@@ -1,0 +1,2 @@
+[MESSAGES CONTROL]
+disable=broad-except,missing-docstring,logging-fstring-interpolation,unspecified-encoding,consider-using-dict-items,broad-exception-raised
