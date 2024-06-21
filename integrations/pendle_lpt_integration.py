@@ -4,7 +4,7 @@ import logging
 from eth_typing import ChecksumAddress
 from web3.contract import Contract
 
-from chains import Chain
+from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
 from models.integration import Integration
 from utils import pendle

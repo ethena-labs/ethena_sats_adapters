@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from chains import Chain
+from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
 from constants.integration_token import Token

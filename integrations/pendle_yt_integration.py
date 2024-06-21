@@ -4,7 +4,7 @@ import logging
 from eth_typing import ChecksumAddress
 from web3.contract import Contract
 
-from chains import Chain
+from constants.chains import Chain
 from models.integration import Integration
 from constants.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn

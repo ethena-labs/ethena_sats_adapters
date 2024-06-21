@@ -1,4 +1,4 @@
-from chains import Chain
+from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from constants.integration_token import Token
 from constants.summary_columns import SummaryColumn
