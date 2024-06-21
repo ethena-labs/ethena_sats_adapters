@@ -18,6 +18,7 @@ For your protocol to be included and your users to receive sats, you should subm
 
 # Guidelines
 
+- Integrations must follow this architecture and be written in python.
 - Pendle integrations are included as examples of functioning integrations. Run `python -m integrations.pendle_lpt_integration` to see the output.
 - The `get_balance` and `get_participants` methods should be as efficient as possible.
 - We prefer that on chain RPC calls are used to get information as much as possible due to reliability and trustlessness. For example one could cycle through events for `get_participants` and read from a smart contract for `get_balance`. Off chain calls to apis or subgraphs are acceptable if necessary. If usage is not reasonable or the external service is not reliable, users may not receive their sats.
