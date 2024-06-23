@@ -8,7 +8,7 @@ For your protocol to be included and your users to receive sats, you should subm
 
 1. Make a copy of `.env.example` and name it `.env`.
 2. Run `pip install -r requirements.txt` to install the required packages.
-3. Add your integration metadata to `integrations/integration_ids.py`.
+3. Add your integration metadata to `constants/integration_ids.py`.
 4. Make a copy of `integrations/template.py`, naming the file `[protocol name].py` and place in the `integrations` directory.
 5. Your integration must be a class that inherits from `Integration` and implements the `get_balance` and `get_participants` methods.
 6. The `get_balance` method should return the balance of a given user at a given block.
