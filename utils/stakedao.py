@@ -11,6 +11,7 @@ from utils.web3_utils import (
     call_with_retry,
     w3,
 )
+from typing import List
 
 with open("abi/stakedao_vault.json") as f:
     vault_abi = json.load(f)
@@ -29,7 +30,8 @@ class StakeDAOIntegration(
         lp_contract: str,
         chain: Chain = Chain.ETHEREUM,
         reward_multiplier: int = 20,
-        balance_multiplier: int = 1
+        balance_multiplier: int = 1,
+        excluded_addresses: List[str] = [PENDLE_LOCKER]
     ):
         super().__init__(
             integration_id,
@@ -38,6 +40,7 @@ class StakeDAOIntegration(
             None,
             reward_multiplier,
             balance_multiplier,
+            excluded_addresses,
             None,
             None,
         )
