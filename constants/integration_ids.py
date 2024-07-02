@@ -30,6 +30,8 @@ class IntegrationID(Enum):
     STAKEDAO_SUSDE_JULY_LPT = ('stakedao_susde_july_effective_lpt_held', 'Stake DAO sUSDe July LPT', Token.SUSDE)
     STAKEDAO_SUSDE_SEPT_LPT = ('stakedao_susde_sept_effective_lpt_held', 'Stake DAO sUSDe Sept LPT', Token.SUSDE)
     STAKEDAO_USDE_JULY_LPT = ('stakedao_usde_july_effective_lpt_held', 'Stake DAO USDe July LPT', Token.USDE)
+    #PENPIE 
+    PENPIE_SUSDE_JULY_LPT=('penpie_susde_july_effective_lpt_held', 'PENPIE sUSDe July LPT', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

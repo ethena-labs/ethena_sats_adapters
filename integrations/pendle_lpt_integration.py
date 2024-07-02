@@ -83,7 +83,7 @@ class PendleLPTIntegration(Integration):
         if self.participants is not None:
             return self.participants
 
-        logging.info(f"[{self.get_description()}] Getting participants...")
+        # logging.info(f"[{self.get_description()}] Getting participants...")
         self.participants = self.get_participants_func(
             [self.sy_contract.address, self.lp_contract.address]
         )
