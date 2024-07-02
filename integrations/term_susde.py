@@ -1,3 +1,4 @@
+from typing import List
 import requests
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
@@ -81,6 +82,13 @@ participants_query = """{{
 }}
 """
 
+repo_lockers_query = """{
+    termRepos(first: 5000) {
+        termRepoLocker
+    }
+}
+"""
+
 collateral_token_addresses = {
     Token.SUSDE: "0x9d39a5de30e57443bff2a8307a4256c8797a3497", # Mainnet address for SUSDE
     # Token.USDE: "0x7e7e112A68d8D2E221E11047f6E4D7a8eB2dC5e1",  # Unsupported
@@ -109,6 +117,14 @@ class TermFinanceIntegration(
     Integration
 ):
     def __init__(self):
+        repo_lockers_response = fetch_data(
+            url=term_finance_subgraph_url_mainnet,
+            query=repo_lockers_query,
+        )
+        repo_lockers = []
+        if repo_lockers_response is not None:
+            for result in repo_lockers_response['termRepos']:
+                repo_lockers.append(result['termRepoLocker'])
         super().__init__(
             integration_id=IntegrationID.TERM_SUSDE,
             start_block=16380765,
@@ -116,7 +132,7 @@ class TermFinanceIntegration(
             summary_cols=None,
             reward_multiplier=20,         # TODO: Change 20 to the sats multiplier for the protocol that has been agreed upon
             balance_multiplier=1,         # TODO: Almost always 1, optionally change to a different value if an adjustment needs to be applied to balances
-            excluded_addresses=None,      # No excluded addresses
+            excluded_addresses=repo_lockers,
             end_block=None,               # No end block, protocol is still active
             reward_multiplier_func=None,  # reward_multiplier should be the same across blocks
         )
@@ -200,6 +216,9 @@ class TermFinanceIntegration(
                 2**31 - 1
             )  # if no end block is specified, return the maximum possible block number
         return self.end_block
+
+    def get_excluded_addresses(self) -> List[str]:
+        return self.excluded_addresses
 
     def is_user_a_participant(self, user: str) -> bool:
         if self.participants is None:
