@@ -11,6 +11,7 @@ from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
     w3,
+    w3_arb,
 )
 from typing import List
 
@@ -55,7 +56,7 @@ class PENPIEIntegration(Integration):
         if(self.chain==Chain.ETHEREUM):
             masterpenpiecontract = w3.eth.contract(address=master_penpie_ethereum, abi=master_penpie)
         if(self.chain==Chain.ARBITRUM):
-            masterpenpiecontract = w3.arb.contract(address=master_penpie_arbitrum, abi=master_penpie)
+            masterpenpiecontract = w3_arb.eth.contract(address=master_penpie_arbitrum, abi=master_penpie)
 
         # Get lpt token address from Stake DAO vault
         pendlePoolAddress = call_with_retry(
@@ -66,7 +67,7 @@ class PENPIEIntegration(Integration):
         if(self.chain==Chain.ETHEREUM):
             lptContract = w3.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
         if(self.chain==Chain.ARBITRUM):
-            lptContract = w3.arb.contract(address=pendlePoolAddress, abi=lpt_abi)
+            lptContract = w3_arb.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
         print(pendlePoolAddress)
         # Get SY address
         tokens = call_with_retry(
@@ -78,7 +79,7 @@ class PENPIEIntegration(Integration):
         if(self.chain==Chain.ETHEREUM):
             sy_contract = w3.eth.contract(address=sy, abi=erc20_abi)
         if(self.chain==Chain.ARBITRUM):
-            sy_contract = w3.arb.contract(address=sy, abi=erc20_abi)
+            sy_contract = w3_arb.eth.contract(address=sy, abi=erc20_abi)
 
         # Get SY balance in the Pendle pool
         sy_bal = call_with_retry(
@@ -117,7 +118,7 @@ class PENPIEIntegration(Integration):
         if(self.chain==Chain.ETHEREUM):
             receiptcontract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
         if(self.chain==Chain.ARBITRUM):
-            receiptcontract = w3.arb.contract(address=self.lp_contract, abi=erc20_abi)
+            receiptcontract = w3_arb.eth.contract(address=self.lp_contract, abi=erc20_abi)
 
         # Get gauge total suply
         penpeiepoolTotalSupply = call_with_retry(
@@ -155,12 +156,12 @@ class PENPIEIntegration(Integration):
         if(self.chain==Chain.ETHEREUM):
             contract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
         if(self.chain==Chain.ARBITRUM):
-            contract = w3.arb.contract(address=self.lp_contract, abi=erc20_abi)
+            contract = w3_arb.eth.contract(address=self.lp_contract, abi=erc20_abi)
         page_size = 1900
         if(self.chain==Chain.ETHEREUM):
             target_block = w3.eth.get_block_number()
         if(self.chain==Chain.ARBITRUM):
-            target_block = w3.arb.get_block_number()
+            target_block = w3_arb.eth.get_block_number()
         while start < target_block:
             to_block = min(start + page_size, target_block)
             deposits = fetch_events_logs_with_retry(
