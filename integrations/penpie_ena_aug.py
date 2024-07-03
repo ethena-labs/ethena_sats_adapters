@@ -1,19 +1,19 @@
 from constants.integration_ids import IntegrationID
 from utils.penpie import PENPIEIntegration
-from constants.penpie import SUSDE_JULY, SUSDE_JULY_DEPLOYMENT_BLOCK   
+from constants.penpie import ENA29AUG2024_PRT, ENA29AUG2024_PRT_DEPLOYMENT_BLOCK   
 from constants.chains import Chain
 from constants.penpie import PENDLE_LOCKER_ETHEREUM
 
 if __name__ == "__main__":
     penpie_integration = PENPIEIntegration(
-        IntegrationID.PENPIE_SUSDE_JULY_LPT,
-        SUSDE_JULY_DEPLOYMENT_BLOCK,
-        SUSDE_JULY,
+        IntegrationID.PENPIE_ENA29AUG2024_LPT,
+        ENA29AUG2024_PRT_DEPLOYMENT_BLOCK,
+        ENA29AUG2024_PRT,
         Chain.ETHEREUM,
-        20,
+        30,
         1,
         [PENDLE_LOCKER_ETHEREUM]
 
     )
     # print(penpie_integration.get_participants())
-    print(penpie_integration.get_balance("0x79E40Ab4BAc23E2910C03E2Fc24819fE498A9491", "latest"))
+    print(penpie_integration.get_balance("0xb60c9094FF0DFfF6aA266063A4C176B00Ad07fE8", "latest"))
