@@ -8,8 +8,7 @@ class SummaryColumn(Enum):
     SYNTHETIX_ARBITRUM_SHARDS = "synthetix_arbitrum_shards"
 
     AMBIENT_SCROLL_SHARDS = "ambient_scroll_shards"
-    
+
     NURI_SHARDS = "nuri_shards"
 
-
-
+    RHO_MARKETS_SCROLL_SHARDS = "rho_markets_scroll_shards"
