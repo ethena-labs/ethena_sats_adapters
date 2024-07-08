@@ -74,6 +74,9 @@ class IntegrationID(Enum):
     VELODROME_MODE_USDE = ('velodrome_mode_usde', 'Velodrome Mode USDe', Token.USDE)
     VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
 
+    # Merchant Moe
+    MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
