@@ -1,12 +1,12 @@
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from models.integration import Integration
-from constants.nuri import NURI_NFP_MANAGER_ADDRESS, NURI_POOL_ADDRESS, NURI_DEPLOYMENT_BLOCK
+from constants.nuri import NURI_NFP_MANAGER_ADDRESS, NURI_POOL_ADDRESS, NURI_DEPLOYMENT_BLOCK, SCROLL_USDE_TOKEN_ADDRESS
 from constants.summary_columns import SummaryColumn
 from utils.nuri import nfp_manager, pool
 from utils.web3_utils import w3_scroll, fetch_events_logs_with_retry, call_with_retry
 from web3 import Web3
-
+import math
 class Nuri(Integration):
     def __init__(self):
         super().__init__(
@@ -18,13 +18,38 @@ class Nuri(Integration):
             1,
         )
 
-    def get_balance(self, user: str, block: int) -> float:      
+    def calculate_sqrt_price(self, tick):
+        return math.sqrt(1.0001**tick) * (2**96)
+
+    def calculate_token_amounts(self, liquidity, current_tick, lower_tick, upper_tick, sqrt_price_x96, decimals0, decimals1):
+        sqrt_price_current = sqrt_price_x96
+        sqrt_price_lower = self.calculate_sqrt_price(lower_tick)
+        sqrt_price_upper = self.calculate_sqrt_price(upper_tick)
+
+        amount0 = liquidity * (sqrt_price_upper - sqrt_price_current) / (sqrt_price_current * sqrt_price_upper) * (2**96)
+        amount1 = liquidity * (sqrt_price_current - sqrt_price_lower) / (2**96)
+
+        amount0_adjusted = amount0 / (10**decimals0)
+        amount1_adjusted = amount1 / (10**decimals1)
+
+        return amount0_adjusted, amount1_adjusted
+
+    def get_balance(self, user: str, block: int) -> float:
+        # get pool current tick
+        current_tick = call_with_retry(
+            pool.functions.slot0(),
+            block,
+        )
+
+        sqrtPriceX96 = current_tick[0]
+        tick = current_tick[1]
+        
         balance = call_with_retry(
             nfp_manager.functions.balanceOf(user),
             block,
         )
 
-        print(balance)
+        print(f"User NFT balance: {balance}")
 
         positions = []
 
@@ -36,23 +61,32 @@ class Nuri(Integration):
 
             positions.append(tokenOfOwnerByIndex)
 
-        print(positions)
+        print(f"User positions: {positions}")
+
+        total_balance = 0
 
         for position in positions:
             position_info = call_with_retry(
                 nfp_manager.functions.positions(position),
                 block,
             )
-            print(position_info)
+            print(f"Position info: {position_info}")
+            token0 = position_info[2]
+            token1 = position_info[3]
+            tickLower = position_info[5]
+            tickUpper = position_info[6]
+            liquidity = position_info[7]
 
-        # get pool current tick
-        current_tick = call_with_retry(
-            pool.functions.slot0(),
-            block,
-        )
+            if token0 == SCROLL_USDE_TOKEN_ADDRESS:
+                # Calculate token amounts for this position
+                amount0, amount1 = self.calculate_token_amounts(
+                    liquidity, tick, tickLower, tickUpper, sqrtPriceX96, 18, 6  # Assuming USDe is 18 decimals and USDT is 6
+                )
 
-        
-        return position_info[0]
+                # Assuming we want to sum up the USDe amounts
+                total_balance += amount0
+
+        return total_balance
 
     def get_participants(self) -> list:
         page_size = 999
@@ -62,40 +96,25 @@ class Nuri(Integration):
         all_users = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
-            transfers = fetch_events_logs_with_retry(
-                f"Nuri users from {start_block} to {to_block}",
-                nfp_manager.events.Transfer(),
-                start_block,
-                to_block,
-            )
-            print(transfers)
+            try:
+                transfers = fetch_events_logs_with_retry(
+                    f"Nuri users from {start_block} to {to_block}",
+                    nfp_manager.events.Transfer(),
+                    start_block,
+                    to_block,
+                )
+                for transfer in transfers:
+                    all_users.add(transfer["args"]["to"])
+            except Exception as e:
+                print(f"Error fetching transfers from block {start_block} to {to_block}: {e}")
             
+            start_block = to_block + 1
 
-            total_supply = call_with_retry(
-                nfp_manager.functions.totalSupply(),
-                target_block,
-            )
-            print(total_supply)
-            for i in range(total_supply):
-                try:
-                    deposits = call_with_retry(
-                        nfp_manager.functions.ownerOf(i),
-                        start_block,
-                    )
-                except:
-                    continue
-
-                all_users.update(deposits)
-
-            start_block += page_size
-
-
-        all_users = list(all_users)
-        self.participants = all_users
-        return all_users
+        self.participants = list(all_users)
+        return self.participants
     
 if __name__ == "__main__":
     nuri = Nuri()
-    #print(nuri.get_balance(Web3.to_checksum_address("0xCAfc58De1E6A071790eFbB6B83b35397023E1544"), 7081747))
-    print(nuri.get_participants())
-    print(nuri.get_balance(nuri.participants[0], 7055711))
+    #print(nuri.get_balance(Web3.to_checksum_address("0xCE29ECB0D2d8c8f0126ED923C50A35cFb0B613A8"), 7249275))
+    #print(nuri.get_participants())
+    #print(nuri.get_balance(nuri.participants[0], 7249275))
