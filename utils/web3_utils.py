@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from web3 import Web3
 
 from utils.slack import slack_message
+from constants.chains import Chain
 
 load_dotenv()
 ETH_NODE_URL = os.getenv("ETH_NODE_URL")
@@ -19,16 +20,16 @@ BLAST_NODE_URL = os.getenv("BLAST_NODE_URL")
 w3_blast = Web3(Web3.HTTPProvider(BLAST_NODE_URL))
 
 W3_BY_CHAIN = {
-    "eth": {
+    Chain.ETHEREUM: {
         "w3": w3,
     },
-    "arb": {
+    Chain.ARBITRUM: {
         "w3": w3_arb,
     },
-    "mantle": {
+    Chain.MANTLE: {
         "w3": w3_mantle,
     },
-    "blast": {
+    Chain.BLAST: {
         "w3": w3_blast,
     },
 }
