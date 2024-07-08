@@ -31,6 +31,9 @@ class IntegrationID(Enum):
     STAKEDAO_SUSDE_SEPT_LPT = ('stakedao_susde_sept_effective_lpt_held', 'Stake DAO sUSDe Sept LPT', Token.SUSDE)
     STAKEDAO_USDE_JULY_LPT = ('stakedao_usde_july_effective_lpt_held', 'Stake DAO USDe July LPT', Token.USDE)
 
+    # Term Finance
+    TERM_SUSDE = ('term_susde_held', 'Term Finance sUSDe', Token.SUSDE)
+
     # Synthetix
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
