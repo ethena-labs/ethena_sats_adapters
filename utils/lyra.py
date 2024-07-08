@@ -1,45 +1,49 @@
 from utils.web3_utils import (
     W3_BY_CHAIN,
     fetch_events_logs_with_retry,
-    w3,
-    w3_mantle,
-    w3_arb,
 )
 
-from constants.lyra import LYRA_CONTRACTS_AND_START_BY_TOKEN
+from web3.contract import Contract
+from utils.web3_utils import call_with_retry
+from constants.chains import Chain
 
 
-# Balance Process
-# 1. Get total bridge balance
-# 2. Get total vault token balance
-# 3. Get user vault token balance
-# 4. Balance = (3 / 2) * 1
+def get_effective_balance(user: str, block: int, integration_token: Contract, bridge: Contract, vault_token: Contract):
+    """ "
+    Returns the effective Ethena integration token balance.
+    Since vault-tokens can be transfered, calculates the portion of total vault token balance held by user.
 
+    User's effective ethena integration token balance = % of vault token owned * total bridge balance
 
-def get_lyra_participants(vault_token_name: str):
     """
-    Gets all participants that have ever interacted with the vault token
+    total_bridge_balance = call_with_retry(integration_token.functions.balanceOf(bridge.address), block)
+    total_vault_token_balance = call_with_retry(vault_token.functions.totalSupply(), block)
+    user_vault_token_balance = call_with_retry(vault_token.functions.balanceOf(user), block)
+    return (user_vault_token_balance / total_vault_token_balance) * total_bridge_balance
+
+
+def get_vault_users(start_block: int, page_size: int, vault_token: Contract, chain: Chain):
+    """
+    Gets all participants that have ever interacted with the vault token.
+
+    Note: does not support cross-chain bridging of vault tokens.
     """
     all_users = set()
-    vault_data = LYRA_CONTRACTS_AND_START_BY_TOKEN[vault_token_name]
-    if not vault_data:
-        return all_users
 
-    start = vault_data["start"]
-    page_size = 1000
-    target_block = W3_BY_CHAIN[vault_data["chain"]]["w3"].eth.get_block_number()
+    target_block = W3_BY_CHAIN[chain]["w3"].eth.get_block_number()
 
-    event_label = f"Getting Lyra participants for: {vault_token_name}"
-    while start < target_block:
-        to_block = min(start + page_size, target_block)
+    while start_block < target_block:
+        to_block = min(start_block + page_size, target_block)
+        event_label = f"Getting Lyra participants from {start_block} to {to_block}"
+
         transfers = fetch_events_logs_with_retry(
             event_label,
-            vault_data["vault_token"].events.Transfer(),
-            start,
+            vault_token.events.Transfer(),
+            start_block,
             to_block,
         )
-        print(event_label, start, to_block, len(transfers))
+        print(event_label, ": found", len(transfers), "transfers")
         for transfer in transfers:
             all_users.add(transfer["args"]["to"])
-        start += page_size
+        start_block += page_size
     return all_users

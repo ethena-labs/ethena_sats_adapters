@@ -67,11 +67,14 @@ class IntegrationID(Enum):
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
 
+    # Lyra
+    LYRA_SUSDE_BULL_MAINNET = ('lyra_susde_bull_mainnet', 'Lyra sUSDe Bull Vault Mainnet', Token.SUSDE)
+    LYRA_SUSDE_BULL_ARBITRUM = ('lyra_susde_bull_arbitrum', 'Lyra sUSDe Bull Vault Arbitrum', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
         self.token = token
-
     def get_column_name(self) -> str:
         return self.column_name
 
