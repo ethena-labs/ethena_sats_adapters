@@ -21,7 +21,7 @@ class Ambient(Integration):
         """
         Get the balance of a user at a given block
         """
-        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/balance"
+        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/usde/balance"
         params = {"user": user, "block": block}
         response = requests.get(url, params=params)
         data = response.json()
@@ -32,7 +32,7 @@ class Ambient(Integration):
         Get all participants of the protocol, ever.
         This function should only be called once and should cache the results by setting self.participants
         """
-        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/participants"
+        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/usde/participants"
         response = requests.get(url)
         data = response.json()
         return data["participants"]

@@ -36,6 +36,7 @@ class IntegrationID(Enum):
 
     # Ambient
     AMBIENT_SCROLL_USDE_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll USDe LP', Token.USDE)
+    AMBIENT_SCROLL_SUSDE_LP = ('ambient_susde_scroll_lp_bal', 'Ambient Scroll sUSDe LP', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
