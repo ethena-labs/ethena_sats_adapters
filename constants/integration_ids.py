@@ -37,6 +37,10 @@ class IntegrationID(Enum):
     # Synthetix
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
+    # Velodrome
+    VELODROME_MODE_USDE = ('velodrome_mode_usde', 'Velodrome Mode USDe', Token.USDE)
+    VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
