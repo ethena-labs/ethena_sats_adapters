@@ -21,7 +21,7 @@ class LyraVaultDetails(TypedDict):
 # NOTE: does not handle cross-chain transfers of vault tokens
 LYRA_CONTRACTS_AND_START_BY_TOKEN: Dict[IntegrationID, LyraVaultDetails] = {
     IntegrationID.LYRA_SUSDE_BULL_MAINNET: LyraVaultDetails(
-        start=0,  # TODO: fill in
+        start=20211445,
         chain=Chain.ETHEREUM,
         integration_token=W3_BY_CHAIN["eth"].eth.contract(
             address="0x9d39a5de30e57443bff2a8307a4256c8797a3497", abi=erc20_abi
@@ -33,7 +33,7 @@ LYRA_CONTRACTS_AND_START_BY_TOKEN: Dict[IntegrationID, LyraVaultDetails] = {
         page_size=1000,
     ),
     IntegrationID.LYRA_SUSDE_BULL_MAINNET: LyraVaultDetails(
-        start=0,  # TODO: fill in
+        start=227626020,
         chain=Chain.ARBITRUM,
         integration_token=W3_BY_CHAIN["arb"].eth.contract(
             address="0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2", abi=erc20_abi

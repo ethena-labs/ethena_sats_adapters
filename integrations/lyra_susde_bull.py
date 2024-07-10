@@ -28,10 +28,10 @@ class LyraIntegration(Integration):
 
     def get_participants(self) -> list:
         self.participants = get_vault_users(
-            self.vault_data.start,
+            self.start_block,
             self.vault_data.page_size,
             self.vault_data.vault_token,
-            self.vault_data.chain,
+            self.chain,
         )
 
         return self.participants
