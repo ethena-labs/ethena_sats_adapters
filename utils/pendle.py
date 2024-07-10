@@ -105,8 +105,8 @@ ENA_YT_contract = w3.eth.contract(address=ENA_YT, abi=erc20_abi)
 
 
 PENDLE_USDE_KARAK_LP_CONTRACT = w3.eth.contract(
-     address=PENDLE_USDE_KARAK_LP, abi=lpt_abi
- )
+    address=PENDLE_USDE_KARAK_LP, abi=lpt_abi
+)
 PENDLE_USDE_KARAK_SY_CONTRACT = w3.eth.contract(
     address=PENDLE_USDE_KARAK_SY, abi=erc20_abi
 )
