@@ -6,3 +6,4 @@ class Chain(Enum):
     ARBITRUM = "arb"
     MANTLE = "mantle"
     BLAST = "blast"
+    SCROLL = "scroll"
