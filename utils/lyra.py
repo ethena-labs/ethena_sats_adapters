@@ -9,11 +9,10 @@ from constants.chains import Chain
 
 
 def get_effective_balance(user: str, block: int, integration_token: Contract, bridge: Contract, vault_token: Contract):
-    """ "
-    Returns the effective Ethena integration token balance.
-    Since vault-tokens can be transfered, calculates the portion of total vault token balance held by user.
+    """
+    Since vault tokens can be transferred, calculates the portion of totalSupply() of the vault held by user.
 
-    User's effective ethena integration token balance = % of vault token owned * total bridge balance
+    User's effective ethena integration token balance = (vault.balanceOf(user) / vault.totalSupply()) * total bridge balance
 
     """
     total_bridge_balance = call_with_retry(integration_token.functions.balanceOf(bridge.address), block)
@@ -24,7 +23,7 @@ def get_effective_balance(user: str, block: int, integration_token: Contract, br
 
 def get_vault_users(start_block: int, page_size: int, vault_token: Contract, chain: Chain):
     """
-    Gets all participants that have ever interacted with the vault token.
+    Gets all participants that have ever interacted with the vault token by fetching all vault transfer events.
 
     Note: does not support cross-chain bridging of vault tokens.
     """
