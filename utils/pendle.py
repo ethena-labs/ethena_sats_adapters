@@ -104,14 +104,26 @@ ENA_SY_contract = w3.eth.contract(address=ENA_SY, abi=erc20_abi)
 ENA_YT_contract = w3.eth.contract(address=ENA_YT, abi=erc20_abi)
 
 
-PENDLE_USDE_KARAK_LP_CONTRACT = w3.eth.contract(address=PENDLE_USDE_KARAK_LP, abi=lpt_abi)
-PENDLE_USDE_KARAK_SY_CONTRACT = w3.eth.contract(address=PENDLE_USDE_KARAK_SY, abi=erc20_abi)
-PENDLE_USDE_KARAK_YT_CONTRACT = w3.eth.contract(address=PENDLE_USDE_KARAK_YT, abi=erc20_abi)
+PENDLE_USDE_KARAK_LP_CONTRACT = w3.eth.contract(
+     address=PENDLE_USDE_KARAK_LP, abi=lpt_abi
+ )
+PENDLE_USDE_KARAK_SY_CONTRACT = w3.eth.contract(
+    address=PENDLE_USDE_KARAK_SY, abi=erc20_abi
+)
+PENDLE_USDE_KARAK_YT_CONTRACT = w3.eth.contract(
+    address=PENDLE_USDE_KARAK_YT, abi=erc20_abi
+)
 
 
-PENDLE_SUSDE_KARAK_LP_CONTRACT = w3.eth.contract(address=PENDLE_SUSDE_KARAK_LP, abi=lpt_abi)
-PENDLE_SUSDE_KARAK_SY_CONTRACT = w3.eth.contract(address=PENDLE_SUSDE_KARAK_SY, abi=erc20_abi)
-PENDLE_SUSDE_KARAK_YT_CONTRACT = w3.eth.contract(address=PENDLE_SUSDE_KARAK_YT, abi=erc20_abi)
+PENDLE_SUSDE_KARAK_LP_CONTRACT = w3.eth.contract(
+    address=PENDLE_SUSDE_KARAK_LP, abi=lpt_abi
+)
+PENDLE_SUSDE_KARAK_SY_CONTRACT = w3.eth.contract(
+    address=PENDLE_SUSDE_KARAK_SY, abi=erc20_abi
+)
+PENDLE_SUSDE_KARAK_YT_CONTRACT = w3.eth.contract(
+    address=PENDLE_SUSDE_KARAK_YT, abi=erc20_abi
+)
 
 usde_arb_LPT_contract = w3_arb.eth.contract(address=usde_arb_LP, abi=lpt_abi)
 usde_arb_SY_contract = w3_arb.eth.contract(address=usde_arb_SY, abi=erc20_abi)
