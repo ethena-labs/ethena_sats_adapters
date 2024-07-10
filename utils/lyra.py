@@ -30,7 +30,7 @@ def get_vault_users(start_block: int, page_size: int, vault_token: Contract, cha
     """
     all_users = set()
 
-    target_block = W3_BY_CHAIN[chain]["w3"].eth.get_block_number()
+    target_block = W3_BY_CHAIN[chain].eth.get_block_number()
 
     while start_block < target_block:
         to_block = min(start_block + page_size, target_block)

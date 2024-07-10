@@ -22,21 +22,11 @@ SCROLL_NODE_URL = os.getenv("SCROLL_NODE_URL")
 w3_scroll = Web3(Web3.HTTPProvider(SCROLL_NODE_URL))
 
 W3_BY_CHAIN = {
-    Chain.ETHEREUM: {
-        "w3": w3,
-    },
-    Chain.ARBITRUM: {
-        "w3": w3_arb,
-    },
-    Chain.MANTLE: {
-        "w3": w3_mantle,
-    },
-    Chain.BLAST: {
-        "w3": w3_blast,
-    },
-    "scroll": {
-        "w3": w3_scroll,
-    },
+    Chain.ETHEREUM: w3,
+    Chain.ARBITRUM: w3_arb,
+    Chain.MANTLE: w3_mantle,
+    Chain.BLAST: w3_blast,
+    Chain.SCROLL: w3_scroll,
 }
 
 
