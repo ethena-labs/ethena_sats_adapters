@@ -43,6 +43,12 @@ class IntegrationID(Enum):
     PENPIE_USDE_ARB_AUG2024_LPT= ('PENPIE_USDE_ARB_AUG2024_effective_lpt_held', 'USDE_ARB_AUG2024', Token.USDE)
     
 
+    # Term Finance
+    TERM_SUSDE = ('term_susde_held', 'Term Finance sUSDe', Token.SUSDE)
+
+    # Synthetix
+    SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
