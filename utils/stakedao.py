@@ -121,7 +121,7 @@ class StakeDAOIntegration(Integration):
         if self.participants is not None:
             return self.participants
 
-        # logging.info(f"[{self.get_description()}] Getting participants...")
+        logging.info(f"[{self.get_description()}] Getting participants...")
         self.participants = self.get_stakedao_participants()
         logging.info(
             f"[{self.get_description()}] Found {len(self.participants)} participants"
