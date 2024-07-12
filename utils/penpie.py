@@ -144,9 +144,9 @@ class PENPIEIntegration(Integration):
 
         # logging.info(f"[{self.get_description()}] Getting participants...")
         self.participants = self.get_penpie_participants()
-        # logging.info(
-        #     f"[{self.get_description()}] Found {len(self.participants)} participants"
-        # )
+        logging.info(
+            f"[{self.get_description()}] Found {len(self.participants)} participants"
+        )
         return self.participants
 
     def get_penpie_participants(self):
