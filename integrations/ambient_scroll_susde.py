@@ -21,11 +21,11 @@ class Ambient(Integration):
         """
         Get the balance of a user at a given block
         """
-        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/susde/balance"
+        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/susde/balances"
         params = {"user": user, "block": block}
         response = requests.get(url, params=params)
         data = response.json()
-        return data["balance"]
+        return data["balances"]
 
     def get_participants(self) -> list:
         """
