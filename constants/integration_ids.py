@@ -35,8 +35,7 @@ class IntegrationID(Enum):
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
     # Ambient
-    AMBIENT_SCROLL_USDE_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll USDe LP', Token.USDE)
-    AMBIENT_SCROLL_SUSDE_LP = ('ambient_susde_scroll_lp_bal', 'Ambient Scroll sUSDe LP', Token.SUSDE)
+    AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

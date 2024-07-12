@@ -9,7 +9,7 @@ from constants.ambient import AMBIENT_SCROLL_DEPLOYMENT_BLOCK, AMBIENT_SCROLL_AP
 class Ambient(Integration):
     def __init__(self):
         super().__init__(
-            IntegrationID.AMBIENT_SCROLL_SUSDE_LP,
+            IntegrationID.AMBIENT_SCROLL_LP,
             AMBIENT_SCROLL_DEPLOYMENT_BLOCK,
             Chain.SCROLL,
             [SummaryColumn.AMBIENT_SCROLL_SHARDS],
@@ -21,25 +21,25 @@ class Ambient(Integration):
         """
         Get the balance of a user at a given block
         """
-        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/susde/balances"
+        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/balance"
         params = {"user": user, "block": block}
         response = requests.get(url, params=params)
         data = response.json()
-        return data["balances"]
+        return data["data"]
 
     def get_participants(self) -> list:
         """
         Get all participants of the protocol, ever.
         This function should only be called once and should cache the results by setting self.participants
         """
-        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/susde/participants"
+        url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/participants"
         response = requests.get(url)
         data = response.json()
-        return data["participants"]
+        return data["data"]
 
 
 if __name__ == "__main__":
     # Simple tests for the integration
     ambient = Ambient()
     print(ambient.get_participants())
-    print(ambient.get_balance(list(ambient.get_participants())[0], 7200000))
+    print(ambient.get_balance(list(ambient.get_participants())[2], 7372500))
