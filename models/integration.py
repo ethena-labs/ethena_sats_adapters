@@ -24,6 +24,7 @@ class Integration(ABC):
         self.start_block = start_block
         self.end_block = end_block
         self.participants = None
+        self.participants_cutoff_block: int = None
         self.chain = chain
         self.summary_cols = summary_cols
         self.reward_multiplier = reward_multiplier
@@ -36,5 +37,16 @@ class Integration(ABC):
         pass
 
     @abstractmethod
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: List[int]) -> List[str] | None:
         pass
+
+    def get_description(self) -> str:
+        return self.integration_id.get_description()
+
+    def get_new_blocks_start(self) -> int:
+        return (
+            self.participants_cutoff_block
+            if self.participants_cutoff_block is not None
+            and self.participants_cutoff_block > self.start_block
+            else self.start_block
+        )

@@ -322,13 +322,17 @@ PENDLE_CONTRACT_AND_START_BY_LP_TOKEN = {
 }
 
 
-def get_pendle_participants_v3(token_addresses):
+def get_pendle_participants_v3(token_addresses, start_block: int = None):
     all_users = set()
     for token in token_addresses:
         token_data = PENDLE_CONTRACT_AND_START_BY_LP_TOKEN[token]
         if not token_data:
             continue
-        start = token_data["start"]
+        start = (
+            start_block
+            if isinstance(start_block, int) and start_block > token_data["start"]
+            else token_data["start"]
+        )
         contract = token_data["contract"]
         chain = token_data["chain"]
         web3_for_token = W3_BY_CHAIN[chain]["w3"]
