@@ -6,4 +6,5 @@ class SummaryColumn(Enum):
     PENDLE_ARBITRUM_SHARDS = "pendle_arbtrium_shards"
     PENDLE_MANTLE_SHARDS = "pendle_mantle_shards"
     SYNTHETIX_ARBITRUM_SHARDS = "synthetix_arbitrum_shards"
+    LENDLE_MANTLE_SHARDS = "lendle_mantle_shards"
     AMBIENT_SCROLL_SHARDS = "ambient_scroll_shards"
