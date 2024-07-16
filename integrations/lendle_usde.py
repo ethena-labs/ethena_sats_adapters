@@ -11,7 +11,7 @@ class LendleIntegration(
 ):
     def __init__(self):
         super().__init__(
-            IntegrationID.LENDLE_USDE_LPT,
+            IntegrationID.LENDLE_USDE_LP,
             LENDLE_USDE_DEPLOYMENT_BLOCK,
             Chain.MANTLE,
             [SummaryColumn.LENDLE_MANTLE_SHARDS],
