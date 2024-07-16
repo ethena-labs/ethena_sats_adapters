@@ -47,7 +47,7 @@ class IntegrationID(Enum):
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
     # Lendle
-    LENDLE_USDE_LP = ('lendle_usde_mantle_lp_bal', 'Lendle Mantle USDe LPT', Token.USDE)
+    LENDLE_USDE_LPT = ('lendle_usde_lpt_bal', 'Lendle Mantle USDe LPT', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
