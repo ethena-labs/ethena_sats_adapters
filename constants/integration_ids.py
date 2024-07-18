@@ -58,6 +58,9 @@ class IntegrationID(Enum):
     # Synthetix
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
+    # Ambient
+    AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
+    
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
 
