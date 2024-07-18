@@ -7,6 +7,7 @@ from utils.nuri import nfp_manager, pool
 from utils.web3_utils import w3_scroll, fetch_events_logs_with_retry, call_with_retry
 from web3 import Web3
 import math
+
 class Nuri(Integration):
     def __init__(self):
         super().__init__(
@@ -97,18 +98,24 @@ class Nuri(Integration):
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             try:
-                transfers = fetch_events_logs_with_retry(
-                    f"Nuri users from {start_block} to {to_block}",
-                    nfp_manager.events.Transfer(),
+                mint_events = fetch_events_logs_with_retry(
+                    f"USDe pool Mint events from {start_block} to {to_block}",
+                    pool.events.Mint(),
                     start_block,
                     to_block,
                 )
-                for transfer in transfers:
-                    all_users.add(transfer["args"]["to"])
+                print(f"Fetched {len(mint_events)} Mint events")
+                
+                for event in mint_events:
+                    tx_hash = event['transactionHash']
+                    tx = w3_scroll.eth.get_transaction(tx_hash)
+                    user_address = tx['from']
+                    all_users.add(user_address)
+
             except Exception as e:
-                print(f"Error fetching transfers from block {start_block} to {to_block}: {e}")
+                print(f"Error fetching events from block {start_block} to {to_block}: {e}")
             
-            start_block = to_block + 1
+            start_block += page_size
 
         self.participants = list(all_users)
         return self.participants
