@@ -3,13 +3,14 @@ from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.kinto import get_kinto_ena_contract, fetch_participants
+from constants.kinto import KINTO_ENA_DEPLOYMENT_BLOCK
 import logging
 
 class KintoENAIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.KINTO_ENA_LP,
-            133016,
+            KINTO_ENA_DEPLOYMENT_BLOCK,
             Chain.KINTO,
             None,
             20,

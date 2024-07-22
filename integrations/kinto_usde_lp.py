@@ -3,13 +3,14 @@ from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.kinto import get_kinto_usde_contract, fetch_participants
+from constants.kinto import KINTO_USDE_DEPLOYMENT_BLOCK
 import logging
 
 class KintoUSDEIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.KINTO_USDE_LP,
-            133016,
+            KINTO_USDE_DEPLOYMENT_BLOCK,
             Chain.KINTO,
             None,
             20,
