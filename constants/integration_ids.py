@@ -63,6 +63,12 @@ class IntegrationID(Enum):
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
+    
+    # KINTO
+    KINTO_USDE_LP = ('kinto_usde_lp', 'Kinto USDe LP', Token.USDE)
+    KINTO_SUSDE_LP = ('kinto_susde_lp', 'Kinto sUSDe LP', Token.SUSDE)
+    KINTO_ENA_LP = ('kinto_ena_lp', 'Kinto ENA LP', Token.ENA)
+
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

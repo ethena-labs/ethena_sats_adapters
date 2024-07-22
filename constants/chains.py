@@ -7,3 +7,4 @@ class Chain(Enum):
     MANTLE = "Mantle"
     BLAST = "Blast"
     SCROLL = "Scroll"
+    KINTO = "Kinto"

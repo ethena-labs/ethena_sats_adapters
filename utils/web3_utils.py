@@ -19,6 +19,8 @@ BLAST_NODE_URL = os.getenv("BLAST_NODE_URL")
 w3_blast = Web3(Web3.HTTPProvider(BLAST_NODE_URL))
 SCROLL_NODE_URL = os.getenv("SCROLL_NODE_URL")
 w3_scroll = Web3(Web3.HTTPProvider(SCROLL_NODE_URL))
+KINTO_NODE_URL = os.getenv("KINTO_NODE_URL")
+w3_kinto = Web3(Web3.HTTPProvider(KINTO_NODE_URL))
 
 W3_BY_CHAIN = {
     "eth": {
@@ -35,6 +37,9 @@ W3_BY_CHAIN = {
     },
     "scroll": {
         "w3": w3_scroll,
+    },
+    "kinto": {
+        "w3": w3_kinto,
     },
 }
 
