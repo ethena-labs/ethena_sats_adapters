@@ -13,7 +13,7 @@ class KintoENAIntegration(Integration):
             KINTO_ENA_DEPLOYMENT_BLOCK,
             Chain.KINTO,
             None,
-            20,
+            1,
             1,
             None,
             None,

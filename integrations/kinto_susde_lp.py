@@ -13,7 +13,7 @@ class KintoSUDEIntegration(Integration):
             KINTO_SUSDE_DEPLOYMENT_BLOCK,
             Chain.KINTO,
             None,
-            20,
+            5,
             1,
             None,
             None,
