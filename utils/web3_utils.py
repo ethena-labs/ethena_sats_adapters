@@ -17,6 +17,8 @@ MANTLE_NODE_URL = os.getenv("MANTLE_NODE_URL")
 w3_mantle = Web3(Web3.HTTPProvider(MANTLE_NODE_URL))
 BLAST_NODE_URL = os.getenv("BLAST_NODE_URL")
 w3_blast = Web3(Web3.HTTPProvider(BLAST_NODE_URL))
+SCROLL_NODE_URL = os.getenv("SCROLL_NODE_URL")
+w3_scroll = Web3(Web3.HTTPProvider(SCROLL_NODE_URL))
 
 W3_BY_CHAIN = {
     "eth": {
@@ -30,6 +32,9 @@ W3_BY_CHAIN = {
     },
     "blast": {
         "w3": w3_blast,
+    },
+    "scroll": {
+        "w3": w3_scroll,
     },
 }
 
