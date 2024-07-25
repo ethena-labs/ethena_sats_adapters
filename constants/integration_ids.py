@@ -70,6 +70,9 @@ class IntegrationID(Enum):
     KINTO_ENA_LP = ('kinto_ena_lp', 'Kinto ENA LP', Token.ENA)
 
 
+    # Merchant Moe
+    MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
