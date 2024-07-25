@@ -38,6 +38,7 @@ class RhoMarkets(Integration):
             r_usde_contract.functions.balanceOf(user),
             block
         )
+        
         exchangeRate = call_with_retry(
             r_usde_contract.functions.exchangeRateStored(),
             block
@@ -56,7 +57,7 @@ class RhoMarkets(Integration):
         self.participants = all_users
         return all_users
 
-    def fetch_compound_users(asset_symbol):
+    def fetch_compound_users(self, asset_symbol):
         url = "https://api.studio.thegraph.com/query/79909/rho-markets-mainnet/version/latest"
         last_id = ""
         all_accounts = []

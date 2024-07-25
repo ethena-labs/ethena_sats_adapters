@@ -7,4 +7,4 @@ if __name__ == "__main__":
     print(rho_markets.get_balance(
         w3_scroll.to_checksum_address(
             rho_markets.participants[0]),
-        7204405))
+        7751774))
