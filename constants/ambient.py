@@ -1,0 +1,2 @@
+AMBIENT_SCROLL_DEPLOYMENT_BLOCK = 267408
+AMBIENT_SCROLL_API_URL = "https://ethena.liquidity.tools"
