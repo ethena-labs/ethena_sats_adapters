@@ -61,18 +61,17 @@ class IntegrationID(Enum):
     # Lendle
     LENDLE_USDE_LPT = ('lendle_usde_lpt_bal', 'Lendle Mantle USDe LPT', Token.USDE)
     
+    # Lyra
+    LYRA_SUSDE_BULL_MAINNET = ("lyra_susde_bull_mainnet", "Lyra sUSDe Bull Vault Mainnet", Token.SUSDE)
+    LYRA_SUSDE_BULL_ARBITRUM = ("lyra_susde_bull_arbitrum", "Lyra sUSDe Bull Vault Arbitrum", Token.SUSDE)
+    # Velodrome
+    VELODROME_MODE_USDE = ('velodrome_mode_usde', 'Velodrome Mode USDe', Token.USDE)
+    VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
-
-    # Lyra
-    LYRA_SUSDE_BULL_MAINNET = ('lyra_susde_bull_mainnet', 'Lyra sUSDe Bull Vault Mainnet', Token.SUSDE)
-    LYRA_SUSDE_BULL_ARBITRUM = ('lyra_susde_bull_arbitrum', 'Lyra sUSDe Bull Vault Arbitrum', Token.SUSDE)
-    # Velodrome
-    VELODROME_MODE_USDE = ('velodrome_mode_usde', 'Velodrome Mode USDe', Token.USDE)
-    VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
 
     # Merchant Moe
     MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
