@@ -11,7 +11,7 @@ from constants.merchantmoe import (
     METH_USDE_MERCHANT_MOE_LBT_CONTRACT,
 )
 from models.integration import Integration
-from utils.merchantmoe import lb_pair_contract, liquidity_helper_contract, chunks
+from utils.merchantmoe import lb_pair_contract, liquidity_helper_contract
 from utils.web3_utils import W3_BY_CHAIN, fetch_events_logs_with_retry, call_with_retry
 
 
@@ -48,18 +48,16 @@ class MerchantMoeIntegration(Integration):
         lower_bin_bound = active_id - 183
         upper_bin_bound = active_id + 183
         bin_range = list(range(lower_bin_bound, upper_bin_bound + 1))
-        bin_chunks = list(chunks(bin_range, 5))
 
         total_liquidity = 0
-        for chunk in bin_chunks:
-            logging.info(f"[{self.name}] Calling Liquidity Helper Contract for User: {user}, for bin ids: {chunk}")
-            liquidity = call_with_retry(
-                self.liquidity_helper_contract.functions.getLiquiditiesOf(
-                    METH_USDE_MERCHANT_MOE_LBT_CONTRACT, user, chunk
-                ),
-                block
-            )
-            total_liquidity += sum(liquidity)
+        logging.info(f"[{self.name}] Calling Liquidity Helper Contract for User: {user}, for bin ids: {bin_range}")
+        liquidity = call_with_retry(
+            self.liquidity_helper_contract.functions.getLiquiditiesOf(
+                METH_USDE_MERCHANT_MOE_LBT_CONTRACT, user, bin_range
+            ),
+            block
+        )
+        total_liquidity += sum(liquidity)
 
         total_liquidity = round(total_liquidity / 10**18, 8)
 
