@@ -20,13 +20,28 @@ BLAST_NODE_URL = os.getenv("BLAST_NODE_URL")
 w3_blast = Web3(Web3.HTTPProvider(BLAST_NODE_URL))
 SCROLL_NODE_URL = os.getenv("SCROLL_NODE_URL")
 w3_scroll = Web3(Web3.HTTPProvider(SCROLL_NODE_URL))
+MODE_NODE_URL = os.getenv("MODE_NODE_URL")
+w3_mode = Web3(Web3.HTTPProvider(MODE_NODE_URL))
 
 W3_BY_CHAIN = {
-    Chain.ETHEREUM: w3,
-    Chain.ARBITRUM: w3_arb,
-    Chain.MANTLE: w3_mantle,
-    Chain.BLAST: w3_blast,
-    Chain.SCROLL: w3_scroll,
+    "eth": {
+        "w3": w3,
+    },
+    "arb": {
+        "w3": w3_arb,
+    },
+    "mantle": {
+        "w3": w3_mantle,
+    },
+    "blast": {
+        "w3": w3_blast,
+    },
+    "scroll": {
+        "w3": w3_scroll,
+    },
+    "mode": {
+        "w3": w3_mode,
+    },
 }
 
 
