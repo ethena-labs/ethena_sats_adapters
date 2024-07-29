@@ -58,6 +58,15 @@ class IntegrationID(Enum):
     # Synthetix
     SYNTHETIX_USDE_LP = ('synthetix_usde_arb_lp_bal', 'Synthetix V3 Arbitrum USDe LP', Token.USDE)
 
+    # Lendle
+    LENDLE_USDE_LPT = ('lendle_usde_lpt_bal', 'Lendle Mantle USDe LPT', Token.USDE)
+    
+    # Lyra
+    LYRA_SUSDE_BULL_MAINNET = ("lyra_susde_bull_mainnet", "Lyra sUSDe Bull Vault Mainnet", Token.SUSDE)
+    LYRA_SUSDE_BULL_ARBITRUM = ("lyra_susde_bull_arbitrum", "Lyra sUSDe Bull Vault Arbitrum", Token.SUSDE)
+    # Velodrome
+    VELODROME_MODE_USDE = ('velodrome_mode_usde', 'Velodrome Mode USDe', Token.USDE)
+    VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
     
@@ -73,7 +82,6 @@ class IntegrationID(Enum):
         self.column_name = column_name
         self.description = description
         self.token = token
-
     def get_column_name(self) -> str:
         return self.column_name
 

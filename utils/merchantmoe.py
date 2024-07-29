@@ -18,8 +18,3 @@ merchant_moe_liquidity_helper_abi = json.load(
 
 lb_pair_contract = w3_mantle.eth.contract(address=METH_USDE_MERCHANT_MOE_LBT_CONTRACT, abi=merchant_moe_lb_pair_abi)
 liquidity_helper_contract = w3_mantle.eth.contract(address=MERCHANT_MOE_LIQUIDITY_HELPER_CONTRACT, abi=merchant_moe_liquidity_helper_abi)
-
-
-def chunks(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
