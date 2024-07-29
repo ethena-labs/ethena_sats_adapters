@@ -24,22 +24,22 @@ MODE_NODE_URL = os.getenv("MODE_NODE_URL")
 w3_mode = Web3(Web3.HTTPProvider(MODE_NODE_URL))
 
 W3_BY_CHAIN = {
-    "eth": {
+    Chain.ETHEREUM: {
         "w3": w3,
     },
-    "arb": {
+    Chain.ARBITRUM: {
         "w3": w3_arb,
     },
-    "mantle": {
+    Chain.MANTLE: {
         "w3": w3_mantle,
     },
-    "blast": {
+    Chain.BLAST: {
         "w3": w3_blast,
     },
-    "scroll": {
+    Chain.SCROLL: {
         "w3": w3_scroll,
     },
-    "mode": {
+    Chain.MODE: {
         "w3": w3_mode,
     },
 }

@@ -10,6 +10,7 @@ class SummaryColumn(Enum):
     AMBIENT_SCROLL_SHARDS = "ambient_scroll_shards"
     
     NURI_SHARDS = "nuri_shards"
+    LENDLE_MANTLE_SHARDS = "lendle_mantle_shards"
 
 
 
