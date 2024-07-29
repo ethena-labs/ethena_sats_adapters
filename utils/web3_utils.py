@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from web3 import Web3
 
 from utils.slack import slack_message
+from constants.chains import Chain
 
 load_dotenv()
 ETH_NODE_URL = os.getenv("ETH_NODE_URL")
