@@ -82,5 +82,5 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
             else:
                 msg = f"Error calling function: {e}, {traceback.format_exc()}"
                 logging.error(msg)
-                #slack_message(msg)
+                slack_message(msg)
                 raise e
