@@ -5,17 +5,17 @@ from utils.web3_utils import (
     w3_arb,
 )
 
-from constants.ramses import RAMSES_GAUGE_ADDRESS, RAMSES_POOL_ADDRESS
+from constants.ramses import RAMSES_NFP_MANAGER_ADDRESS, RAMSES_POOL_ADDRESS
 
-with open("abi/ramses_gauge.json") as f:
-    gauge_abi = json.load(f)
+with open("abi/ramses_nfp_manager.json") as f:
+    nfp_manager_abi = json.load(f)
 
-with open("abi/ramses_legacy_pool.json") as f:
+with open("abi/ramses_pool.json") as f:
     pool_abi = json.load(f)
 
 
-gauge = w3_arb.eth.contract(
-    address=RAMSES_GAUGE_ADDRESS, abi=gauge_abi
+nfp_manager = w3_arb.eth.contract(
+    address=RAMSES_NFP_MANAGER_ADDRESS, abi=nfp_manager_abi
 )
 
 pool = w3_arb.eth.contract(
