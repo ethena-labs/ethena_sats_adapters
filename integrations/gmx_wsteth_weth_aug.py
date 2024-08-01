@@ -15,6 +15,6 @@ if __name__ == "__main__":
     print(gmx_integration.get_participants())
     print(
         gmx_integration.get_balance(
-            "0x8F091A33f310EFd8Ca31f7aE4362d6306cA6Ec8d", 237999816
+            "0x8F091A33f310EFd8Ca31f7aE4362d6306cA6Ec8d", 238029658
         )
     )

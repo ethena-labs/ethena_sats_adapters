@@ -108,8 +108,9 @@ class GMXLPIntegration(Integration):
         )
 
         gm_token_price = marketTokenPrice[0]
+        oracle_price_decimals = 1e30
 
-        return gm_token_price * user_token_balance
+        return gm_token_price * user_token_balance / oracle_price_decimals
 
     def get_participants(self) -> list:
         if self.participants is not None:
