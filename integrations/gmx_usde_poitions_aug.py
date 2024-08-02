@@ -87,7 +87,7 @@ class GMXPositionsIntegration(Integration):
 
 if __name__ == "__main__":
     gmx_integration = GMXPositionsIntegration()
-    print(gmx_integration.get_participants())
+    # print(gmx_integration.get_participants())
     print(
-        gmx_integration.get_balance("0xE6dA4a9ec4d69a902358B4c583961090e4C0828d", 237999816)
+        gmx_integration.get_balance("0xDb59AB7d951f3D9F1d2E764c3A6F7507E11a4e4e", 238320844)
     )

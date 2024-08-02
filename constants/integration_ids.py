@@ -82,7 +82,6 @@ class IntegrationID(Enum):
     GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
-    GMX_WSTETH_WETH_LP = ('gmx_wsteth_weth_aug', 'GMX wstETH/wETH LP', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

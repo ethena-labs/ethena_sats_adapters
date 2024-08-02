@@ -6,7 +6,7 @@ from models.integration import Integration
 from constants.summary_columns import SummaryColumn
 from utils.web3_utils import w3_arb, fetch_events_logs_with_retry, call_with_retry
 
-from constants.gmx import GMX_WSTETH_WETH_MARKET_ADDRESS, GMX_SYNTHETICS_READER_CONTRACT_ADDRESS, GMX_WSTETH_USDE_MARKET_ADDRESS, GMX_DATA_STORE_CONTRACT_ADDRESS, GMX_USDE_USDC_MARKET_ADDRESS, GMX_MAX_PNL_FACTOR_FOR_TRADERS_KEY, GMX_PRICES_ENDPOINT
+from constants.gmx import GMX_SYNTHETICS_READER_CONTRACT_ADDRESS, GMX_WSTETH_USDE_MARKET_ADDRESS, GMX_DATA_STORE_CONTRACT_ADDRESS, GMX_USDE_USDC_MARKET_ADDRESS, GMX_MAX_PNL_FACTOR_FOR_TRADERS_KEY, GMX_PRICES_ENDPOINT
 
 with open("abi/gmx_gm_token.json") as f:
     gmx_gm_token_abi = json.load(f)
@@ -20,10 +20,6 @@ gmx_usde_usdc_market_contract = w3_arb.eth.contract(
 
 gmx_wsteth_usde_market_contract = w3_arb.eth.contract(
     address=GMX_WSTETH_USDE_MARKET_ADDRESS, abi=gmx_gm_token_abi
-)
-
-gmx_wsteth_weth_market_contract = w3_arb.eth.contract(
-    address=GMX_WSTETH_WETH_MARKET_ADDRESS, abi=gmx_gm_token_abi
 )
 
 gmx_synthetics_reader_contract = w3_arb.eth.contract(
@@ -41,8 +37,6 @@ def getContract(contract_address):
         return gmx_usde_usdc_market_contract
     elif contract_address == GMX_WSTETH_USDE_MARKET_ADDRESS:
         return gmx_wsteth_usde_market_contract
-    elif contract_address == GMX_WSTETH_WETH_MARKET_ADDRESS:
-        return gmx_wsteth_weth_market_contract
     else:
         return None
 
@@ -98,8 +92,7 @@ class GMXLPIntegration(Integration):
                 makePriceTuple(marketPrices, self.short_token_address),
                 GMX_MAX_PNL_FACTOR_FOR_TRADERS_KEY,
                 False,
-            ),
-            block,
+            )
         )
 
         user_token_balance = call_with_retry(
