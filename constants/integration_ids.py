@@ -78,6 +78,11 @@ class IntegrationID(Enum):
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
 
+    # GMX
+    GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
+    GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
+    GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
