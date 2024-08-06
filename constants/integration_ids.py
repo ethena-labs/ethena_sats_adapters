@@ -69,6 +69,9 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
+
+    # Balancer
+    BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
