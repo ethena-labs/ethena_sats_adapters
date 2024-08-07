@@ -1,3 +1,5 @@
+from typing import Optional
+
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from models.integration import Integration
@@ -17,7 +19,7 @@ class BalancerIntegration(Integration):
         start_block: int,
         integration_id: IntegrationID,
         gauge_address: str,
-        aura_address: str,
+        aura_address: Optional[str] = None,
     ):
         super().__init__(
             integration_id,
@@ -35,13 +37,25 @@ class BalancerIntegration(Integration):
 
     def get_balance(self, user: str, block: int) -> float:
         gauge_balance = get_user_balance(self.chain, user, self.gauge_address, block)
-        aura_balance = get_user_balance(self.chain, user, self.aura_address, block)
+        aura_balance = (
+            get_user_balance(self.chain, user, self.aura_address, block)
+            if self.aura_address
+            else 0
+        )
 
         gauge_supply = get_token_supply(self.chain, self.gauge_address, block)
-        aura_supply = get_token_supply(self.chain, self.aura_address, block)
+        aura_supply = (
+            get_token_supply(self.chain, self.aura_address, block)
+            if self.aura_address
+            else 0
+        )
 
-        aura_voter_balance = get_user_balance(
-            self.chain, AURA_VOTER_PROXY[self.chain], self.gauge_address, block
+        aura_voter_balance = (
+            get_user_balance(
+                self.chain, AURA_VOTER_PROXY[self.chain], self.gauge_address, block
+            )
+            if self.aura_address
+            else 0
         )
 
         # Avoid double-counting of Gauge tokens held by Aura Voter Proxy
