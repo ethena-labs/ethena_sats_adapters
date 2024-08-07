@@ -70,4 +70,4 @@ if __name__ == "__main__":
         BALANCER_FRAXTAL_FRAX_USDE_AURA,
     )
     print(balancer.get_participants())
-    print(balancer.get_balance(list(balancer.participants)[0], 8090000))
+    print(balancer.get_balance(list(balancer.participants)[0], "latest"))
