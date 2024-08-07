@@ -1,30 +1,21 @@
-from typing import Optional
-
-from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.balancer import get_user_balance, get_token_supply, get_token_holders
-from constants.balancer import (
-    BALANCER_FRAXTAL_DEPLOYMENT_BLOCK,
-    BALANCER_FRAXTAL_FRAX_USDE_GAUGE,
-    BALANCER_FRAXTAL_FRAX_USDE_AURA,
-    AURA_VOTER_PROXY,
-)
+from constants.balancer import AURA_VOTER_PROXY, INTEGRATION_CONFIGS
 
 
 class BalancerIntegration(Integration):
-    def __init__(
-        self,
-        chain: Chain,
-        start_block: int,
-        integration_id: IntegrationID,
-        gauge_address: str,
-        aura_address: Optional[str] = None,
-    ):
+    def __init__(self, integration_id: IntegrationID):
+        config = INTEGRATION_CONFIGS.get(integration_id)
+        if not config:
+            raise ValueError(
+                f"No configuration found for integration ID: {integration_id}"
+            )
+
         super().__init__(
             integration_id,
-            start_block,
-            chain,
+            config.start_block,
+            config.chain,
             None,
             20,
             1,
@@ -32,10 +23,19 @@ class BalancerIntegration(Integration):
             None,
         )
 
-        self.gauge_address = gauge_address
-        self.aura_address = aura_address
+        self.gauge_address = config.gauge_address
+        self.aura_address = config.aura_address
 
     def get_balance(self, user: str, block: int) -> float:
+        """
+        Retrieve the share of Balancer Pool Tokens (BPTs) held by a specific user.
+
+        This method calculates the user's share of the total supply of BPTs
+        staked in Balancer gauges and Aura Finance.
+
+        Note that the Aura Voter Proxy contract is used to avoid double-counting
+        of gauge tokens held by Aura Finance.
+        """
         gauge_balance = get_user_balance(self.chain, user, self.gauge_address, block)
         aura_balance = (
             get_user_balance(self.chain, user, self.aura_address, block)
@@ -65,23 +65,25 @@ class BalancerIntegration(Integration):
         return user_balance / total_supply
 
     def get_participants(self) -> list:
+        """
+        Retrieve the set of all unique participants who have staked Balancer Pool Tokens (BPTs).
+
+        This method identifies all addresses that have staked their BPT either directly
+        in Balancer gauges or via Aura Finance. Non-staked BPT holders are not included.
+        """
         gauge_holders = get_token_holders(
             self.chain, self.gauge_address, self.start_block
         )
-        aura_holders = get_token_holders(
-            self.chain, self.aura_address, self.start_block
+        aura_holders = (
+            get_token_holders(self.chain, self.aura_address, self.start_block)
+            if self.aura_address
+            else []
         )
         self.participants = set(aura_holders + gauge_holders)
         return self.participants
 
 
 if __name__ == "__main__":
-    balancer = BalancerIntegration(
-        Chain.FRAXTAL,
-        BALANCER_FRAXTAL_DEPLOYMENT_BLOCK,
-        IntegrationID.BALANCER_FRAXTAL_FRAX_USDE,
-        BALANCER_FRAXTAL_FRAX_USDE_GAUGE,
-        BALANCER_FRAXTAL_FRAX_USDE_AURA,
-    )
+    balancer = BalancerIntegration(IntegrationID.BALANCER_FRAXTAL_FRAX_USDE)
     print(balancer.get_participants())
     print(balancer.get_balance(list(balancer.participants)[0], "latest"))
