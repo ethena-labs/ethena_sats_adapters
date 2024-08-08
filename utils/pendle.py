@@ -332,7 +332,7 @@ def get_pendle_participants_v3(token_addresses):
         start = token_data["start"]
         contract = token_data["contract"]
         chain = token_data["chain"]
-        web3_for_token = W3_BY_CHAIN[chain]
+        web3_for_token = W3_BY_CHAIN[chain]["w3"]
         page_size = 1900
         target_block = web3_for_token.eth.get_block_number()
         while start < target_block:
