@@ -77,5 +77,5 @@ class BalancerIntegration(Integration):
 
 if __name__ == "__main__":
     balancer = BalancerIntegration(IntegrationID.BALANCER_FRAXTAL_FRAX_USDE)
-    # print(balancer.get_participants())
-    print(balancer.get_balance("0x854B004700885A61107B458f11eCC169A019b764", "latest"))
+    print(balancer.get_participants())
+    print(balancer.get_balance(list(balancer.participants)[0], "latest"))
