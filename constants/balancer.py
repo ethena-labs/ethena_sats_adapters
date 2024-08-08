@@ -40,6 +40,14 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x56bA1E88340fD53968f686490519Fb0fBB692a39",
         has_preminted_bpts=True,
     ),
+    IntegrationID.BALANCER_ARBITRUM_GHO_USDE.value: IntegrationConfig(
+        chain=Chain.ARBITRUM,
+        start_block=225688025,
+        incentivized_token=Token.USDE.value,
+        pool_id="0x2b783cd37774bb77d387d35683e8388937712f0a00020000000000000000056b",
+        gauge_address="0xf2d151c40C18d8097AAa5157eE8f447CBe217269",
+        aura_address="0x106398c0a78AE85F501FEE16d53A81401469b9B8",
+    ),
 }
 
 

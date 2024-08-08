@@ -72,6 +72,7 @@ class IntegrationID(Enum):
 
     # Balancer
     BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
+    BALANCER_ARBITRUM_GHO_USDE = ('balancer_arbitrum_gho_usde', 'Balancer Arbitrum GHO/USDe', Token.USDE)
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
