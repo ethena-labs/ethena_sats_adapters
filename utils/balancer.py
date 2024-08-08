@@ -53,11 +53,11 @@ def get_user_balance(chain: Chain, user: str, token_address: str, block: int) ->
 
 
 def get_bpt_supply(
-    chain: Chain, bpt_address: str, is_composable_pool: bool, block: int
+    chain: Chain, bpt_address: str, has_preminted_bpts: bool, block: int
 ) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    if is_composable_pool:
+    if has_preminted_bpts:
         bpt_contract = w3.eth.contract(
             address=Web3.to_checksum_address(bpt_address), abi=composable_abi
         )

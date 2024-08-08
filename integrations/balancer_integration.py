@@ -29,7 +29,7 @@ class BalancerIntegration(Integration):
         )
 
         self.pool_id = config.pool_id
-        self.is_composable_pool = config.is_composable_pool
+        self.has_preminted_bpts = config.has_preminted_bpts
         self.gauge_address = config.gauge_address
         self.aura_address = config.aura_address
         self.incentivized_token = config.incentivized_token
@@ -46,7 +46,7 @@ class BalancerIntegration(Integration):
 
         bpt_address = self.pool_id[:42]
         bpt_supply = get_bpt_supply(
-            self.chain, bpt_address, self.is_composable_pool, block
+            self.chain, bpt_address, self.has_preminted_bpts, block
         )
 
         user_balance = gauge_balance + aura_balance
