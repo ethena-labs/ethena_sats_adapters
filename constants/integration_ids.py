@@ -82,6 +82,10 @@ class IntegrationID(Enum):
     GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
+    
+    # CURVE
+    CURVE_SUSDE_BORROWERS = ('curve_susde_borrowers', 'Curve.fi SUSDe Borrowers', Token.SUSDE)
+    CURVE_USDE_BORROWERS = ('curve_usde_borrowers', 'Curve.fi USDe Borrowers', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
