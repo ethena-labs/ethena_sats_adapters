@@ -39,7 +39,7 @@ class CurveLlamaLendsSUSDeEthereum(Integration):
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             borrows = fetch_events_logs_with_retry(
-                f"Synthetix V3 Arbitrum users from {start_block} to {to_block}",
+                f"Curve Llamalend SUSDe <> crvUSD borrowers from {start_block} to {to_block}",
                 curve_utils.curve_llamalend_susde_controller_contract.events.Borrow(),
                 start_block,
                 to_block,
