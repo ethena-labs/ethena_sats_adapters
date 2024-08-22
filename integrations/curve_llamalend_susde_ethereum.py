@@ -1,3 +1,6 @@
+import sys
+sys.path.append("./")
+
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
@@ -56,4 +59,4 @@ class CurveLlamaLendsSUSDeEthereum(Integration):
 if __name__ == "__main__":
     curve_llamalend_susde_crvusd = CurveLlamaLendsSUSDeEthereum()
     print(curve_llamalend_susde_crvusd.get_participants())
-    print(curve_llamalend_susde_crvusd.get_balance(curve_llamalend_susde_crvusd.participants[0], 227610000))
+    print(curve_llamalend_susde_crvusd.get_balance(curve_llamalend_susde_crvusd.participants[0], 20586544))
