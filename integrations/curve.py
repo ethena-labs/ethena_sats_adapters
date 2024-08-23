@@ -43,15 +43,15 @@ if __name__ == "__main__":
         table = Table(title="Participant Details")
         table.add_column("Address", style="cyan", no_wrap=True)
         table.add_column("Start Block", justify="right", style="magenta")
-        table.add_column("Current Balance", justify="right", style="green")
-        table.add_column("Start Balance", justify="right", style="yellow")
+        table.add_column("Start Balance", justify="right", style="green")
+        table.add_column("Current Balance", justify="right", style="yellow")
 
         for user_info_start, current_user_info in zip(start_state, latest_state):
             table.add_row(
                 user_info_start.address,
                 str(user_info_start.block),
+                f"{user_info_start.state[0]/1e18:.2f}",
                 f"{current_user_info.state[0]/1e18:.2f}",
-                f"{user_info_start.state[0]/1e18:.2f}"
             )
 
         console.print(table)

@@ -155,11 +155,12 @@ class Curve(Integration):
             )
             for event in events:
                 user = event["args"][self.reward_config.event_arg_name]
+                block = event["blockNumber"]
                 all_users.add(
                     UserState(
                         address=user,
-                        state=self.get_user_state(user, current_block),
-                        block=event["blockNumber"],
+                        state=self.get_user_state(user, block),
+                        block=block,
                     )
                 )
             start_block += page_size
