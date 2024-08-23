@@ -15,14 +15,10 @@ if __name__ == "__main__":
     console.print(f"Number of contracts: {len(LENDING_CONTRACTS)}", style="bold green")
 
     for id, contract in enumerate(LENDING_CONTRACTS, start=1):
-        # Calculate the width of the table
-        table_width = max(len("Participant Details"), 
-                          len("Address") + len("Start Block") + len("Current Balance") + len("Start Balance") + 3)  # +3 for column separators
 
         # Create a panel with the same width as the table
         panel = Panel(
             f"[bold cyan]{id}. {contract.integration_id.get_description()} on {contract.chain.name}[/bold cyan]",
-            width=table_width,
             expand=False
         )
         console.print(panel)
