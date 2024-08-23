@@ -1,7 +1,38 @@
-CURVE_LLAMALEND_ETHEREUM_USDE_CONTROLLER = "0x74f88Baa966407b50c10B393bBD789639EFfE78B"
-CURVE_LLAMALEND_ETHEREUM_USDE_AMM = "0xF832F4d9087e474357Afb9C9A277CB23B9A136cB"
-CURVE_LLAMALEND_ETHEREUM_USDE_GENESIS_BLOCK = 20148558
+from constants.summary_columns import SummaryColumn
+from dataclasses import dataclass
+from constants.chains import Chain
+from constants.integration_ids import IntegrationID
 
-CURVE_LLAMALEND_ETHEREUM_SUSDE_CONTROLLER = "0xB536FEa3a01c95Dd09932440eC802A75410139D6"
-CURVE_LLAMALEND_ETHEREUM_SUSDE_AMM = "0x6505aeC799AC3b16a79cb1Ae2A61884889b54C1b"
-CURVE_LLAMALEND_ETHEREUM_SUSDE_GENESIS_BLOCK = 19999153
+
+@dataclass
+class RewardContractConfig:
+    address: str
+    chain: Chain
+    genesis_block: int
+    reward_multiplier: int
+    balance_multiplier: int
+    integration_id: IntegrationID
+
+
+CURVE_LLAMALEND = [
+    RewardContractConfig(
+        address="0x74f88Baa966407b50c10B393bBD789639EFfE78B",
+        chain=Chain.ETHEREUM,
+        genesis_block=20148558,
+        reward_multiplier=20,
+        balance_multiplier=1,
+        integration_id=IntegrationID.CURVE_ETHEREUM_USDE_BORROWERS,
+    ),
+    RewardContractConfig(
+        address="0xB536FEa3a01c95Dd09932440eC802A75410139D6",
+        chain=Chain.ETHEREUM,
+        genesis_block=19999153,
+        reward_multiplier=5,
+        balance_multiplier=1,
+        integration_id=IntegrationID.CURVE_ETHEREUM_SUSDE_BORROWERS,
+    ),
+]
+
+SUMMARY_COLS = {
+    "llamalend": SummaryColumn.CURVE_LLAMALEND_SHARDS,
+}

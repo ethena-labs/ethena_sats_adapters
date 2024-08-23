@@ -1,34 +1,174 @@
 import json
-from utils.web3_utils import w3 as w3_eth
+from dataclasses import dataclass
 
-import constants.curve as curve_constants
+from constants.chains import Chain
+from constants.summary_columns import SummaryColumn
+from constants.curve import RewardContractConfig
 
+from models.integration import Integration
 
-with open("abi/curve_llamalend_controller.json") as f:
-    curve_llamalend_controller_abi = json.load(f)
+from utils.web3_utils import (
+    W3_BY_CHAIN, 
+    fetch_events_logs_with_retry, 
+    call_with_retry,
+    multicall,
+)
 
-with open("abi/curve_llamalend_amm.json") as f:
-    curve_llamalend_amm_abi = json.load(f)
+@dataclass(frozen=True)
+class UserState:
+    address: str
+    state: tuple
+    block: int
     
+    def __init__(self, address: str, state: list, block: int):
+        object.__setattr__(self, 'address', address)
+        object.__setattr__(self, 'state', tuple(state))
+        object.__setattr__(self, 'block', block)
 
-# Llamalend contracts:
+    def __hash__(self):
+        return hash((self.address, self.state, self.block))
 
-# SUSDe
-curve_llamalend_susde_controller_contract = w3_eth.eth.contract(
-    address=curve_constants.CURVE_LLAMALEND_ETHEREUM_SUSDE_CONTROLLER, 
-    abi=curve_llamalend_controller_abi
-)
-curve_llamalend_susde_amm_contract = w3_eth.eth.contract(
-    address=curve_constants.CURVE_LLAMALEND_ETHEREUM_SUSDE_AMM, 
-    abi=curve_llamalend_amm_abi
-)
 
-# USDe
-curve_llamalend_susde_controller_contract = w3_eth.eth.contract(
-    address=curve_constants.CURVE_LLAMALEND_ETHEREUM_USDE_CONTROLLER, 
-    abi=curve_llamalend_controller_abi
-)
-curve_llamalend_susde_amm_contract = w3_eth.eth.contract(
-    address=curve_constants.CURVE_LLAMALEND_ETHEREUM_USDE_AMM, 
-    abi=curve_llamalend_amm_abi
-)
+class Curve(Integration):
+    """
+    Base class for Curve integrations.    
+    """
+
+    def __init__(
+        self, 
+        reward_config: RewardContractConfig,
+        abi_filename: str,
+    ):
+        """
+        Initialize the Curve integration.
+
+        Args:
+            reward_config (RewardContractConfig): The configuration for the reward contract.
+            abi_filename (str): The filename of the ABI for the reward contract.
+        """
+        
+        super().__init__(
+            integration_id=reward_config.integration_id,
+            start_block=reward_config.genesis_block,
+            chain=reward_config.chain,
+            summary_cols=SummaryColumn.CURVE_LLAMALEND_SHARDS,
+        )
+        
+        self.w3 = W3_BY_CHAIN[self.chain]["w3"]
+        self.reward_config = reward_config
+        with open(abi_filename, "r") as f:
+            abi = json.load(f)
+            self.contract = self.w3.eth.contract(
+                address=self.reward_config.address,
+                abi=abi
+            )
+        self.contract_function = self.contract.functions.user_state
+        self.contract_event = self.contract.events.Borrow()
+        self.start_state: List[UserState] = []
+        self.last_indexed_block: int = 0
+            
+    def get_balance(self, user: str, block: int) -> float:
+        """
+        Retrieve the collateral balance for a user at a specific block.
+
+        Args:
+            user (str): EVM address of the user.
+            block (int): Block number to query the balance at.
+
+        Returns:
+            float: The user's collateral balance in wei.
+        """
+        # user_state returns [collateral, borrowable, debt, nbands]
+        # We only need the collateral amount (index 0)
+        return self.get_user_state(user, block)[0]
+        
+    def get_user_states(self, block: int) -> list:
+        """
+        Retrieve user states for all participants at a specific block.
+
+        Args:
+            block (int): Block number to query the balances at.
+
+        Returns:
+            List[Tuple[str, float]]: A list of tuples containing (address, balance) pairs.
+        """
+
+        self.get_participants()  # Ensure participants list is up to date
+
+        calls = [
+            (self.contract, self.contract_function.fn_name, [user_info.address])
+            for user_info in self.start_state
+        ]
+        results = multicall(self.w3, calls, block)
+
+        states = []
+        for user_info, result in zip(self.start_state, results):
+            states.append(
+                UserState(
+                    address=user_info.address,
+                    state=result[0],
+                    block=block
+                )
+            )
+
+        return states
+    
+    def get_user_state(self, user: str, block: int) -> float:
+        """
+        Retrieve the collateral balance for a user at a specific block.
+
+        Args:
+            user (str): EVM address of the user.
+            block (int): Block number to query the balance at.
+
+        Returns:
+            float: The user's collateral balance in wei.
+        """
+        return call_with_retry(
+            self.contract_function(user),
+            block,
+        )
+        
+    def get_current_block(self) -> int:
+        return self.w3.eth.get_block_number()
+
+    def get_participants(self) -> list:
+        """
+        Fetch all participants who have borrowed from the LlamaLend market.
+
+        Returns:
+            list: A list of unique Ethereum addresses that have borrowed.
+        """
+        page_size = 50000
+        current_block = self.get_current_block()
+        if self.last_indexed_block == current_block:
+            return [user_info.address for user_info in self.start_state]
+
+        start_block = max(self.start_block, self.last_indexed_block + 1)
+
+        all_users = set()
+        while start_block <= current_block:
+            to_block = min(start_block + page_size, current_block)
+            borrows = fetch_events_logs_with_retry(
+                f"Curve LlamaLend {self.chain.name} {self.integration_id.get_description()} "
+                f"market borrowers from its genesis block "
+                f"({start_block}) to the current block ({to_block})",
+                self.contract_event,
+                start_block,
+                to_block,
+            )
+            for borrow_event in borrows:
+                user = borrow_event["args"]["user"]
+                all_users.add(
+                    UserState(
+                        address=user,
+                        state=self.get_user_state(user, current_block),
+                        block=current_block,
+                    )
+                )
+            start_block += page_size
+
+        self.start_state.extend(all_users)
+        self.last_indexed_block = current_block
+        
+        return [user_info.address for user_info in self.start_state]

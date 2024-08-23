@@ -84,13 +84,14 @@ class IntegrationID(Enum):
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
     
     # CURVE
-    CURVE_SUSDE_BORROWERS = ('curve_susde_borrowers', 'Curve.fi SUSDe Borrowers', Token.SUSDE)
-    CURVE_USDE_BORROWERS = ('curve_usde_borrowers', 'Curve.fi USDe Borrowers', Token.USDE)
+    CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
+    CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
         self.token = token
+    
     def get_column_name(self) -> str:
         return self.column_name
 
