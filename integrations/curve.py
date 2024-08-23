@@ -11,8 +11,7 @@ if __name__ == "__main__":
 
     console = Console()
 
-    # ... existing code ...
-    LENDING_CONTRACTS = [Curve(config, abi_filename="abi/curve_llamalend_controller.json") for config in CURVE_LLAMALEND]
+    LENDING_CONTRACTS = [Curve(config) for config in CURVE_LLAMALEND]
     console.print(f"Number of contracts: {len(LENDING_CONTRACTS)}", style="bold green")
 
     for id, contract in enumerate(LENDING_CONTRACTS, start=1):

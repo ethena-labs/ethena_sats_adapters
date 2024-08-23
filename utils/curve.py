@@ -37,14 +37,12 @@ class Curve(Integration):
     def __init__(
         self, 
         reward_config: RewardContractConfig,
-        abi_filename: str,
     ):
         """
         Initialize the Curve integration.
 
         Args:
             reward_config (RewardContractConfig): The configuration for the reward contract.
-            abi_filename (str): The filename of the ABI for the reward contract.
         """
         
         super().__init__(
@@ -56,7 +54,7 @@ class Curve(Integration):
         
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
         self.reward_config = reward_config
-        with open(abi_filename, "r") as f:
+        with open(self.reward_config.abi_filename, "r") as f:
             abi = json.load(f)
             self.contract = self.w3.eth.contract(
                 address=self.reward_config.address,
@@ -78,9 +76,7 @@ class Curve(Integration):
         Returns:
             float: The user's collateral balance in wei.
         """
-        # user_state returns [collateral, borrowable, debt, nbands]
-        # We only need the collateral amount (index 0)
-        return self.get_user_state(user, block)[0]
+        return self.get_user_state(user, block)[self.reward_config.state_arg_no]
         
     def get_user_states(self, block: int) -> list:
         """
@@ -106,7 +102,7 @@ class Curve(Integration):
             states.append(
                 UserState(
                     address=user_info.address,
-                    state=result[0],
+                    state=result[self.reward_config.state_arg_no],
                     block=block
                 )
             )
@@ -149,7 +145,7 @@ class Curve(Integration):
         all_users = set()
         while start_block <= current_block:
             to_block = min(start_block + page_size, current_block)
-            borrows = fetch_events_logs_with_retry(
+            events = fetch_events_logs_with_retry(
                 f"Curve LlamaLend {self.chain.name} {self.integration_id.get_description()} "
                 f"market borrowers from its genesis block "
                 f"({start_block}) to the current block ({to_block})",
@@ -157,13 +153,13 @@ class Curve(Integration):
                 start_block,
                 to_block,
             )
-            for borrow_event in borrows:
-                user = borrow_event["args"]["user"]
+            for event in events:
+                user = event["args"][self.reward_config.event_arg_name]
                 all_users.add(
                     UserState(
                         address=user,
                         state=self.get_user_state(user, current_block),
-                        block=current_block,
+                        block=event["blockNumber"],
                     )
                 )
             start_block += page_size
