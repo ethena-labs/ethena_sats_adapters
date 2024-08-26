@@ -83,6 +83,12 @@ class IntegrationID(Enum):
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
 
+    # Beefy
+    BEEFY_ARBITRUM_USDE = ('beefy_arbitrum_usde_held', 'Beefy Arbitrum USDe', Token.USDE)
+    BEEFY_FRAXTAL_USDE = ('beefy_fraxtal_usde_held', 'Beefy Fraxtal USDe', Token.USDE)
+    BEEFY_MANTLE_USDE = ('beefy_mantle_usde_held', 'Beefy Mantle USDe', Token.USDE)
+    BEEFY_OPTIMISM_USDE = ('beefy_optimism_usde_held', 'Beefy Optimism USDe', Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
