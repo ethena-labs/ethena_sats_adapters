@@ -80,7 +80,6 @@ class IntegrationID(Enum):
 
     # Radiant
     RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
-    RADIANT_USDE_CORE_MAINNET = ('radiant_usde_mainnet', 'Radiant USDE Lending', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

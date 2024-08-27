@@ -22,18 +22,6 @@ class RadiantLendingDetails(TypedDict):
 
 
 RADIANT_CONTRACTS_AND_START_BY_TOKEN: Dict[IntegrationID, RadiantLendingDetails] = {
-    IntegrationID.RADIANT_USDE_CORE_MAINNET: RadiantLendingDetails(
-        start=18466402,
-        chain=Chain.ETHEREUM,
-        collateral_address= Web3.to_checksum_address("0x35751007a407ca6feffe80b3cb397736d2cf4dbe"),
-        r_token_contract=W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.contract(
-            address=Web3.to_checksum_address("0xb11a56da177c5532d5e29cc8363d145bd0822c81"), abi=r_token_abi
-        ),
-        lending_pool=W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.contract(
-            address=Web3.to_checksum_address("0xA950974f64aA33f27F6C5e017eEE93BF7588ED07"), abi=lending_pool_abi
-        ),
-        graph_url="https://gateway-arbitrum.network.thegraph.com/api/8d1d947ce53cce677d86d075396ad13b/subgraphs/id/683Qhh8TEta6qS5gdTpXCs84xnrp77fPWGQyBmRe6qgo",
-    ),
     IntegrationID.RADIANT_USDE_CORE_ARBITRUM: RadiantLendingDetails(
         start=247318247,
         chain=Chain.ARBITRUM,
