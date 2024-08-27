@@ -78,6 +78,10 @@ class IntegrationID(Enum):
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
 
+    # Radiant
+    RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
+    RADIANT_USDE_CORE_MAINNET = ('radiant_usde_mainnet', 'Radiant USDE Lending', Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
