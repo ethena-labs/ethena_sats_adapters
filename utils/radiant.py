@@ -16,7 +16,7 @@ def get_effective_balance(user: str, block: int, collateral_address: str, r_toke
     usde_liquidity_index = reserve_data[1]
     return (user_scaled_balance * usde_liquidity_index) / (10 ** 45) # 10 ** (27 + 18)
 
-def get_radiant_lenders(graph_url: str):
+def get_radiant_lenders(graph_url: str, collateral_address: str):
     url = graph_url
     skip = 0
     all_positions = []
@@ -24,13 +24,13 @@ def get_radiant_lenders(graph_url: str):
     while True:
         query = """
         {
-            positions(first: 1000, skip: %s, where :{ side: COLLATERAL, asset: "0x35751007a407ca6feffe80b3cb397736d2cf4dbe" }) {
+            positions(first: 1000, skip: %s, where :{ side: COLLATERAL, asset: "%s" }) {
                 account {
                     id
                 }
             }
         }
-        """ % (skip, )
+        """ % (skip, collateral_address)
 
         response = requests.post(url, json={'query': query})
 

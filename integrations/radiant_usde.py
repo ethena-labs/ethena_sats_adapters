@@ -37,6 +37,7 @@ class RadiantIntegration(Integration):
         logging.info(f"[{self.integration_id.get_description()}] Getting participants...")
         self.participants = get_radiant_lenders(
             self.vault_data["graph_url"],
+             self.vault_data["collateral_address"],
         )
 
         return self.participants
