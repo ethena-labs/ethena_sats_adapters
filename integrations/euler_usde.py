@@ -1,8 +1,8 @@
+import json
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
-from models.integration import Integration
 from constants.euler import USDE_VAULT_ADDRESS
-import json
+from models.integration import Integration
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
@@ -10,7 +10,7 @@ from utils.web3_utils import (
 )
 
 with open("abi/euler_evault.json") as f:
-    evault_abi = json.load(f)['abi']
+    evault_abi = json.load(f)
 
 
 class EulerIntegration(
