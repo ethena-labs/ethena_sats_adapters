@@ -170,7 +170,7 @@ class PENPIEIntegration(Integration):
                 start,
                 to_block,
             )
-            print(start, to_block, len(deposits), "getting Stake DAO contract data")
+            # print(start, to_block, len(deposits), "getting Stake DAO contract data")
             for deposit in deposits:
                 if (deposit["args"]["to"]!="0x0000000000000000000000000000000000000000"):
                     all_users.add(deposit["args"]["to"])
