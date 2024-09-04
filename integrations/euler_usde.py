@@ -22,7 +22,7 @@ class EulerIntegration(
             20529207,
             Chain.ETHEREUM,
             None,
-            5,
+            20,
             1,
             None,
             None,
