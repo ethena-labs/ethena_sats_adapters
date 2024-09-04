@@ -15,7 +15,7 @@ with open("abi/euler_evault.json") as f:
 
 class EulerIntegration(
     Integration
-):  # TODO: Change ProtocolNameIntegration to the name of the protocol
+): 
     def __init__(self):
         super().__init__(
             IntegrationID.EULER_USDE,
