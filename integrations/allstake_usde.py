@@ -9,5 +9,6 @@ if __name__ == "__main__":
 
     print("Get Participants:")
     print(integration.get_participants())
-    print("Get Balance of First Participant:")
-    print(integration.get_balance(list(integration.participants)[0], current_block))
+    print("Get Balances of All Participants:")
+    for participant in integration.participants:
+        print(participant, integration.get_balance(participant, current_block))
