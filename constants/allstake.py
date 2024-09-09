@@ -20,7 +20,7 @@ class StrategyConfig(TypedDict):
 contract = W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.contract
 
 ALLSTAKE_STRATEGIES: Dict[IntegrationID, StrategyConfig] = {
-    # TODO: Replace with actual USDe and sUSDe tokens and strategies. The current config is for testing only.
+    # TODO: Replace with production USDe and sUSDe strategies. The current config is for staging environment only.
     IntegrationID.ALLSTAKE_USDE: StrategyConfig(
         start=20690635,
         chain=Chain.ETHEREUM,
@@ -29,7 +29,7 @@ ALLSTAKE_STRATEGIES: Dict[IntegrationID, StrategyConfig] = {
         ),
         strategy=contract(
             address=Web3.to_checksum_address("0x69bb6ae7db9cca28d24aeda5a432bc2f932f2183"), abi=erc20_abi
-        ), # staging AUSDe contract
+        ), # TODO: staging USDe strategy contract. Replace with production contract.
         page_size=5000,
     ),
     IntegrationID.ALLSTAKE_SUSDE: StrategyConfig(
@@ -40,7 +40,7 @@ ALLSTAKE_STRATEGIES: Dict[IntegrationID, StrategyConfig] = {
         ),
         strategy=contract(
             address=Web3.to_checksum_address("0x4e78c5e7f52ae8e34693584fc2103c58018adde2"), abi=erc20_abi
-        ), # staging AsUSDe contract
+        ), # TODO: staging sUSDe strategy contract. Replace with production contract.
         page_size=5000,
     ),
 }
