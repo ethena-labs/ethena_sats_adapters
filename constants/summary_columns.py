@@ -13,4 +13,9 @@ class SummaryColumn(Enum):
     LENDLE_MANTLE_SHARDS = "lendle_mantle_shards"
 
     RHO_MARKETS_SCROLL_SHARDS = "rho_markets_scroll_shards"
+    
     RAMSES_SHARDS = "ramses_shards"
+
+    GMX_ARBITRUM_SHARDS = "gmx_arbitrum_shards"
+    
+    CURVE_LLAMALEND_SHARDS = "curve_llamalend_shards"

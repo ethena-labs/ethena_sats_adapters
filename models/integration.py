@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Dict, List, Optional, Set
 
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
@@ -35,6 +35,16 @@ class Integration(ABC):
     def get_balance(self, user: str, block: int) -> float:
         pass
 
-    @abstractmethod
-    def get_participants(self) -> list:
-        pass
+    # either get_participants OR get_block_balances must be implemented
+    def get_participants(
+        self,
+        blocks: Optional[List[int]],
+    ) -> Set[str]:
+        raise NotImplementedError
+
+    # either get_participants OR get_block_balances must be implemented
+    def get_block_balances(
+        self,
+        blocks: List[int],
+    ) -> Dict[int, Dict[str, float]]:
+        raise NotImplementedError
