@@ -23,17 +23,24 @@ class Ramses(Integration):
         return math.sqrt(1.0001**tick) * (2**96)
 
     def calculate_token_amounts(self, liquidity, current_tick, lower_tick, upper_tick, sqrt_price_x96, decimals0, decimals1):
-        sqrt_price_current = sqrt_price_x96
-        sqrt_price_lower = self.calculate_sqrt_price(lower_tick)
-        sqrt_price_upper = self.calculate_sqrt_price(upper_tick)
+        sqrt_price_current = sqrt_price_x96 / (2**96)
+        sqrt_price_lower = self.calculate_sqrt_price(lower_tick) / (2**96)
+        sqrt_price_upper = self.calculate_sqrt_price(upper_tick) / (2**96)
 
-        amount0 = liquidity * (sqrt_price_upper - sqrt_price_current) / (sqrt_price_current * sqrt_price_upper) * (2**96)
-        amount1 = liquidity * (sqrt_price_current - sqrt_price_lower) / (2**96)
+        if current_tick < lower_tick:
+            amount0 = liquidity * (1 / sqrt_price_lower - 1 / sqrt_price_upper)
+            amount1 = 0
+        elif current_tick < upper_tick:
+            amount0 = liquidity * (1 / sqrt_price_current - 1 / sqrt_price_upper)
+            amount1 = liquidity * (sqrt_price_current - sqrt_price_lower)
+        else:
+            amount0 = 0
+            amount1 = liquidity * (sqrt_price_upper - sqrt_price_lower)
 
         amount0_adjusted = amount0 / (10**decimals0)
         amount1_adjusted = amount1 / (10**decimals1)
 
-        return amount0_adjusted, amount1_adjusted
+        return max(amount0_adjusted, 0), max(amount1_adjusted, 0)
 
     def get_balance(self, user: str, block: int) -> float:
         # get pool current tick
@@ -52,23 +59,16 @@ class Ramses(Integration):
 
         print(f"User NFT balance: {balance}")
 
-        positions = []
+        total_balance = 0
 
         for i in range(balance):
-            tokenOfOwnerByIndex = call_with_retry(
+            tokenId = call_with_retry(
                 nfp_manager.functions.tokenOfOwnerByIndex(user, i),
                 block,
             )
 
-            positions.append(tokenOfOwnerByIndex)
-
-        print(f"User positions: {positions}")
-
-        total_balance = 0
-
-        for position in positions:
             position_info = call_with_retry(
-                nfp_manager.functions.positions(position),
+                nfp_manager.functions.positions(tokenId),
                 block,
             )
             print(f"Position info: {position_info}")
@@ -78,14 +78,18 @@ class Ramses(Integration):
             tickUpper = position_info[6]
             liquidity = position_info[7]
 
-            if token0 == ARBITRUM_USDE_TOKEN_ADDRESS:
-                # Calculate token amounts for this position
-                amount0, amount1 = self.calculate_token_amounts(
-                    liquidity, tick, tickLower, tickUpper, sqrtPriceX96, 18, 6  # Assuming USDe is 18 decimals and USDT is 6
-                )
+            amount0, amount1 = self.calculate_token_amounts(
+                liquidity, tick, tickLower, tickUpper, sqrtPriceX96, 18, 18
+            )
 
-                # Assuming we want to sum up the USDe amounts
+            if token0 == ARBITRUM_USDE_TOKEN_ADDRESS:
+                print(f"Amount0 (USDe): {amount0}")
+                print(f"Amount1: {amount1}")
                 total_balance += amount0
+            elif token1 == ARBITRUM_USDE_TOKEN_ADDRESS:
+                print(f"Amount0: {amount0}")
+                print(f"Amount1 (USDe): {amount1}")
+                total_balance += amount1
 
         return total_balance
 
@@ -127,7 +131,7 @@ if __name__ == "__main__":
         test_block = latest_block - 100
         print(f"Testing with block number: {test_block}")
         
-        test_address = Web3.to_checksum_address("0xCAfc58De1E6A071790eFbB6B83b35397023E1544")
+        test_address = Web3.to_checksum_address("0x38564BAa609b6B9df4A0341A2589489aa3F870ee")
         balance = ramses.get_balance(test_address, test_block)
         print(f"Balance for {test_address}: {balance}")
         
