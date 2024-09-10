@@ -83,6 +83,8 @@ class IntegrationID(Enum):
     MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
+    # Ramses
+    RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
 
     # Splice
     SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
