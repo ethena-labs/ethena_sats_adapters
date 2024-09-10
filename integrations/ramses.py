@@ -59,16 +59,23 @@ class Ramses(Integration):
 
         print(f"User NFT balance: {balance}")
 
-        total_balance = 0
+        positions = []
 
         for i in range(balance):
-            tokenId = call_with_retry(
+            tokenOfOwnerByIndex = call_with_retry(
                 nfp_manager.functions.tokenOfOwnerByIndex(user, i),
                 block,
             )
 
+            positions.append(tokenOfOwnerByIndex)
+
+        print(f"User positions: {positions}")
+
+        total_balance = 0
+
+        for position in positions:
             position_info = call_with_retry(
-                nfp_manager.functions.positions(tokenId),
+                nfp_manager.functions.positions(position),
                 block,
             )
             print(f"Position info: {position_info}")
@@ -78,18 +85,14 @@ class Ramses(Integration):
             tickUpper = position_info[6]
             liquidity = position_info[7]
 
-            amount0, amount1 = self.calculate_token_amounts(
-                liquidity, tick, tickLower, tickUpper, sqrtPriceX96, 18, 18
-            )
-
             if token0 == ARBITRUM_USDE_TOKEN_ADDRESS:
-                print(f"Amount0 (USDe): {amount0}")
-                print(f"Amount1: {amount1}")
+                # Calculate token amounts for this position
+                amount0, amount1 = self.calculate_token_amounts(
+                    liquidity, tick, tickLower, tickUpper, sqrtPriceX96, 18, 18
+                )
+
+                # Assuming we want to sum up the USDe amounts
                 total_balance += amount0
-            elif token1 == ARBITRUM_USDE_TOKEN_ADDRESS:
-                print(f"Amount0: {amount0}")
-                print(f"Amount1 (USDe): {amount1}")
-                total_balance += amount1
 
         return total_balance
 
@@ -131,7 +134,7 @@ if __name__ == "__main__":
         test_block = latest_block - 100
         print(f"Testing with block number: {test_block}")
         
-        test_address = Web3.to_checksum_address("0x38564BAa609b6B9df4A0341A2589489aa3F870ee")
+        test_address = Web3.to_checksum_address("0xED12959952FAb1d304555cFb0146Ed3E6265DE42")
         balance = ramses.get_balance(test_address, test_block)
         print(f"Balance for {test_address}: {balance}")
         
