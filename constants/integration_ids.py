@@ -84,6 +84,12 @@ class IntegrationID(Enum):
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
 
+    # Splice
+    SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
+    SPLICE_USDE_LPT = ('splice_usde_lpt', 'Splice USDe LPT', Token.USDE)
+    SPLICE_SUSDE_YT = ('splice_susde_yt', 'Splice SUSDe YT', Token.SUSDE)
+    SPLICE_SUSDE_LPT = ('splice_susde_lpt', 'Splice SUSDu LPT', Token.SUSDE)
+    
     # GMX
     GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
