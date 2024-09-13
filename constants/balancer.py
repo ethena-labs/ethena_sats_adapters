@@ -22,6 +22,7 @@ class IntegrationConfig:
     chain: Chain
     start_block: int
     incentivized_token: str
+    incentivized_token_decimals: int
     pool_id: str
     gauge_address: str
     aura_address: str
@@ -35,6 +36,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         chain=Chain.FRAXTAL,
         start_block=5931687,
         incentivized_token=Token.USDE.value,
+        incentivized_token_decimals=18,
         pool_id="0xa0af0b88796c1aa67e93db89fead2ab7aa3d6747000000000000000000000007",
         gauge_address="0xf99d875Dd868277cf3780f51D69c6E1F8522a1e9",
         aura_address="0x56bA1E88340fD53968f686490519Fb0fBB692a39",
@@ -44,6 +46,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         chain=Chain.ARBITRUM,
         start_block=225688025,
         incentivized_token=Token.USDE.value,
+        incentivized_token_decimals=18,
         pool_id="0x2b783cd37774bb77d387d35683e8388937712f0a00020000000000000000056b",
         gauge_address="0xf2d151c40C18d8097AAa5157eE8f447CBe217269",
         aura_address="0x106398c0a78AE85F501FEE16d53A81401469b9B8",
