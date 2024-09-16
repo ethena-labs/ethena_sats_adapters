@@ -4,7 +4,10 @@ import time
 import traceback
 
 from dotenv import load_dotenv
+from eth_abi.abi import decode
+
 from web3 import Web3
+from web3.contract import Contract
 
 from utils.slack import slack_message
 from constants.chains import Chain
@@ -43,6 +46,32 @@ W3_BY_CHAIN = {
         "w3": w3_mode,
     },
 }
+
+
+MULTICALL_ABI = [
+    {
+        "inputs": [
+            {
+                "components": [
+                    {"internalType": "address", "name": "target", "type": "address"},
+                    {"internalType": "bytes", "name": "callData", "type": "bytes"},
+                ],
+                "internalType": "struct Multicall2.Call[]",
+                "name": "calls",
+                "type": "tuple[]",
+            }
+        ],
+        "name": "aggregate",
+        "outputs": [
+            {"internalType": "uint256", "name": "blockNumber", "type": "uint256"},
+            {"internalType": "bytes[]", "name": "returnData", "type": "bytes[]"},
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function",
+    }
+]
+
+MULTICALL_ADDRESS = "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 
 
 def fetch_events_logs_with_retry(
@@ -84,3 +113,24 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
                 logging.error(msg)
                 slack_message(msg)
                 raise e
+
+
+def multicall(w3: Web3, calls: list, block_identifier: int = 'latest'):
+    multicall_contract = w3.eth.contract(address=MULTICALL_ADDRESS, abi=MULTICALL_ABI)
+    
+    aggregate_calls = []
+    for call in calls:
+        contract, fn_name, args = call
+        call_data = contract.encodeABI(fn_name=fn_name, args=args)
+        aggregate_calls.append((contract.address, call_data))
+
+    result = multicall_contract.functions.aggregate(aggregate_calls).call(block_identifier=block_identifier)
+    
+    decoded_results = []
+    for i, call in enumerate(calls):
+        contract, fn_name, _ = call
+        function = contract.get_function_by_name(fn_name)
+        output_types = [output['type'] for output in function.abi['outputs']]
+        decoded_results.append(decode(output_types, result[1][i]))
+
+    return decoded_results

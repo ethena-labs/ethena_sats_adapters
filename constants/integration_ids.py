@@ -87,16 +87,29 @@ class IntegrationID(Enum):
     MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
+    # Ramses
+    RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
 
+    # Splice
+    SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
+    SPLICE_USDE_LPT = ('splice_usde_lpt', 'Splice USDe LPT', Token.USDE)
+    SPLICE_SUSDE_YT = ('splice_susde_yt', 'Splice SUSDe YT', Token.SUSDE)
+    SPLICE_SUSDE_LPT = ('splice_susde_lpt', 'Splice SUSDu LPT', Token.SUSDE)
+    
     # GMX
     GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
+    
+    # CURVE
+    CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
+    CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
         self.token = token
+    
     def get_column_name(self) -> str:
         return self.column_name
 
