@@ -86,6 +86,9 @@ class IntegrationID(Enum):
     # Ramses
     RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
 
+    # Radiant
+    RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
+
     # Splice
     SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
     SPLICE_USDE_LPT = ('splice_usde_lpt', 'Splice USDe LPT', Token.USDE)
