@@ -41,7 +41,13 @@ class IntegrationID(Enum):
     PENPIE_Zircuit_USDe27JUN2024_LPT= ('PENPIE_Zircuit_USDe27JUN2024_effective_lpt_held', 'Zircuit_USDe27JUN2024', Token.USDE)
     PENPIE_ENA29AUG2024_LPT= ('PENPIE_ENA29AUG2024_effective_lpt_held', 'ENA29AUG2024', Token.ENA)
     PENPIE_USDE_ARB_AUG2024_LPT= ('PENPIE_USDE_ARB_AUG2024_effective_lpt_held', 'USDE_ARB_AUG2024', Token.USDE)
-    
+    PENPIE_USDe_24OCT2024_LPT=('PENPIE_USDe_24OCT202_effective_lpt_held4','USDe_24OCT2024',Token.USDE)
+    PENPIE_ENA_31OCT2024_LPT=('PENPIE_ENA_31OCT2024_effective_lpt_held','ENA_31OCT2024',Token.ENA)
+    PENPIE_rsUSDe_26SEP2024_LPT =('PENPIE_rsUSDe_26SEP2024_effective_lpt_held','rsUSDe_26SEP2024',Token.USDE)
+    PENPIE_USDe_26DEC2024_LPT=('PENPIE_USDe_26DEC2024_effective_lpt_held','USDe_26DEC2024',Token.USDE)
+    PENPIE_sUSDE_26DEC2024_LPT=('PENPIE_sUSDE_26DEC2024_effective_lpt_held','sUSDE_26DEC2024',Token.SUSDE)
+    PENPIE_sUSDE_24OCT2024_LPT=('PENPIE_sUSDE_24OCT2024_effective_lpt_held','sUSDE_24OCT2024',Token.SUSDE)
+    PENPIE_rsENA_26SEP2024_LPT =('PENPIE_rsENA_26SEP2024_effective_lpt_held','rsENA_26SEP2024',Token.ENA)
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
@@ -77,19 +83,32 @@ class IntegrationID(Enum):
     MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
+    # Ramses
+    RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
 
     # Radiant
     RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
+
+    # Splice
+    SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
+    SPLICE_USDE_LPT = ('splice_usde_lpt', 'Splice USDe LPT', Token.USDE)
+    SPLICE_SUSDE_YT = ('splice_susde_yt', 'Splice SUSDe YT', Token.SUSDE)
+    SPLICE_SUSDE_LPT = ('splice_susde_lpt', 'Splice SUSDu LPT', Token.SUSDE)
     
     # GMX
     GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
     GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
     GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
+    
+    # CURVE
+    CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
+    CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
         self.token = token
+    
     def get_column_name(self) -> str:
         return self.column_name
 
