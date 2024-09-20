@@ -10,7 +10,7 @@ if __name__ == "__main__":
         rsUSDe_26SEP2024_DEPLOYMENT_BLOCK,
         rsUSDe_26SEP2024,
         Chain.ETHEREUM,
-        20,
+        10,
         1,
         [PENDLE_LOCKER_ETHEREUM]
 

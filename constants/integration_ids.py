@@ -48,6 +48,7 @@ class IntegrationID(Enum):
     PENPIE_sUSDE_26DEC2024_LPT=('PENPIE_sUSDE_26DEC2024_effective_lpt_held','sUSDE_26DEC2024',Token.SUSDE)
     PENPIE_sUSDE_24OCT2024_LPT=('PENPIE_sUSDE_24OCT2024_effective_lpt_held','sUSDE_24OCT2024',Token.SUSDE)
     PENPIE_rsENA_26SEP2024_LPT =('PENPIE_rsENA_26SEP2024_effective_lpt_held','rsENA_26SEP2024',Token.ENA)
+    PENPIE_USDE_ARB_NOV2024_LPT= ('PENPIE_USDE_ARB_NOV2024_effective_lpt_held', 'USDE_ARB_NOV2024', Token.USDE)
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
