@@ -1,10 +1,10 @@
 import json
 from constants.chains import Chain
-from constants.dyad import DYAD_NOTE_ADDRESS, DYAD_SUSDE_VAULT_ADDRESS, DYAD_SUSDE_VAULT_DEPLOYMENT_BLOCK, DYAD_VAULT_MANAGER_ADDRESS
+from constants.dyad import DYAD_NOTE_ADDRESS, DYAD_NOTE_DEPLOYMENT_BLOCK, DYAD_SUSDE_VAULT_ADDRESS, DYAD_SUSDE_VAULT_DEPLOYMENT_BLOCK, DYAD_VAULT_MANAGER_ADDRESS
 from models.integration import Integration
 from utils.web3_utils import w3, call_with_retry, fetch_events_logs_with_retry
 
-page_size = 1000
+page_size = 100000
 
 from constants.integration_ids import IntegrationID
 
@@ -28,10 +28,10 @@ class DyadIntegration(Integration):
 
     def get_balance(self, user: str, block: int) -> float:
         vault = w3.eth.contract(
-            address=DYAD_SUSDE_VAULT_ADDRESS, 
+            address=w3.to_checksum_address(DYAD_SUSDE_VAULT_ADDRESS), 
             abi=dyad_vault_abi
-        ),
-        return call_with_retry(vault.balanceOf(user), block)
+        )
+        return call_with_retry(vault.functions.balanceOf(w3.to_checksum_address(user)), block)
 
     def get_participants(self) -> list:
         
@@ -52,8 +52,6 @@ class DyadIntegration(Integration):
             abi=dyad_note_abi
         )
 
-        print(vault_manager)
-
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             print(f"Getting sUSDe enabled notes from {start_block} to {to_block}")
@@ -62,16 +60,18 @@ class DyadIntegration(Integration):
                 "Vault Added",
                 vault_manager.events.Added(),
                 start_block,
-                to_block,
+                to_block
             )
 
             for vault in vault_addeds:
-                if vault.args.vault == DYAD_SUSDE_VAULT_ADDRESS:
+                if vault.args.vault == w3.to_checksum_address(DYAD_SUSDE_VAULT_ADDRESS):
                     print(vault.args.id, ": found sUSDe vault")
                     all_notes.add(vault.args.id)
             start_block += page_size
 
-        start_block = DYAD_SUSDE_VAULT_DEPLOYMENT_BLOCK
+        start_block = DYAD_NOTE_DEPLOYMENT_BLOCK
+
+        print(f'{list(all_notes)}')
 
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
@@ -97,7 +97,10 @@ if __name__ == "__main__":
     example_integration = DyadIntegration(IntegrationID.DYAD_SUSDE_VAULT)
     current_block = w3.eth.get_block_number()
 
+    participants = example_integration.get_participants()
     print("Found Dyad Participants:")
-    print(example_integration.get_participants())
-    print("Found Balance of First Participant:")
-    print(example_integration.get_balance(list(example_integration.participants)[0], current_block))
+    print(participants)
+
+    print("Balances of Participants:")
+    for participant in participants:
+        print(f'address: {participant:} {example_integration.get_balance(participant, current_block)}')
