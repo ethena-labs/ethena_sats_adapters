@@ -20,27 +20,26 @@ class StrategyConfig(TypedDict):
 contract = W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.contract
 
 ALLSTAKE_STRATEGIES: Dict[IntegrationID, StrategyConfig] = {
-    # TODO: Replace with production USDe and sUSDe strategies. The current config is for staging environment only.
     IntegrationID.ALLSTAKE_USDE: StrategyConfig(
-        start=20690635,
+        start=20810640,
         chain=Chain.ETHEREUM,
         underlying=contract(
             address=Web3.to_checksum_address("0x4c9edd5852cd905f086c759e8383e09bff1e68b3"), abi=erc20_abi
         ),
         strategy=contract(
-            address=Web3.to_checksum_address("0x69bb6ae7db9cca28d24aeda5a432bc2f932f2183"), abi=erc20_abi
-        ), # TODO: staging USDe strategy contract. Replace with production contract.
+            address=Web3.to_checksum_address("0x8B6bF38B812BE4749577303FB8D222576957ff44"), abi=erc20_abi
+        ),
         page_size=5000,
     ),
     IntegrationID.ALLSTAKE_SUSDE: StrategyConfig(
-        start=20690660,
+        start=20811020,
         chain=Chain.ETHEREUM,
         underlying=contract(
             address=Web3.to_checksum_address("0x9d39a5de30e57443bff2a8307a4256c8797a3497"), abi=erc20_abi
         ),
         strategy=contract(
-            address=Web3.to_checksum_address("0x4e78c5e7f52ae8e34693584fc2103c58018adde2"), abi=erc20_abi
-        ), # TODO: staging sUSDe strategy contract. Replace with production contract.
+            address=Web3.to_checksum_address("0x5d083d71F7A531F543070b78740880F5A346B53a"), abi=erc20_abi
+        ),
         page_size=5000,
     ),
 }
