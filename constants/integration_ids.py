@@ -109,6 +109,9 @@ class IntegrationID(Enum):
     CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
     CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
 
+    # DYAD
+    DYAD_SUSDE_VAULT = ('dyad_susde_depositors', 'DYAD Stablecoin sUSDe Depositors', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
