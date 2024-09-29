@@ -44,7 +44,10 @@ def get_strategy_users(start_block: int, page_size: int, strategy: Contract, cha
         )
         print(event_label, ": found", len(transfers), "transfers")
         for transfer in transfers:
-            all_users.add(transfer["args"]["to"])
+            to = transfer["args"]["to"]
+            # exclude strategy contract address
+            if to != strategy.address:
+                all_users.add(to)
         start_block += page_size
     return all_users
 
