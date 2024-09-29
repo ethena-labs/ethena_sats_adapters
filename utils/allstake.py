@@ -9,6 +9,7 @@ from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from constants.allstake import ALLSTAKE_STRATEGIES
 from models.integration import Integration
+from decimal import Decimal
 
 
 SHARES_OFFSET = 1000
@@ -22,7 +23,7 @@ def get_underlying_balance(user: str, block: int, underlying: Contract, strategy
     total_underlying_balance = call_with_retry(underlying.functions.balanceOf(strategy.address), block) + BALANCE_OFFSET
     total_shares = call_with_retry(strategy.functions.totalSupply(), block) + SHARES_OFFSET
     user_shares = call_with_retry(strategy.functions.balanceOf(user), block)
-    return user_shares * total_underlying_balance / total_shares
+    return Decimal(user_shares * total_underlying_balance) / Decimal(total_shares)
 
 def get_strategy_users(start_block: int, page_size: int, strategy: Contract, chain: Chain):
     """
