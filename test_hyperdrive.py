@@ -26,7 +26,7 @@ print(f"=== pool to test: {pool_to_test} ===")
 start_time = time.time()
 pool_users, pool_ids = get_hyperdrive_participants(pool_to_test, cache=True)
 pool_to_test_contract = w3.eth.contract(address=w3.to_checksum_address(pool_to_test), abi=HYPERDRIVE_MORPHO_ABI)
-config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_to_test_contract, debug=True)
+config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_to_test_contract)
 print(f"=== {name} ===")
 pool_positions = get_pool_positions(
     pool_contract=pool_to_test_contract,

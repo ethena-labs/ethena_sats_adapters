@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from constants.hyperdrive import (
     ERC20_ABI,
-    HYPERDRIVE_ABI,
+    HYPERDRIVE_MORPHO_ABI,
     MORPHO_ABI,
 )
 from utils.web3_utils import (
@@ -65,7 +65,7 @@ def get_hyperdrive_participants(pool, cache: bool = False):
     assert all_users is not None, "error: all_users is None"
     assert all_ids is not None, "error: all_ids is None"
     assert start_block is not None, "error: start_block is None"
-    contract = w3.eth.contract(address=pool, abi=HYPERDRIVE_ABI)
+    contract = w3.eth.contract(address=pool, abi=HYPERDRIVE_MORPHO_ABI)
     
     total_blocks_to_process = target_block - start_block
     with tqdm(total=total_blocks_to_process, desc="Fetching Hyperdrive events", unit="block") as pbar:
@@ -136,34 +136,18 @@ def decode_asset_id(asset_id: int) -> tuple[int, int]:
     timestamp = asset_id & prefix_mask  # apply the prefix mask
     return prefix, timestamp
 
-def get_pool_details(pool_contract, debug: bool = False):
+def get_pool_details(pool_contract):
     name = pool_contract.functions.name().call()
     config_values = pool_contract.functions.getPoolConfig().call()
     config_outputs = pool_contract.functions.getPoolConfig().abi['outputs'][0]['components']
     config_keys = [i['name'] for i in config_outputs if 'name' in i]
     config = dict(zip(config_keys, config_values))
-    if debug:
-        print(f"POOL {pool_contract.address[:8]} ({name}) CONFIG:")
-        for k,i in config.items():
-            print(f" {k:<31} = {i}")
     info_values = pool_contract.functions.getPoolInfo().call(block_identifier=20684260)
     info_outputs = pool_contract.functions.getPoolInfo().abi['outputs'][0]['components']
     info_keys = [i['name'] for i in info_outputs if 'name' in i]
     info = dict(zip(info_keys, info_values))
-    if debug:
-        print(f"POOL {pool_contract.address[:8]} ({name}) INFO:")
-        for k,i in info.items():
-            print(f" {k:<31} = {i}")
-    lp_short_positions = info['longExposure']
 
-    # query pool holdings of the base token
-    base_token_balance = None
-    if config["baseToken"] == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-        # the base token is ETH
-        base_token_balance = w3.eth.get_balance(pool_contract.address)
-    else:
-        base_token_contract = w3.eth.contract(address=config["baseToken"], abi=ERC20_ABI)
-        base_token_balance = base_token_contract.functions.balanceOf(pool_contract.address).call()
+    # query pool holdings
     vault_shares_balance = vault_contract_address = vault_contract = None
     if "Morpho" in name:
         vault_contract_address = pool_contract.functions.vault().call()
@@ -185,22 +169,8 @@ def get_pool_details(pool_contract, debug: bool = False):
         vault_shares_balance = vault_shares_contract.functions.balanceOf(pool_contract.address).call()
     short_rewardable_tvl = info['shortsOutstanding']
     lp_rewardable_tvl = vault_shares_balance - short_rewardable_tvl
-    if debug:
-        print("  === calculated values ===")
-        print(f" {'base_token_balance':<31} = {base_token_balance}")
-        if "Morpho" in name:
-            print(f" {'vault_contract':<31} = {vault_contract_address}")
-        print(f" {'vault_shares_balance':<31} = {vault_shares_balance}")
-        # if vault_shares_balance:
-        #     vault_shares_balance_minus_shorts = vault_shares_balance - info['shortsOutstanding']
-        #     print(f" {'vault_shares_balance_minus_shorts':<31} = {vault_shares_balance_minus_shorts/1e18 if vault_shares_balance_minus_shorts else vault_shares_balance_minus_shorts}")
-        print(f" {'lp_short_positions':<31} = {lp_short_positions}")
-        print(f" {'lp_rewardable_tvl':<31} = {lp_rewardable_tvl}")
-        print(f" {'short_rewardable_tvl':<31} = {short_rewardable_tvl}")
 
     return config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
-
-    return config, info, adjusted_share_reserves, lp_ratio, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
 
 def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, debug: bool = False):
     # sourcery skip: extract-method
