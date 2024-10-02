@@ -2,7 +2,6 @@ import itertools
 import json
 import os
 from decimal import Decimal, getcontext
-from enum import IntEnum
 
 import eth_abi
 from dotenv import load_dotenv
@@ -12,6 +11,7 @@ from constants.hyperdrive import (
     ERC20_ABI,
     HYPERDRIVE_MORPHO_ABI,
     MORPHO_ABI,
+    HyperdrivePrefix
 )
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
@@ -95,17 +95,6 @@ def get_hyperdrive_participants(pool, cache: bool = False):
             json.dump(target_block, f)
 
     return all_users, all_ids
-
-class HyperdrivePrefix(IntEnum):
-    r"""The asset ID is used to encode the trade type in a transaction receipt"""
-
-    LP = 0
-    LONG = 1
-    SHORT = 2
-    WITHDRAWAL_SHARE = 3
-
-def convert_prefix_to_trade_type(prefix: int) -> str:
-    return HyperdrivePrefix(prefix).name
 
 def decode_asset_id(asset_id: int) -> tuple[int, int]:
     r"""Decodes a transaction asset ID into its constituent parts of an identifier, data, and a timestamp.
@@ -233,5 +222,5 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
 
 def get_trade_details(asset_id: int) -> tuple[str, int, int]:
     prefix, timestamp = decode_asset_id(asset_id)
-    trade_type = convert_prefix_to_trade_type(prefix)
+    trade_type = HyperdrivePrefix(prefix).name
     return trade_type, prefix, timestamp
