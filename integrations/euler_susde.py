@@ -2,20 +2,20 @@ import json
 from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from constants.euler import SUSDE_VAULT_ADDRESS
+from constants.merchantmoe import DEAD_ADDRESS, ZERO_ADDRESS
 from models.integration import Integration
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
     w3,
 )
+from web3 import Web3
 
 with open("abi/euler_evault.json") as f:
     evault_abi = json.load(f)
 
 
-class EulerIntegration(
-    Integration
-): 
+class EulerIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.EULER_SUSDE,
@@ -27,19 +27,25 @@ class EulerIntegration(
             None,
             None,
         )
-        self.vault_contract = w3.eth.contract(address = SUSDE_VAULT_ADDRESS, abi=evault_abi)
+        self.vault_contract = w3.eth.contract(
+            address=SUSDE_VAULT_ADDRESS, abi=evault_abi
+        )
 
     def get_balance(self, user: str, block: int) -> float:
         try:
-            etoken_balance = call_with_retry(self.vault_contract.functions.balanceOf(user), block)
+            etoken_balance = call_with_retry(
+                self.vault_contract.functions.balanceOf(user), block
+            )
+            if etoken_balance == 0:
+                return 0
             asset_balance = call_with_retry(
-                self.vault_contract.functions.convertToAssets(etoken_balance),
-                block
+                self.vault_contract.functions.convertToAssets(etoken_balance), block
             )
         except Exception as ex:
             print("Error getting balance for user %s: %s", user, ex)
+            return 0
 
-        return asset_balance
+        return round(asset_balance / 1e18, 4)
 
     def get_participants(self) -> list:
         if self.participants is not None:
@@ -57,16 +63,16 @@ class EulerIntegration(
                 f"Euler Vault {self.vault_contract}",
                 self.vault_contract.events.Transfer(),
                 start,
-                current_batch_end
+                current_batch_end,
             )
 
             for transfer in transfers:
                 from_address = transfer["args"]["from"]
                 to_address = transfer["args"]["to"]
-                if from_address != "0x0000000000000000000000000000000000000000":
-                    all_users.add(from_address)
-                if to_address != "0x0000000000000000000000000000000000000000":
-                    all_users.add(to_address)
+                if from_address != ZERO_ADDRESS and from_address != DEAD_ADDRESS:
+                    all_users.add(Web3.to_checksum_address(from_address))
+                if to_address != ZERO_ADDRESS and to_address != DEAD_ADDRESS:
+                    all_users.add(Web3.to_checksum_address(to_address))
 
             start += batch_size
 
@@ -75,9 +81,6 @@ class EulerIntegration(
 
 if __name__ == "__main__":
     example_integration = EulerIntegration()
-    print(example_integration.get_participants())
-    print(
-        example_integration.get_balance(
-            list(example_integration.get_participants())[0], 20677865
-        )
-    )
+    participants = example_integration.get_participants()
+    print(participants)
+    print(example_integration.get_balance(participants[0], 20677865))
