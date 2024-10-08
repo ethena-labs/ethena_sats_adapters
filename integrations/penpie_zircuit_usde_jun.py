@@ -10,7 +10,7 @@ if __name__ == "__main__":
         Zircuit_USDe27JUN2024_PRT_DEPLOYMENT_BLOCK,
         Zircuit_USDe27JUN2024_PRT,
         Chain.ETHEREUM,
-        20,
+        25,
         1,
         [PENDLE_LOCKER_ETHEREUM]
 

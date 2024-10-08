@@ -48,6 +48,7 @@ class IntegrationID(Enum):
     PENPIE_sUSDE_26DEC2024_LPT=('PENPIE_sUSDE_26DEC2024_effective_lpt_held','sUSDE_26DEC2024',Token.SUSDE)
     PENPIE_sUSDE_24OCT2024_LPT=('PENPIE_sUSDE_24OCT2024_effective_lpt_held','sUSDE_24OCT2024',Token.SUSDE)
     PENPIE_rsENA_26SEP2024_LPT =('PENPIE_rsENA_26SEP2024_effective_lpt_held','rsENA_26SEP2024',Token.ENA)
+    PENPIE_USDE_ARB_NOV2024_LPT= ('PENPIE_USDE_ARB_NOV2024_effective_lpt_held', 'USDE_ARB_NOV2024', Token.USDE)
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
@@ -79,6 +80,10 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
+
+    # Balancer
+    BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
+    BALANCER_ARBITRUM_GHO_USDE = ('balancer_arbitrum_gho_usde', 'Balancer Arbitrum GHO/USDe', Token.USDE)
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
@@ -89,6 +94,9 @@ class IntegrationID(Enum):
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
     # Ramses
     RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
+
+    # Radiant
+    RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
 
     # Splice
     SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
@@ -104,6 +112,10 @@ class IntegrationID(Enum):
     # CURVE
     CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
     CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
+
+    # Allstake
+    ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
+    ALLSTAKE_SUSDE = ('allstake_susde', 'Allstake sUSDe', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
