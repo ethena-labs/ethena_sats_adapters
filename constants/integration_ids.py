@@ -41,7 +41,14 @@ class IntegrationID(Enum):
     PENPIE_Zircuit_USDe27JUN2024_LPT= ('PENPIE_Zircuit_USDe27JUN2024_effective_lpt_held', 'Zircuit_USDe27JUN2024', Token.USDE)
     PENPIE_ENA29AUG2024_LPT= ('PENPIE_ENA29AUG2024_effective_lpt_held', 'ENA29AUG2024', Token.ENA)
     PENPIE_USDE_ARB_AUG2024_LPT= ('PENPIE_USDE_ARB_AUG2024_effective_lpt_held', 'USDE_ARB_AUG2024', Token.USDE)
-    
+    PENPIE_USDe_24OCT2024_LPT=('PENPIE_USDe_24OCT202_effective_lpt_held4','USDe_24OCT2024',Token.USDE)
+    PENPIE_ENA_31OCT2024_LPT=('PENPIE_ENA_31OCT2024_effective_lpt_held','ENA_31OCT2024',Token.ENA)
+    PENPIE_rsUSDe_26SEP2024_LPT =('PENPIE_rsUSDe_26SEP2024_effective_lpt_held','rsUSDe_26SEP2024',Token.USDE)
+    PENPIE_USDe_26DEC2024_LPT=('PENPIE_USDe_26DEC2024_effective_lpt_held','USDe_26DEC2024',Token.USDE)
+    PENPIE_sUSDE_26DEC2024_LPT=('PENPIE_sUSDE_26DEC2024_effective_lpt_held','sUSDE_26DEC2024',Token.SUSDE)
+    PENPIE_sUSDE_24OCT2024_LPT=('PENPIE_sUSDE_24OCT2024_effective_lpt_held','sUSDE_24OCT2024',Token.SUSDE)
+    PENPIE_rsENA_26SEP2024_LPT =('PENPIE_rsENA_26SEP2024_effective_lpt_held','rsENA_26SEP2024',Token.ENA)
+    PENPIE_USDE_ARB_NOV2024_LPT= ('PENPIE_USDE_ARB_NOV2024_effective_lpt_held', 'USDE_ARB_NOV2024', Token.USDE)
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
@@ -51,6 +58,10 @@ class IntegrationID(Enum):
     EQUILIBRIA_rUSDE_SEPT_LPT = ('equilibria_rusde_sept_effective_lpt_held', 'Equilibria rUSDe Sept LPT')
     EQUILIBRIA_USDE_LPT_EXPIRY = ('equilibria_usde_lpt_expiry_effective_lpt_held', 'Equilibria USDe LPT Expiry', Token.USDE)
     EQUILIBRIA_SUSDE_APR_EXPIRY = ('equilibria_susde_apr_expiry_effective_lpt_held', 'Equilibria sUSDe Apr Expiry', Token.SUSDE)
+
+    # EulerV2
+    EULER_USDE = ('euler_usde_deposit', 'EulerV2 USDe', Token.USDE)
+    EULER_SUSDE = ('euler_susde_deposit', 'EulerV2 sUSDe', Token.SUSDE)
     
     # Term Finance
     TERM_SUSDE = ('term_susde_held', 'Term Finance sUSDe', Token.SUSDE)
@@ -69,6 +80,10 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ('velodrome_mode_susde', 'Velodrome Mode sUSDe', Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
+
+    # Balancer
+    BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
+    BALANCER_ARBITRUM_GHO_USDE = ('balancer_arbitrum_gho_usde', 'Balancer Arbitrum GHO/USDe', Token.USDE)
     
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
@@ -77,6 +92,30 @@ class IntegrationID(Enum):
     MERCHANT_MOE_METH_USDE_LBT = ('merchant_moe_in_range_lbt_liq_held', "Merchant Moe mETH/USDe Liquidity Book Token")
     # Rho Markets
     RHO_MARKETS_USDE_LP = ('rho_markets_usde_scroll_lp_bal', 'Rho Markets Scroll USDe LP', Token.USDE)
+    # Ramses
+    RAMSES_USDE_LP = ('ramses_usde_lp_bal', 'Ramses USDe LP', Token.USDE)
+
+    # Radiant
+    RADIANT_USDE_CORE_ARBITRUM = ('radiant_usde_arb', 'Radiant USDE Lending', Token.USDE)
+
+    # Splice
+    SPLICE_USDE_YT = ('splice_usde_yt', 'Splice USDe YT', Token.USDE)
+    SPLICE_USDE_LPT = ('splice_usde_lpt', 'Splice USDe LPT', Token.USDE)
+    SPLICE_SUSDE_YT = ('splice_susde_yt', 'Splice SUSDe YT', Token.SUSDE)
+    SPLICE_SUSDE_LPT = ('splice_susde_lpt', 'Splice SUSDu LPT', Token.SUSDE)
+    
+    # GMX
+    GMX_USDE_POSITIONS = ('gmx_usde_positions', 'GMX USDe Positions', Token.USDE)
+    GMX_USDE_USDC_LP = ('gmx_usde_usdc_aug', 'GMX USDe/USDc LP', Token.USDE)
+    GMX_WSTETH_USDE_LP = ('gmx_wsteth_usde_aug', 'GMX wstETH/USDe LP', Token.USDE)
+    
+    # CURVE
+    CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
+    CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
+
+    # Allstake
+    ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
+    ALLSTAKE_SUSDE = ('allstake_susde', 'Allstake sUSDe', Token.SUSDE)
 
     # Inverse Finance FiRM
     FIRM_SUSDE = ('firm_susde', 'Inverse Finance FiRM sUSDe', Token.SUSDE)
@@ -85,6 +124,7 @@ class IntegrationID(Enum):
         self.column_name = column_name
         self.description = description
         self.token = token
+    
     def get_column_name(self) -> str:
         return self.column_name
 
