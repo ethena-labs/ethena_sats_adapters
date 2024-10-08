@@ -117,6 +117,9 @@ class IntegrationID(Enum):
     ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
     ALLSTAKE_SUSDE = ('allstake_susde', 'Allstake sUSDe', Token.SUSDE)
 
+    # Inverse Finance FiRM
+    FIRM_SUSDE = ('firm_susde', 'Inverse Finance FiRM sUSDe', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
