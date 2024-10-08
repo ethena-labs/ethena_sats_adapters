@@ -58,6 +58,10 @@ class IntegrationID(Enum):
     EQUILIBRIA_rUSDE_SEPT_LPT = ('equilibria_rusde_sept_effective_lpt_held', 'Equilibria rUSDe Sept LPT')
     EQUILIBRIA_USDE_LPT_EXPIRY = ('equilibria_usde_lpt_expiry_effective_lpt_held', 'Equilibria USDe LPT Expiry', Token.USDE)
     EQUILIBRIA_SUSDE_APR_EXPIRY = ('equilibria_susde_apr_expiry_effective_lpt_held', 'Equilibria sUSDe Apr Expiry', Token.SUSDE)
+
+    # EulerV2
+    EULER_USDE = ('euler_usde_deposit', 'EulerV2 USDe', Token.USDE)
+    EULER_SUSDE = ('euler_susde_deposit', 'EulerV2 sUSDe', Token.SUSDE)
     
     # Term Finance
     TERM_SUSDE = ('term_susde_held', 'Term Finance sUSDe', Token.SUSDE)
