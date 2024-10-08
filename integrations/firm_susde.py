@@ -3,7 +3,7 @@ from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from constants.firm import FIRM_SUSDE_DEPLOYMENT_BLOCK
 from utils.firm import get_escrow_contract, firm_susde_market_contract
-from utils.web3_utils import w3_arb, fetch_events_logs_with_retry, call_with_retry
+from utils.web3_utils import w3, fetch_events_logs_with_retry, call_with_retry
 
 
 class Firm(Integration):
@@ -32,7 +32,7 @@ class Firm(Integration):
     def get_participants(self) -> list:
         page_size = 1900
         start_block = FIRM_SUSDE_DEPLOYMENT_BLOCK
-        target_block = w3_arb.eth.get_block_number()
+        target_block = w3.eth.get_block_number()
 
         all_users = set()
         while start_block < target_block:
@@ -55,10 +55,7 @@ class Firm(Integration):
 if __name__ == "__main__":
     firm = Firm()
     participants = firm.get_participants()
-    currentBlock = w3_arb.eth.get_block_number()
+    print("participants", participants)
+    currentBlock = w3.eth.get_block_number()
     if len(participants) > 0:
-        print(
-            firm.get_balance(
-                list(participants)[len(participants) - 1], currentBlock
-            )
-        )
+        print(firm.get_balance(list(participants)[len(participants) - 1], currentBlock))
