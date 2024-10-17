@@ -1,22 +1,10 @@
 import itertools
-import json
-import os
 from decimal import Decimal, getcontext
 
-import eth_abi
 from dotenv import load_dotenv
-from tqdm import tqdm
 
-from constants.hyperdrive import (
-    ERC20_ABI,
-    HYPERDRIVE_MORPHO_ABI,
-    MORPHO_ABI,
-    HyperdrivePrefix
-)
-from utils.web3_utils import (
-    fetch_events_logs_with_retry,
-    w3,
-)
+from constants.hyperdrive import ERC20_ABI,HYPERDRIVE_MORPHO_ABI,HyperdrivePrefix
+from utils.web3_utils import fetch_events_logs_with_retry,w3
 
 load_dotenv()
 
@@ -41,58 +29,30 @@ def get_first_contract_block(contract_address):
     assert earliest_block >= latest_block, f"something fucked up since {earliest_block=} isn't greater than or equal to {latest_block=}"
     return earliest_block
 
-def get_hyperdrive_participants(pool, cache: bool = False):
+def get_hyperdrive_participants(pool):
     target_block = w3.eth.get_block_number()
-    all_users = all_ids = start_block = None
-    if cache and os.path.exists(f"hyperdrive_users_{pool}.json"):
-        with open(f"hyperdrive_users_{pool}.json", "r") as f:
-            all_users = set(json.load(f))
-    else:
-        all_users = set()
-    if cache and os.path.exists(f"hyperdrive_ids_{pool}.json"):
-        with open(f"hyperdrive_ids_{pool}.json", "r") as f:
-            all_ids = set(json.load(f))
-    else:
-        all_ids = set()
-    if cache and os.path.exists(f"hyperdrive_latest_block_{pool}.json"):
-        with open(f"hyperdrive_latest_block_{pool}.json", "r") as f:
-            start_block = json.load(f) + 1
-        if start_block >= target_block:
-            print(f"Skipping pool {pool} because it's up to date.")
-            return all_users, all_ids
-    else:
-        start_block = get_first_contract_block(pool)
+    all_users = set()
+    all_ids = set()
+    start_block = get_first_contract_block(pool)
     assert all_users is not None, "error: all_users is None"
     assert all_ids is not None, "error: all_ids is None"
     assert start_block is not None, "error: start_block is None"
     contract = w3.eth.contract(address=pool, abi=HYPERDRIVE_MORPHO_ABI)
     
-    total_blocks_to_process = target_block - start_block
-    with tqdm(total=total_blocks_to_process, desc="Fetching Hyperdrive events", unit="block") as pbar:
-        current_block = start_block
-        while current_block < target_block:
-            to_block = min(current_block + PAGE_SIZE, target_block)
-            transfers = fetch_events_logs_with_retry(
-                label=f"Hyperdrive users {pool}",
-                contract_event=contract.events.TransferSingle(),
-                from_block=current_block,
-                to_block=to_block,
-                delay=0,
-            )
-            for transfer in transfers:
-                all_users.add(transfer["args"]["to"])
-                all_ids.add(transfer["args"]["id"])
-            # Update the progress bar by the number of blocks processed in this iteration
-            blocks_processed = to_block - current_block
-            pbar.update(blocks_processed)
-            current_block = to_block
-    if cache:
-        with open(f"hyperdrive_users_{pool}.json", "w") as f:
-            json.dump(list(all_users), f)
-        with open(f"hyperdrive_ids_{pool}.json", "w") as f:
-            json.dump(list(all_ids), f)
-        with open(f"hyperdrive_latest_block_{pool}.json", "w") as f:
-            json.dump(target_block, f)
+    current_block = start_block
+    while current_block < target_block:
+        to_block = min(current_block + PAGE_SIZE, target_block)
+        transfers = fetch_events_logs_with_retry(
+            label=f"Hyperdrive users {pool}",
+            contract_event=contract.events.TransferSingle(),
+            from_block=current_block,
+            to_block=to_block,
+            delay=0,
+        )
+        for transfer in transfers:
+            all_users.add(transfer["args"]["to"])
+            all_ids.add(transfer["args"]["id"])
+        current_block = to_block
 
     return all_users, all_ids
 
@@ -131,29 +91,14 @@ def get_pool_details(pool_contract):
     config_outputs = pool_contract.functions.getPoolConfig().abi['outputs'][0]['components']
     config_keys = [i['name'] for i in config_outputs if 'name' in i]
     config = dict(zip(config_keys, config_values))
-    info_values = pool_contract.functions.getPoolInfo().call(block_identifier=20684260)
+    info_values = pool_contract.functions.getPoolInfo().call()
     info_outputs = pool_contract.functions.getPoolInfo().abi['outputs'][0]['components']
     info_keys = [i['name'] for i in info_outputs if 'name' in i]
     info = dict(zip(info_keys, info_values))
 
     # query pool holdings
-    vault_shares_balance = vault_contract_address = vault_contract = None
-    if "Morpho" in name:
-        vault_contract_address = pool_contract.functions.vault().call()
-        print(f"{vault_contract_address=}")
-        vault_contract = w3.eth.contract(address=vault_contract_address, abi=MORPHO_ABI)
-        morpho_market_id = w3.keccak(eth_abi.encode(  # type: ignore
-            ("address", "address", "address", "address", "uint256"),
-            (
-                config["baseToken"],
-                pool_contract.functions.collateralToken().call(),
-                pool_contract.functions.oracle().call(),
-                pool_contract.functions.irm().call(),
-                pool_contract.functions.lltv().call(),
-            ),
-        ))
-        vault_shares_balance = vault_contract.functions.position(morpho_market_id,pool_contract.address).call()[0]
-    elif config["vaultSharesToken"] != "0x0000000000000000000000000000000000000000":
+    vault_shares_balance = None
+    if config["vaultSharesToken"] != "0x0000000000000000000000000000000000000000":
         vault_shares_contract = w3.eth.contract(address=config["vaultSharesToken"], abi=ERC20_ABI)
         vault_shares_balance = vault_shares_contract.functions.balanceOf(pool_contract.address).call()
     short_rewardable_tvl = info['shortsOutstanding']
@@ -162,62 +107,64 @@ def get_pool_details(pool_contract):
     return config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
 
 def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, debug: bool = False):
-    # sourcery skip: extract-method
     pool_positions = []
-    rewardable_by_prefix = {
-        0: Decimal(lp_rewardable_tvl),  # LPs and Withdrawal Shares get a share of the LP rewardable TVL
-        1: Decimal(0),  # longs get nothing since they have no exposure to the variable rate
-        2: Decimal(short_rewardable_tvl),  # shorts get a share of the Short rewardable TVL
-        3: Decimal(lp_rewardable_tvl),  # withdrawal shares get rewarded the same as LPs
-    }
+    combined_prefixes = [(0, 3), (2,)]  # Treat prefixes 0 and 3 together, 2 separately
     bal_by_prefix = {0: Decimal(0), 1: Decimal(0), 2: Decimal(0), 3: Decimal(0)}
-    shares_by_prefix = {0: Decimal(0), 1: Decimal(0), 2: Decimal(0), 3: Decimal(0)}
-    for user,id in itertools.product(pool_users, pool_ids):
+
+    # First pass: collect balances
+    for user, id in itertools.product(pool_users, pool_ids):
         trade_type, prefix, timestamp = get_trade_details(int(id))
-        bal = pool_contract.functions.balanceOf(int(id),user).call()
+        bal = pool_contract.functions.balanceOf(int(id), user).call()
         if bal > Decimal(1):
             if debug:
                 print(f"user={user[:8]} {trade_type:<4}({prefix=}) {timestamp=:>12} balance={bal:>32}")
             pool_positions.append([user, trade_type, prefix, timestamp, bal, Decimal(0)])
             bal_by_prefix[prefix] += bal
+    # manually hard-code a withdrawal share position
+    # bal = 24101344855221864785272839529
+    # pool_positions.append(["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "WITHDRAWAL_SHARE", 3, 1678908800, bal, Decimal(0)])
+    # bal_by_prefix[3] += bal
+
+    # Second pass: calculate shares (prefix 1 (longs) get nothing, so we skip it)
     for position in pool_positions:
         prefix = position[2]
-        if bal_by_prefix[prefix] != Decimal(0):
-            # calculate their share of of total balances by prefix
-            share_of_rewardable = position[4] / bal_by_prefix[prefix]
-            position[5] = (rewardable_by_prefix[prefix] * share_of_rewardable).quantize(Decimal('0'))
+        if prefix in [0, 3]:  # assign rewards for LPs and withdrawal shares
+            combined_lp_balance = bal_by_prefix[0] + bal_by_prefix[3]  # combine LP and withdrawal share balance
+            if combined_lp_balance != Decimal(0):
+                share_of_rewardable = position[4] / combined_lp_balance
+                position[5] = (lp_rewardable_tvl * share_of_rewardable).quantize(Decimal('0'))
+        elif prefix == 2:  # assign rewards for shorts
+            if bal_by_prefix[2] != Decimal(0):
+                share_of_rewardable = position[4] / bal_by_prefix[2]
+                position[5] = (short_rewardable_tvl * share_of_rewardable).quantize(Decimal('0'))
 
-    # Calculate shares by prefix
-    shares_by_prefix = {prefix: sum(position[5] for position in pool_positions if position[2] == prefix) for prefix in range(4)}
-
-    # Correction step
-    combined_prefixes = [(0, 3), (2,)]  # Treat prefixes 0 and 3 together, 2 separately
+    # Correction step to fix rounding errors
     for prefixes in combined_prefixes:
-        combined_shares = sum(shares_by_prefix[p] for p in prefixes)
-        combined_rewardable = rewardable_by_prefix[prefixes[0]]  # take rewardable_by_prefix of first prefix
-        print(f"{prefixes=}")
-        print(f"{combined_shares=}")
-        print(f"{combined_rewardable=}")
+        combined_shares = sum(position[5] for position in pool_positions if position[2] in prefixes)
+        combined_rewardable = lp_rewardable_tvl if prefixes[0] == 0 else short_rewardable_tvl
+        if debug:
+            print(f"{prefixes=}")
+            print(f"{combined_shares=}")
+            print(f"{combined_rewardable=}")
         if combined_shares != combined_rewardable:
             diff = combined_rewardable - combined_shares
             # Find the position with the largest share among the combined prefixes
             max_position = max((p for p in pool_positions if p[2] in prefixes), key=lambda x: x[5])
-            print(f"found {diff=} in {prefixes=}, adjusting\n{max_position=}")
+            if debug:
+                print(f"found {diff=} in {prefixes=}, adjusting\n{max_position=}")
             max_position[5] += diff
-            print(f"{max_position=}")
+            if debug:
+                print(f"{max_position=}")
 
-    # Re-calculate shares by prefix
-    shares_by_prefix = {prefix: sum(position[5] for position in pool_positions if position[2] == prefix) for prefix in range(4)}
-
-    # combine LPs and withdrawal shares into subtotals to check accuracy
-    subtotals_by_prefix = {0: shares_by_prefix[0] + shares_by_prefix[3], 1: shares_by_prefix[1], 2: shares_by_prefix[2]}
-    # each subtotal (shares_by_prefix) should match the total (rewardable_by_prefix)
-    for prefix,subtotal in subtotals_by_prefix.items():
-        print(f"{prefix=:<3} balance={bal_by_prefix[prefix]:>24} shares={subtotal:>24} rewardable={rewardable_by_prefix[prefix]:>24}")
-        if subtotal == rewardable_by_prefix[prefix]:
-            print(f" check subtotals_by_prefix == rewardable_by_prefix ({subtotal} == {rewardable_by_prefix[prefix]}) ✅")
+    # Make sure rewards add up to rewardable TVL
+    for prefixes in combined_prefixes:
+        combined_shares = sum(position[5] for position in pool_positions if position[2] in prefixes)
+        combined_rewardable = lp_rewardable_tvl if prefixes[0] == 0 else short_rewardable_tvl
+        if combined_shares == combined_rewardable:
+            print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} == {combined_rewardable}) ✅")
         else:
-            print(f" check subtotals_by_prefix == rewardable_by_prefix ({subtotal} != {rewardable_by_prefix[prefix]}) ❌")
+            print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} != {combined_rewardable}) ❌")
+
     return pool_positions
 
 def get_trade_details(asset_id: int) -> tuple[str, int, int]:
