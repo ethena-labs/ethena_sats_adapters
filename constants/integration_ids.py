@@ -83,12 +83,14 @@ class IntegrationID(Enum):
 
     # Balancer
     BALANCER_ARBITRUM_GHO_USDE = ('balancer_arbitrum_gho_usde', 'Balancer Arbitrum GHO/USDe', Token.USDE)
+    BALANCER_ARBITRUM_WAGHO_USDE = ('balancer_arbitrum_wagho_usde', 'Balancer Arbitrum waGHO/USDe', Token.USDE)
     BALANCER_ARBITRUM_GYD_SUSDE = ('balancer_arbitrum_gyd_susde', 'Balancer Arbitrum GYD/sUSDe', Token.SUSDE)
     BALANCER_ARBITRUM_SUSDE_SFRAX = ('balancer_arbitrum_susde_sfrax', 'Balancer Arbitrum sUSDe/sFRAX', Token.SUSDE)
     BALANCER_ARBITRUM_SUSDE_USDC = ('balancer_arbitrum_susde_usdc', 'Balancer Arbitrum sUSDe/USDC', Token.SUSDE)
     BALANCER_ETHEREUM_WSTETH_SUSDE = ('balancer_ethereum_wsteth_susde', 'Balancer Ethereum 50wstETH/50sUSDe', Token.SUSDE)
     BALANCER_ETHEREUM_BAOUSD_SUSDE = ('balancer_ethereum_baousd_susde', 'Balancer Ethereum baoUSD/sUSDe', Token.SUSDE)
     BALANCER_ETHEREUM_SUSDE_USDC = ('balancer_ethereum_susde_usdc', 'Balancer Ethereum sUSDe/USDC', Token.SUSDE)
+    BALANCER_ETHEREUM_SUSDE_GYD = ('balancer_ethereum_susde_gyd', 'Balancer Ethereum sUSDe/GYD', Token.SUSDE)
     BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
     BALANCER_FRAXTAL_SFRAX_SDAI_SUSDE = ('balancer_fraxtal_sfrax_sdai_susde', 'Balancer Fraxtal sFRAX/sDAI/sUSDe', Token.SUSDE)
     BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC = ('balancer_fraxtal_frax_usde_dai_usdt_usdc', 'Balancer Fraxtal FRAX/USDe/DAI/USDT/USDC', Token.USDE)
