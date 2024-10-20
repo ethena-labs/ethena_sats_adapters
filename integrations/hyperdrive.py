@@ -69,6 +69,16 @@ class Hyperdrive(Integration):
             short_rewardable_tvl=short_rewardable_tvl,
         )
 
+        # Make sure rewards add up to rewardable TVL
+        combined_prefixes = [(0, 3), (2,)]  # Treat prefixes 0 and 3 together, 2 separately
+        for prefixes in combined_prefixes:
+            combined_shares = sum(position[5] for position in pool_positions if position[2] in prefixes)
+            combined_rewardable = lp_rewardable_tvl if prefixes[0] == 0 else short_rewardable_tvl
+            if combined_shares == combined_rewardable:
+                print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} == {combined_rewardable}) ✅")
+            else:
+                print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} != {combined_rewardable}) ❌")
+
         total_rewardable = Decimal(sum(position[5] for position in pool_positions))
         if vault_shares_balance == total_rewardable:
             print(f"vault_shares_balance == total_rewardable ({vault_shares_balance} == {total_rewardable}) ✅")

@@ -118,10 +118,6 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
         if bal > Decimal(1):
             pool_positions.append([user, trade_type, prefix, timestamp, bal, Decimal(0)])
             bal_by_prefix[prefix] += bal
-    # manually hard-code a withdrawal share position
-    # bal = 24101344855221864785272839529
-    # pool_positions.append(["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "WITHDRAWAL_SHARE", 3, 1678908800, bal, Decimal(0)])
-    # bal_by_prefix[3] += bal
 
     # Second pass: calculate shares (prefix 1 (longs) get nothing, so we skip it)
     for position in pool_positions:
@@ -145,15 +141,6 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
             # Find the position with the largest share among the combined prefixes
             max_position = max((p for p in pool_positions if p[2] in prefixes), key=lambda x: x[5])
             max_position[5] += diff
-
-    # Make sure rewards add up to rewardable TVL
-    for prefixes in combined_prefixes:
-        combined_shares = sum(position[5] for position in pool_positions if position[2] in prefixes)
-        combined_rewardable = lp_rewardable_tvl if prefixes[0] == 0 else short_rewardable_tvl
-        if combined_shares == combined_rewardable:
-            print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} == {combined_rewardable}) ✅")
-        else:
-            print(f"for prefixes={prefixes}, check combined_shares == combined_rewardable ({combined_shares} != {combined_rewardable}) ❌")
 
     return pool_positions
 
