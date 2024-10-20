@@ -136,6 +136,9 @@ class IntegrationID(Enum):
     # Inverse Finance FiRM
     FIRM_SUSDE = ('firm_susde', 'Inverse Finance FiRM sUSDe', Token.SUSDE)
 
+    # Hyperdrive
+    HYPERDRIVE_SUSDE = ('hyperdrive_susde', 'ElementDAO 182 Day sUSDe Hyperdrive', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description

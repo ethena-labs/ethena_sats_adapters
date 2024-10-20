@@ -1,14 +1,14 @@
 # %%
 from decimal import Decimal
 
-from constants.hyperdrive import HYPERDRIVE_MORPHO_ABI, HYPERDRIVE_SUSDE_POOL
+from constants.hyperdrive import HYPERDRIVE_MORPHO_ABI, HYPERDRIVE_SUSDE_POOL_ADDRESS
 from utils.hyperdrive import get_hyperdrive_participants, get_pool_details, get_pool_positions
 from utils.web3_utils import w3
 
 ## Import
-print(f"=== {HYPERDRIVE_SUSDE_POOL} ===")
-pool_users, pool_ids = get_hyperdrive_participants(HYPERDRIVE_SUSDE_POOL)
-pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL), abi=HYPERDRIVE_MORPHO_ABI)
+print(f"=== {HYPERDRIVE_SUSDE_POOL_ADDRESS} ===")
+pool_users, pool_ids = get_hyperdrive_participants(HYPERDRIVE_SUSDE_POOL_ADDRESS)
+pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL_ADDRESS), abi=HYPERDRIVE_MORPHO_ABI)
 _, _, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
 print(f"=== {name} ===")
 pool_positions = get_pool_positions(

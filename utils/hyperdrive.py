@@ -106,7 +106,7 @@ def get_pool_details(pool_contract):
 
     return config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
 
-def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, debug: bool = False):
+def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, block = None, debug: bool = False):
     pool_positions = []
     combined_prefixes = [(0, 3), (2,)]  # Treat prefixes 0 and 3 together, 2 separately
     bal_by_prefix = {0: Decimal(0), 1: Decimal(0), 2: Decimal(0), 3: Decimal(0)}
@@ -114,7 +114,7 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
     # First pass: collect balances
     for user, id in itertools.product(pool_users, pool_ids):
         trade_type, prefix, timestamp = get_trade_details(int(id))
-        bal = pool_contract.functions.balanceOf(int(id), user).call()
+        bal = pool_contract.functions.balanceOf(int(id), user).call(block_identifier=block or "latest")
         if bal > Decimal(1):
             if debug:
                 print(f"user={user[:8]} {trade_type:<4}({prefix=}) {timestamp=:>12} balance={bal:>32}")
