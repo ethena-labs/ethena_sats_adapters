@@ -29,11 +29,11 @@ def get_first_contract_block(contract_address):
     assert earliest_block >= latest_block, f"something fucked up since {earliest_block=} isn't greater than or equal to {latest_block=}"
     return earliest_block
 
-def get_hyperdrive_participants(pool):
+def get_hyperdrive_participants(pool, start_block = None):
     target_block = w3.eth.get_block_number()
     all_users = set()
     all_ids = set()
-    start_block = get_first_contract_block(pool)
+    start_block = start_block or get_first_contract_block(pool)
     assert all_users is not None, "error: all_users is None"
     assert all_ids is not None, "error: all_ids is None"
     assert start_block is not None, "error: start_block is None"
@@ -106,7 +106,7 @@ def get_pool_details(pool_contract):
 
     return config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
 
-def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, block = None, debug: bool = False):
+def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, block = None):
     pool_positions = []
     combined_prefixes = [(0, 3), (2,)]  # Treat prefixes 0 and 3 together, 2 separately
     bal_by_prefix = {0: Decimal(0), 1: Decimal(0), 2: Decimal(0), 3: Decimal(0)}
@@ -116,8 +116,6 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
         trade_type, prefix, timestamp = get_trade_details(int(id))
         bal = pool_contract.functions.balanceOf(int(id), user).call(block_identifier=block or "latest")
         if bal > Decimal(1):
-            if debug:
-                print(f"user={user[:8]} {trade_type:<4}({prefix=}) {timestamp=:>12} balance={bal:>32}")
             pool_positions.append([user, trade_type, prefix, timestamp, bal, Decimal(0)])
             bal_by_prefix[prefix] += bal
     # manually hard-code a withdrawal share position
@@ -142,19 +140,11 @@ def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, s
     for prefixes in combined_prefixes:
         combined_shares = sum(position[5] for position in pool_positions if position[2] in prefixes)
         combined_rewardable = lp_rewardable_tvl if prefixes[0] == 0 else short_rewardable_tvl
-        if debug:
-            print(f"{prefixes=}")
-            print(f"{combined_shares=}")
-            print(f"{combined_rewardable=}")
         if combined_shares != combined_rewardable:
             diff = combined_rewardable - combined_shares
             # Find the position with the largest share among the combined prefixes
             max_position = max((p for p in pool_positions if p[2] in prefixes), key=lambda x: x[5])
-            if debug:
-                print(f"found {diff=} in {prefixes=}, adjusting\n{max_position=}")
             max_position[5] += diff
-            if debug:
-                print(f"{max_position=}")
 
     # Make sure rewards add up to rewardable TVL
     for prefixes in combined_prefixes:

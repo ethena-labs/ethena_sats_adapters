@@ -24,7 +24,10 @@ class Hyperdrive(Integration):
         self.pool_positions = None
 
     def update_participants(self):
-        self.pool_users, self.pool_ids = get_hyperdrive_participants(HYPERDRIVE_SUSDE_POOL_ADDRESS)
+        self.pool_users, self.pool_ids = get_hyperdrive_participants(
+            pool=HYPERDRIVE_SUSDE_POOL_ADDRESS,
+            start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
+        )
 
     def get_participants(self, blocks: Optional[List[int]]) -> Set[str]:
         if self.pool_users is None:
@@ -46,28 +49,26 @@ class Hyperdrive(Integration):
                 lp_rewardable_tvl=lp_rewardable_tvl,
                 short_rewardable_tvl=short_rewardable_tvl,
                 block=block,
-                debug=True,
             )
         # get the user's balance
         rewardable_tvl = sum(position[5] for position in self.pool_positions if position[0] == user)
         return rewardable_tvl / 1e18
 
     def test_hyperdrive(self):
-        print(f"=== {HYPERDRIVE_SUSDE_POOL_ADDRESS} ===")
-        pool_users, pool_ids = get_hyperdrive_participants(HYPERDRIVE_SUSDE_POOL_ADDRESS)
+        pool_users, pool_ids = get_hyperdrive_participants(
+            pool=HYPERDRIVE_SUSDE_POOL_ADDRESS,
+            start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
+        )
         pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL_ADDRESS), abi=HYPERDRIVE_MORPHO_ABI)
-        _, _, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
-        print(f"=== {name} ===")
+        _, _, _, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
         pool_positions = get_pool_positions(
             pool_contract=pool_contract,
             pool_users=pool_users,
             pool_ids=pool_ids,
             lp_rewardable_tvl=lp_rewardable_tvl,
             short_rewardable_tvl=short_rewardable_tvl,
-            debug=True,
         )
 
-        # display stuff
         total_rewardable = Decimal(sum(position[5] for position in pool_positions))
         if vault_shares_balance == total_rewardable:
             print(f"vault_shares_balance == total_rewardable ({vault_shares_balance} == {total_rewardable}) ✅")
