@@ -48,6 +48,7 @@ class IntegrationID(Enum):
     PENPIE_sUSDE_26DEC2024_LPT=('PENPIE_sUSDE_26DEC2024_effective_lpt_held','sUSDE_26DEC2024',Token.SUSDE)
     PENPIE_sUSDE_24OCT2024_LPT=('PENPIE_sUSDE_24OCT2024_effective_lpt_held','sUSDE_24OCT2024',Token.SUSDE)
     PENPIE_rsENA_26SEP2024_LPT =('PENPIE_rsENA_26SEP2024_effective_lpt_held','rsENA_26SEP2024',Token.ENA)
+    PENPIE_USDE_ARB_NOV2024_LPT= ('PENPIE_USDE_ARB_NOV2024_effective_lpt_held', 'USDE_ARB_NOV2024', Token.USDE)
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
@@ -57,6 +58,10 @@ class IntegrationID(Enum):
     EQUILIBRIA_rUSDE_SEPT_LPT = ('equilibria_rusde_sept_effective_lpt_held', 'Equilibria rUSDe Sept LPT')
     EQUILIBRIA_USDE_LPT_EXPIRY = ('equilibria_usde_lpt_expiry_effective_lpt_held', 'Equilibria USDe LPT Expiry', Token.USDE)
     EQUILIBRIA_SUSDE_APR_EXPIRY = ('equilibria_susde_apr_expiry_effective_lpt_held', 'Equilibria sUSDe Apr Expiry', Token.SUSDE)
+
+    # EulerV2
+    EULER_USDE = ('euler_usde_deposit', 'EulerV2 USDe', Token.USDE)
+    EULER_SUSDE = ('euler_susde_deposit', 'EulerV2 sUSDe', Token.SUSDE)
     
     # Term Finance
     TERM_SUSDE = ('term_susde_held', 'Term Finance sUSDe', Token.SUSDE)
@@ -113,6 +118,13 @@ class IntegrationID(Enum):
     BEEFY_FRAXTAL_USDE = ('beefy_fraxtal_usde_held', 'Beefy Fraxtal USDe', Token.USDE)
     BEEFY_MANTLE_USDE = ('beefy_mantle_usde_held', 'Beefy Mantle USDe', Token.USDE)
     BEEFY_OPTIMISM_USDE = ('beefy_optimism_usde_held', 'Beefy Optimism USDe', Token.USDE)
+
+    # Allstake
+    ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
+    ALLSTAKE_SUSDE = ('allstake_susde', 'Allstake sUSDe', Token.SUSDE)
+
+    # Inverse Finance FiRM
+    FIRM_SUSDE = ('firm_susde', 'Inverse Finance FiRM sUSDe', Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
