@@ -41,7 +41,7 @@ class Hyperdrive(Integration):
                 self.update_participants()
             # get pool positions
             pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL_ADDRESS), abi=HYPERDRIVE_MORPHO_ABI)
-            _, _, _, _, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
+            _, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
             self.pool_positions = get_pool_positions(
                 pool_contract=pool_contract,
                 pool_users=self.pool_users,
@@ -60,7 +60,7 @@ class Hyperdrive(Integration):
             start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
         )
         pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL_ADDRESS), abi=HYPERDRIVE_MORPHO_ABI)
-        _, _, _, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
+        vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
         pool_positions = get_pool_positions(
             pool_contract=pool_contract,
             pool_users=pool_users,

@@ -8,10 +8,6 @@ HYPERDRIVE_MORPHO_ABI = None
 with open("abi/IHyperdriveMorpho.json") as f:
     HYPERDRIVE_MORPHO_ABI = json.load(f)
 
-MORPHO_ABI = None
-with open("abi/IMorpho.json") as f:
-    MORPHO_ABI = json.load(f)
-
 ERC20_ABI = None
 with open("abi/ERC20_abi.json") as f:
     ERC20_ABI = json.load(f)

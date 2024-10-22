@@ -86,7 +86,6 @@ def decode_asset_id(asset_id: int) -> tuple[int, int]:
     return prefix, timestamp
 
 def get_pool_details(pool_contract):
-    name = pool_contract.functions.name().call()
     config_values = pool_contract.functions.getPoolConfig().call()
     config_outputs = pool_contract.functions.getPoolConfig().abi['outputs'][0]['components']
     config_keys = [i['name'] for i in config_outputs if 'name' in i]
@@ -104,7 +103,7 @@ def get_pool_details(pool_contract):
     short_rewardable_tvl = info['shortsOutstanding']
     lp_rewardable_tvl = vault_shares_balance - short_rewardable_tvl
 
-    return config, info, name, vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
+    return vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl
 
 def get_pool_positions(pool_contract, pool_users, pool_ids, lp_rewardable_tvl, short_rewardable_tvl, block = None):
     pool_positions = []
