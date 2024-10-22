@@ -123,6 +123,12 @@ class IntegrationID(Enum):
     CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
     CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
 
+    # Beefy
+    BEEFY_ARBITRUM_USDE = ('beefy_arbitrum_usde_held', 'Beefy Arbitrum USDe', Token.USDE)
+    BEEFY_FRAXTAL_USDE = ('beefy_fraxtal_usde_held', 'Beefy Fraxtal USDe', Token.USDE)
+    BEEFY_MANTLE_USDE = ('beefy_mantle_usde_held', 'Beefy Mantle USDe', Token.USDE)
+    BEEFY_OPTIMISM_USDE = ('beefy_optimism_usde_held', 'Beefy Optimism USDe', Token.USDE)
+
     # Allstake
     ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
     ALLSTAKE_SUSDE = ('allstake_susde', 'Allstake sUSDe', Token.SUSDE)
