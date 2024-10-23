@@ -83,9 +83,19 @@ class IntegrationID(Enum):
     AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
 
     # Balancer
-    BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
     BALANCER_ARBITRUM_GHO_USDE = ('balancer_arbitrum_gho_usde', 'Balancer Arbitrum GHO/USDe', Token.USDE)
-    
+    BALANCER_ARBITRUM_WAGHO_USDE = ('balancer_arbitrum_wagho_usde', 'Balancer Arbitrum waGHO/USDe', Token.USDE)
+    BALANCER_ARBITRUM_GYD_SUSDE = ('balancer_arbitrum_gyd_susde', 'Balancer Arbitrum GYD/sUSDe', Token.SUSDE)
+    BALANCER_ARBITRUM_SUSDE_SFRAX = ('balancer_arbitrum_susde_sfrax', 'Balancer Arbitrum sUSDe/sFRAX', Token.SUSDE)
+    BALANCER_ARBITRUM_SUSDE_USDC = ('balancer_arbitrum_susde_usdc', 'Balancer Arbitrum sUSDe/USDC', Token.SUSDE)
+    BALANCER_ETHEREUM_WSTETH_SUSDE = ('balancer_ethereum_wsteth_susde', 'Balancer Ethereum 50wstETH/50sUSDe', Token.SUSDE)
+    BALANCER_ETHEREUM_BAOUSD_SUSDE = ('balancer_ethereum_baousd_susde', 'Balancer Ethereum baoUSD/sUSDe', Token.SUSDE)
+    BALANCER_ETHEREUM_SUSDE_USDC = ('balancer_ethereum_susde_usdc', 'Balancer Ethereum sUSDe/USDC', Token.SUSDE)
+    BALANCER_ETHEREUM_SUSDE_GYD = ('balancer_ethereum_susde_gyd', 'Balancer Ethereum sUSDe/GYD', Token.SUSDE)
+    BALANCER_FRAXTAL_FRAX_USDE = ('balancer_fraxtal_frax_usde', 'Balancer Fraxtal FRAX/USDe', Token.USDE)
+    BALANCER_FRAXTAL_SFRAX_SDAI_SUSDE = ('balancer_fraxtal_sfrax_sdai_susde', 'Balancer Fraxtal sFRAX/sDAI/sUSDe', Token.SUSDE)
+    BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC = ('balancer_fraxtal_frax_usde_dai_usdt_usdc', 'Balancer Fraxtal FRAX/USDe/DAI/USDT/USDC', Token.USDE)
+
     # Nuri
     NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
 
@@ -113,6 +123,12 @@ class IntegrationID(Enum):
     # CURVE
     CURVE_ETHEREUM_USDE_BORROWERS = ('curve_ethereum_usde_borrowers', 'Curve.fi Ethereum USDe Borrowers', Token.USDE)
     CURVE_ETHEREUM_SUSDE_BORROWERS = ('curve_ethereum_susde_borrowers', 'Curve.fi Ethereum sUSDe Borrowers', Token.SUSDE)
+
+    # Beefy
+    BEEFY_ARBITRUM_USDE = ('beefy_arbitrum_usde_held', 'Beefy Arbitrum USDe', Token.USDE)
+    BEEFY_FRAXTAL_USDE = ('beefy_fraxtal_usde_held', 'Beefy Fraxtal USDe', Token.USDE)
+    BEEFY_MANTLE_USDE = ('beefy_mantle_usde_held', 'Beefy Mantle USDe', Token.USDE)
+    BEEFY_OPTIMISM_USDE = ('beefy_optimism_usde_held', 'Beefy Optimism USDe', Token.USDE)
 
     # Allstake
     ALLSTAKE_USDE = ('allstake_usde', 'Allstake USDe', Token.USDE)
