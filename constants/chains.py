@@ -11,3 +11,4 @@ class Chain(Enum):
     MODE = "Mode"
     FRAXTAL = "Fraxtal"
     OPTIMISM = "Optimism"
+    Lyra = "Lyra"
