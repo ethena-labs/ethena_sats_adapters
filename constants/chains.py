@@ -9,3 +9,4 @@ class Chain(Enum):
     BLAST = "Blast"
     SCROLL = "Scroll"
     MODE = "Mode"
+    Lyra = "Lyra"
