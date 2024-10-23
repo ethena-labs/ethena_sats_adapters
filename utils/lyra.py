@@ -42,7 +42,7 @@ def get_exchange_balance(user: str, block: int) -> int:
 
     headers = {
         'Content-Type': 'application/json',
-        'api-key': os.getenv("DERIVE_SUBGRAPHAPI_KEY") 
+        'api-key': os.getenv("DERIVE_SUBGRAPH_API_KEY") 
     }
     print(user_balance_query_filled)
 
@@ -110,7 +110,7 @@ all_users_query = '''
 def get_exchange_users() -> set:
     headers = {
         'Content-Type': 'application/json',
-        'api-key': os.getenv("DERIVE_SUBGRAPHAPI_KEY") 
+        'api-key': os.getenv("DERIVE_SUBGRAPH_API_KEY") 
     }
 
     response = requests.post(url, json={'query': all_users_query}, headers=headers)
