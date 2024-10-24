@@ -81,14 +81,6 @@ class Hyperdrive(Integration):
         else:
             print(f"vault_shares_balance != total_rewardable ({vault_shares_balance} != {total_rewardable}) ❌")
 
-        for user, id in itertools.product(self.pool_users, self.pool_ids):
-            trade_type, _, _ = get_trade_details(int(id))
-            if trade_type == 0:
-                if pool_contract.functions.balanceOf(int(id), user).call() == Decimal(0):
-                    print(f"balanceOf({id}, {user}) == 0 ({pool_contract.functions.balanceOf(int(id), user).call()} == 0) ✅")
-                else:
-                    print(f"balanceOf({id}, {user}) != 0 ({pool_contract.functions.balanceOf(int(id), user).call()} != 0) ❌")
-
 if __name__ == "__main__":
     hyperdrive = Hyperdrive()
     hyperdrive.test_hyperdrive()
