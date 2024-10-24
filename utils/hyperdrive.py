@@ -90,6 +90,8 @@ def get_pool_details(pool_contract):
     config_outputs = pool_contract.functions.getPoolConfig().abi['outputs'][0]['components']
     config_keys = [i['name'] for i in config_outputs if 'name' in i]
     config = dict(zip(config_keys, config_values))
+    for k,v in config.items():
+        print(f"{k}: {v}")
     info_values = pool_contract.functions.getPoolInfo().call()
     info_outputs = pool_contract.functions.getPoolInfo().abi['outputs'][0]['components']
     info_keys = [i['name'] for i in info_outputs if 'name' in i]

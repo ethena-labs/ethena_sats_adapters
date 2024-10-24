@@ -1,10 +1,9 @@
-import itertools
 from decimal import Decimal
 from constants.chains import Chain
 from models.integration import Integration
 from constants.integration_ids import IntegrationID
 from constants.hyperdrive import HYPERDRIVE_SUSDE_POOL_ADDRESS, HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK, HYPERDRIVE_MORPHO_ABI
-from utils.hyperdrive import get_hyperdrive_participants, get_pool_details, get_pool_positions, get_trade_details
+from utils.hyperdrive import get_hyperdrive_participants, get_pool_details, get_pool_positions
 from utils.web3_utils import w3
 
 class Hyperdrive(Integration):
