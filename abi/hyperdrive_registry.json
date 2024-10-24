@@ -1,0 +1,555 @@
+[
+    {
+        "inputs": [
+        {
+            "internalType": "string",
+            "name": "_name",
+            "type": "string"
+        }],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [],
+        "name": "EndIndexTooLarge",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InputLengthMismatch",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidFactory",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidIndexes",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "Unauthorized",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": true,
+            "internalType": "address",
+            "name": "admin",
+            "type": "address"
+        }],
+        "name": "AdminUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": true,
+            "internalType": "address",
+            "name": "factory",
+            "type": "address"
+        },
+        {
+            "indexed": true,
+            "internalType": "uint256",
+            "name": "data",
+            "type": "uint256"
+        }],
+        "name": "FactoryInfoUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+        {
+            "indexed": true,
+            "internalType": "address",
+            "name": "instance",
+            "type": "address"
+        },
+        {
+            "indexed": true,
+            "internalType": "uint256",
+            "name": "data",
+            "type": "uint256"
+        },
+        {
+            "indexed": true,
+            "internalType": "address",
+            "name": "factory",
+            "type": "address"
+        }],
+        "name": "InstanceInfoUpdated",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "admin",
+        "outputs": [
+        {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "uint256",
+            "name": "_startIndex",
+            "type": "uint256"
+        },
+        {
+            "internalType": "uint256",
+            "name": "_endIndex",
+            "type": "uint256"
+        }],
+        "name": "getFactoriesInRange",
+        "outputs": [
+        {
+            "internalType": "address[]",
+            "name": "factories",
+            "type": "address[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "uint256",
+            "name": "_index",
+            "type": "uint256"
+        }],
+        "name": "getFactoryAtIndex",
+        "outputs": [
+        {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_factory",
+            "type": "address"
+        }],
+        "name": "getFactoryInfo",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            }],
+            "internalType": "struct IHyperdriveRegistry.FactoryInfo",
+            "name": "info",
+            "type": "tuple"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_factory",
+            "type": "address"
+        }],
+        "name": "getFactoryInfoWithMetadata",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "version",
+                "type": "string"
+            }],
+            "internalType": "struct IHyperdriveRegistry.FactoryInfoWithMetadata",
+            "name": "info",
+            "type": "tuple"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__factories",
+            "type": "address[]"
+        }],
+        "name": "getFactoryInfos",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            }],
+            "internalType": "struct IHyperdriveRegistry.FactoryInfo[]",
+            "name": "info",
+            "type": "tuple[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__factories",
+            "type": "address[]"
+        }],
+        "name": "getFactoryInfosWithMetadata",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "version",
+                "type": "string"
+            }],
+            "internalType": "struct IHyperdriveRegistry.FactoryInfoWithMetadata[]",
+            "name": "info",
+            "type": "tuple[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "uint256",
+            "name": "_index",
+            "type": "uint256"
+        }],
+        "name": "getInstanceAtIndex",
+        "outputs": [
+        {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_instance",
+            "type": "address"
+        }],
+        "name": "getInstanceInfo",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "factory",
+                "type": "address"
+            }],
+            "internalType": "struct IHyperdriveRegistry.InstanceInfo",
+            "name": "info",
+            "type": "tuple"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_instance",
+            "type": "address"
+        }],
+        "name": "getInstanceInfoWithMetadata",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "factory",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "version",
+                "type": "string"
+            }],
+            "internalType": "struct IHyperdriveRegistry.InstanceInfoWithMetadata",
+            "name": "info",
+            "type": "tuple"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__instances",
+            "type": "address[]"
+        }],
+        "name": "getInstanceInfos",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "factory",
+                "type": "address"
+            }],
+            "internalType": "struct IHyperdriveRegistry.InstanceInfo[]",
+            "name": "info",
+            "type": "tuple[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__instances",
+            "type": "address[]"
+        }],
+        "name": "getInstanceInfosWithMetadata",
+        "outputs": [
+        {
+            "components": [
+            {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "factory",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "kind",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "version",
+                "type": "string"
+            }],
+            "internalType": "struct IHyperdriveRegistry.InstanceInfoWithMetadata[]",
+            "name": "info",
+            "type": "tuple[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "uint256",
+            "name": "_startIndex",
+            "type": "uint256"
+        },
+        {
+            "internalType": "uint256",
+            "name": "_endIndex",
+            "type": "uint256"
+        }],
+        "name": "getInstancesInRange",
+        "outputs": [
+        {
+            "internalType": "address[]",
+            "name": "instances",
+            "type": "address[]"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNumberOfFactories",
+        "outputs": [
+        {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNumberOfInstances",
+        "outputs": [
+        {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "kind",
+        "outputs": [
+        {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+        {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__factories",
+            "type": "address[]"
+        },
+        {
+            "internalType": "uint128[]",
+            "name": "_data",
+            "type": "uint128[]"
+        }],
+        "name": "setFactoryInfo",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address[]",
+            "name": "__instances",
+            "type": "address[]"
+        },
+        {
+            "internalType": "uint128[]",
+            "name": "_data",
+            "type": "uint128[]"
+        },
+        {
+            "internalType": "address[]",
+            "name": "__factories",
+            "type": "address[]"
+        }],
+        "name": "setInstanceInfo",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+        {
+            "internalType": "address",
+            "name": "_admin",
+            "type": "address"
+        }],
+        "name": "updateAdmin",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "version",
+        "outputs": [
+        {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    }]

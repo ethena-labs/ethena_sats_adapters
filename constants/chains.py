@@ -9,5 +9,4 @@ class Chain(Enum):
     BLAST = "Blast"
     SCROLL = "Scroll"
     MODE = "Mode"
-    FRAXTAL = "Fraxtal"
     OPTIMISM = "Optimism"
