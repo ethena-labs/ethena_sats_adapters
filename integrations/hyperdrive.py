@@ -30,8 +30,7 @@ class Hyperdrive(Integration):
         )
 
     def get_participants(self, blocks: Optional[List[int]]) -> Set[str]:
-        if self.pool_users is None:
-            self.update_participants()
+        self.update_participants()
         return self.pool_users
 
     def get_balance(self, user: str, block: int) -> float:
