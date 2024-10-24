@@ -1,9 +1,10 @@
+import itertools
 from decimal import Decimal
 from constants.chains import Chain
 from models.integration import Integration
 from constants.integration_ids import IntegrationID
 from constants.hyperdrive import HYPERDRIVE_SUSDE_POOL_ADDRESS, HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK, HYPERDRIVE_MORPHO_ABI
-from utils.hyperdrive import get_hyperdrive_participants, get_pool_details, get_pool_positions
+from utils.hyperdrive import get_hyperdrive_participants, get_pool_details, get_pool_positions, get_trade_details
 from utils.web3_utils import w3
 
 class Hyperdrive(Integration):
@@ -53,16 +54,13 @@ class Hyperdrive(Integration):
         return rewardable_tvl / 1e18
 
     def test_hyperdrive(self):
-        pool_users, pool_ids = get_hyperdrive_participants(
-            pool=HYPERDRIVE_SUSDE_POOL_ADDRESS,
-            start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
-        )
+        self.update_participants()
         pool_contract = w3.eth.contract(address=w3.to_checksum_address(HYPERDRIVE_SUSDE_POOL_ADDRESS), abi=HYPERDRIVE_MORPHO_ABI)
         vault_shares_balance, lp_rewardable_tvl, short_rewardable_tvl = get_pool_details(pool_contract)
         pool_positions = get_pool_positions(
             pool_contract=pool_contract,
-            pool_users=pool_users,
-            pool_ids=pool_ids,
+            pool_users=self.pool_users,
+            pool_ids=self.pool_ids,
             lp_rewardable_tvl=lp_rewardable_tvl,
             short_rewardable_tvl=short_rewardable_tvl,
         )
@@ -82,3 +80,15 @@ class Hyperdrive(Integration):
             print(f"vault_shares_balance == total_rewardable ({vault_shares_balance} == {total_rewardable}) ✅")
         else:
             print(f"vault_shares_balance != total_rewardable ({vault_shares_balance} != {total_rewardable}) ❌")
+
+        for user, id in itertools.product(self.pool_users, self.pool_ids):
+            trade_type, _, _ = get_trade_details(int(id))
+            if trade_type == 0:
+                if pool_contract.functions.balanceOf(int(id), user).call() == Decimal(0):
+                    print(f"balanceOf({id}, {user}) == 0 ({pool_contract.functions.balanceOf(int(id), user).call()} == 0) ✅")
+                else:
+                    print(f"balanceOf({id}, {user}) != 0 ({pool_contract.functions.balanceOf(int(id), user).call()} != 0) ❌")
+
+if __name__ == "__main__":
+    hyperdrive = Hyperdrive()
+    hyperdrive.test_hyperdrive()
