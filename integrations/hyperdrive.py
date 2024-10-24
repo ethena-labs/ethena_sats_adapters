@@ -1,4 +1,3 @@
-from typing import List, Optional, Set
 from decimal import Decimal
 from constants.chains import Chain
 from models.integration import Integration
@@ -29,7 +28,7 @@ class Hyperdrive(Integration):
             start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
         )
 
-    def get_participants(self, blocks: Optional[List[int]]) -> Set[str]:
+    def get_participants(self):
         self.update_participants()
         return self.pool_users
 
