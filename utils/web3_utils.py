@@ -27,6 +27,8 @@ MODE_NODE_URL = os.getenv("MODE_NODE_URL")
 w3_mode = Web3(Web3.HTTPProvider(MODE_NODE_URL))
 FRAXTAL_NODE_URL = os.getenv("FRAXTAL_NODE_URL")
 w3_fraxtal = Web3(Web3.HTTPProvider(FRAXTAL_NODE_URL))
+LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
+w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -49,6 +51,9 @@ W3_BY_CHAIN = {
     },
     Chain.FRAXTAL: {
         "w3": w3_fraxtal,
+    },
+    Chain.Lyra: {
+        "w3": w3_lyra,
     },
 }
 
