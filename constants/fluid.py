@@ -1,0 +1,2 @@
+vaultResolver = "0x56ddF84B2c94BF3361862FcEdB704C382dc4cd32"
+vaultFactory  = "0x324c5Dc1fC42c7a4D43d92df1eBA58a54d13Bf2d"
