@@ -8,11 +8,6 @@
             },
             {
                 "internalType": "address",
-                "name": "liquidity_",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
                 "name": "liquidityResolver_",
                 "type": "address"
             }
@@ -26,19 +21,6 @@
         "outputs": [
             {
                 "internalType": "contract IFluidVaultFactory",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "LIQUIDITY",
-        "outputs": [
-            {
-                "internalType": "contract IFluidLiquidity",
                 "name": "",
                 "type": "address"
             }
@@ -144,6 +126,25 @@
                 "type": "address"
             }
         ],
+        "name": "getAbsorbedDustDebt",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            }
+        ],
         "name": "getAbsorbedLiquidityRaw",
         "outputs": [
             {
@@ -181,33 +182,48 @@
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenIn",
+                        "name": "token0In",
                         "type": "address"
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenOut",
+                        "name": "token0Out",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1In",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1Out",
                         "type": "address"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtOne",
+                        "name": "inAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtOne",
+                        "name": "outAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtTwo",
+                        "name": "inAmtWithAbsorb",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtTwo",
+                        "name": "outAmtWithAbsorb",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "absorbAvailable",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct Structs.LiquidationStruct[]",
@@ -245,6 +261,49 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "index_",
+                "type": "uint256"
+            }
+        ],
+        "name": "getContractForDeployerIndex",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            }
+        ],
+        "name": "getDexFromAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address[]",
                 "name": "vaults_",
                 "type": "address[]"
@@ -266,33 +325,48 @@
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenIn",
+                        "name": "token0In",
                         "type": "address"
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenOut",
+                        "name": "token0Out",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1In",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1Out",
                         "type": "address"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtOne",
+                        "name": "inAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtOne",
+                        "name": "outAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtTwo",
+                        "name": "inAmtWithAbsorb",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtTwo",
+                        "name": "outAmtWithAbsorb",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "absorbAvailable",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct Structs.LiquidationStruct[]",
@@ -542,6 +616,16 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "bool",
+                        "name": "isSmartCol",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isSmartDebt",
+                        "type": "bool"
+                    },
+                    {
                         "components": [
                             {
                                 "internalType": "address",
@@ -551,6 +635,11 @@
                             {
                                 "internalType": "address",
                                 "name": "factory",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "operateImplementation",
                                 "type": "address"
                             },
                             {
@@ -565,23 +654,52 @@
                             },
                             {
                                 "internalType": "address",
-                                "name": "supplyToken",
+                                "name": "deployer",
                                 "type": "address"
                             },
                             {
                                 "internalType": "address",
-                                "name": "borrowToken",
+                                "name": "supply",
                                 "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "supplyDecimals",
-                                "type": "uint8"
+                                "internalType": "address",
+                                "name": "borrow",
+                                "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "borrowDecimals",
-                                "type": "uint8"
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "supplyToken",
+                                "type": "tuple"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "borrowToken",
+                                "type": "tuple"
                             },
                             {
                                 "internalType": "uint256",
@@ -589,27 +707,32 @@
                                 "type": "uint256"
                             },
                             {
+                                "internalType": "uint256",
+                                "name": "vaultType",
+                                "type": "uint256"
+                            },
+                            {
                                 "internalType": "bytes32",
-                                "name": "liquiditySupplyExchangePriceSlot",
+                                "name": "supplyExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityBorrowExchangePriceSlot",
+                                "name": "borrowExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserSupplySlot",
+                                "name": "userSupplySlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserBorrowSlot",
+                                "name": "userBorrowSlot",
                                 "type": "bytes32"
                             }
                         ],
-                        "internalType": "struct IFluidVaultT1.ConstantViews",
+                        "internalType": "struct IFluidVault.ConstantViews",
                         "name": "constantVariables",
                         "type": "tuple"
                     },
@@ -674,6 +797,11 @@
                                 "internalType": "address",
                                 "name": "rebalancer",
                                 "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "lastUpdateTimestamp",
+                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct Structs.Configs",
@@ -724,16 +852,6 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "supplyRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "borrowRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
                                 "name": "supplyRateLiquidity",
                                 "type": "uint256"
                             },
@@ -743,9 +861,24 @@
                                 "type": "uint256"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "rewardsRate",
-                                "type": "uint256"
+                                "internalType": "int256",
+                                "name": "supplyRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "borrowRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateSupply",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateBorrow",
+                                "type": "int256"
                             }
                         ],
                         "internalType": "struct Structs.ExchangePricesAndRates",
@@ -766,12 +899,12 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalSupplyLiquidity",
+                                "name": "totalSupplyLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalBorrowLiquidity",
+                                "name": "totalBorrowLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
@@ -1081,33 +1214,48 @@
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenIn",
+                        "name": "token0In",
                         "type": "address"
                     },
                     {
                         "internalType": "address",
-                        "name": "tokenOut",
+                        "name": "token0Out",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1In",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token1Out",
                         "type": "address"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtOne",
+                        "name": "inAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtOne",
+                        "name": "outAmt",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenInAmtTwo",
+                        "name": "inAmtWithAbsorb",
                         "type": "uint256"
                     },
                     {
                         "internalType": "uint256",
-                        "name": "tokenOutAmtTwo",
+                        "name": "outAmtWithAbsorb",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "absorbAvailable",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct Structs.LiquidationStruct",
@@ -1206,6 +1354,25 @@
                 "internalType": "struct Structs.VaultState",
                 "name": "vaultState_",
                 "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            }
+        ],
+        "name": "getVaultType",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "vaultType_",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -1323,6 +1490,16 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "bool",
+                        "name": "isSmartCol",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isSmartDebt",
+                        "type": "bool"
+                    },
+                    {
                         "components": [
                             {
                                 "internalType": "address",
@@ -1332,6 +1509,11 @@
                             {
                                 "internalType": "address",
                                 "name": "factory",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "operateImplementation",
                                 "type": "address"
                             },
                             {
@@ -1346,23 +1528,52 @@
                             },
                             {
                                 "internalType": "address",
-                                "name": "supplyToken",
+                                "name": "deployer",
                                 "type": "address"
                             },
                             {
                                 "internalType": "address",
-                                "name": "borrowToken",
+                                "name": "supply",
                                 "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "supplyDecimals",
-                                "type": "uint8"
+                                "internalType": "address",
+                                "name": "borrow",
+                                "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "borrowDecimals",
-                                "type": "uint8"
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "supplyToken",
+                                "type": "tuple"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "borrowToken",
+                                "type": "tuple"
                             },
                             {
                                 "internalType": "uint256",
@@ -1370,27 +1581,32 @@
                                 "type": "uint256"
                             },
                             {
+                                "internalType": "uint256",
+                                "name": "vaultType",
+                                "type": "uint256"
+                            },
+                            {
                                 "internalType": "bytes32",
-                                "name": "liquiditySupplyExchangePriceSlot",
+                                "name": "supplyExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityBorrowExchangePriceSlot",
+                                "name": "borrowExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserSupplySlot",
+                                "name": "userSupplySlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserBorrowSlot",
+                                "name": "userBorrowSlot",
                                 "type": "bytes32"
                             }
                         ],
-                        "internalType": "struct IFluidVaultT1.ConstantViews",
+                        "internalType": "struct IFluidVault.ConstantViews",
                         "name": "constantVariables",
                         "type": "tuple"
                     },
@@ -1455,6 +1671,11 @@
                                 "internalType": "address",
                                 "name": "rebalancer",
                                 "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "lastUpdateTimestamp",
+                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct Structs.Configs",
@@ -1505,16 +1726,6 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "supplyRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "borrowRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
                                 "name": "supplyRateLiquidity",
                                 "type": "uint256"
                             },
@@ -1524,9 +1735,24 @@
                                 "type": "uint256"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "rewardsRate",
-                                "type": "uint256"
+                                "internalType": "int256",
+                                "name": "supplyRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "borrowRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateSupply",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateBorrow",
+                                "type": "int256"
                             }
                         ],
                         "internalType": "struct Structs.ExchangePricesAndRates",
@@ -1547,12 +1773,12 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalSupplyLiquidity",
+                                "name": "totalSupplyLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalBorrowLiquidity",
+                                "name": "totalBorrowLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
@@ -1831,6 +2057,16 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "bool",
+                        "name": "isSmartCol",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isSmartDebt",
+                        "type": "bool"
+                    },
+                    {
                         "components": [
                             {
                                 "internalType": "address",
@@ -1840,6 +2076,11 @@
                             {
                                 "internalType": "address",
                                 "name": "factory",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "operateImplementation",
                                 "type": "address"
                             },
                             {
@@ -1854,23 +2095,52 @@
                             },
                             {
                                 "internalType": "address",
-                                "name": "supplyToken",
+                                "name": "deployer",
                                 "type": "address"
                             },
                             {
                                 "internalType": "address",
-                                "name": "borrowToken",
+                                "name": "supply",
                                 "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "supplyDecimals",
-                                "type": "uint8"
+                                "internalType": "address",
+                                "name": "borrow",
+                                "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "borrowDecimals",
-                                "type": "uint8"
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "supplyToken",
+                                "type": "tuple"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "borrowToken",
+                                "type": "tuple"
                             },
                             {
                                 "internalType": "uint256",
@@ -1878,27 +2148,32 @@
                                 "type": "uint256"
                             },
                             {
+                                "internalType": "uint256",
+                                "name": "vaultType",
+                                "type": "uint256"
+                            },
+                            {
                                 "internalType": "bytes32",
-                                "name": "liquiditySupplyExchangePriceSlot",
+                                "name": "supplyExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityBorrowExchangePriceSlot",
+                                "name": "borrowExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserSupplySlot",
+                                "name": "userSupplySlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserBorrowSlot",
+                                "name": "userBorrowSlot",
                                 "type": "bytes32"
                             }
                         ],
-                        "internalType": "struct IFluidVaultT1.ConstantViews",
+                        "internalType": "struct IFluidVault.ConstantViews",
                         "name": "constantVariables",
                         "type": "tuple"
                     },
@@ -1963,6 +2238,11 @@
                                 "internalType": "address",
                                 "name": "rebalancer",
                                 "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "lastUpdateTimestamp",
+                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct Structs.Configs",
@@ -2013,16 +2293,6 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "supplyRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "borrowRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
                                 "name": "supplyRateLiquidity",
                                 "type": "uint256"
                             },
@@ -2032,9 +2302,24 @@
                                 "type": "uint256"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "rewardsRate",
-                                "type": "uint256"
+                                "internalType": "int256",
+                                "name": "supplyRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "borrowRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateSupply",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateBorrow",
+                                "type": "int256"
                             }
                         ],
                         "internalType": "struct Structs.ExchangePricesAndRates",
@@ -2055,12 +2340,12 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalSupplyLiquidity",
+                                "name": "totalSupplyLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalBorrowLiquidity",
+                                "name": "totalBorrowLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
@@ -2431,6 +2716,16 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "bool",
+                        "name": "isSmartCol",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isSmartDebt",
+                        "type": "bool"
+                    },
+                    {
                         "components": [
                             {
                                 "internalType": "address",
@@ -2440,6 +2735,11 @@
                             {
                                 "internalType": "address",
                                 "name": "factory",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "operateImplementation",
                                 "type": "address"
                             },
                             {
@@ -2454,23 +2754,52 @@
                             },
                             {
                                 "internalType": "address",
-                                "name": "supplyToken",
+                                "name": "deployer",
                                 "type": "address"
                             },
                             {
                                 "internalType": "address",
-                                "name": "borrowToken",
+                                "name": "supply",
                                 "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "supplyDecimals",
-                                "type": "uint8"
+                                "internalType": "address",
+                                "name": "borrow",
+                                "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "borrowDecimals",
-                                "type": "uint8"
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "supplyToken",
+                                "type": "tuple"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "borrowToken",
+                                "type": "tuple"
                             },
                             {
                                 "internalType": "uint256",
@@ -2478,27 +2807,32 @@
                                 "type": "uint256"
                             },
                             {
+                                "internalType": "uint256",
+                                "name": "vaultType",
+                                "type": "uint256"
+                            },
+                            {
                                 "internalType": "bytes32",
-                                "name": "liquiditySupplyExchangePriceSlot",
+                                "name": "supplyExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityBorrowExchangePriceSlot",
+                                "name": "borrowExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserSupplySlot",
+                                "name": "userSupplySlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserBorrowSlot",
+                                "name": "userBorrowSlot",
                                 "type": "bytes32"
                             }
                         ],
-                        "internalType": "struct IFluidVaultT1.ConstantViews",
+                        "internalType": "struct IFluidVault.ConstantViews",
                         "name": "constantVariables",
                         "type": "tuple"
                     },
@@ -2563,6 +2897,11 @@
                                 "internalType": "address",
                                 "name": "rebalancer",
                                 "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "lastUpdateTimestamp",
+                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct Structs.Configs",
@@ -2613,16 +2952,6 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "supplyRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "borrowRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
                                 "name": "supplyRateLiquidity",
                                 "type": "uint256"
                             },
@@ -2632,9 +2961,24 @@
                                 "type": "uint256"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "rewardsRate",
-                                "type": "uint256"
+                                "internalType": "int256",
+                                "name": "supplyRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "borrowRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateSupply",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateBorrow",
+                                "type": "int256"
                             }
                         ],
                         "internalType": "struct Structs.ExchangePricesAndRates",
@@ -2655,12 +2999,12 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalSupplyLiquidity",
+                                "name": "totalSupplyLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalBorrowLiquidity",
+                                "name": "totalBorrowLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
@@ -3012,6 +3356,16 @@
                         "type": "address"
                     },
                     {
+                        "internalType": "bool",
+                        "name": "isSmartCol",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isSmartDebt",
+                        "type": "bool"
+                    },
+                    {
                         "components": [
                             {
                                 "internalType": "address",
@@ -3021,6 +3375,11 @@
                             {
                                 "internalType": "address",
                                 "name": "factory",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "operateImplementation",
                                 "type": "address"
                             },
                             {
@@ -3035,23 +3394,52 @@
                             },
                             {
                                 "internalType": "address",
-                                "name": "supplyToken",
+                                "name": "deployer",
                                 "type": "address"
                             },
                             {
                                 "internalType": "address",
-                                "name": "borrowToken",
+                                "name": "supply",
                                 "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "supplyDecimals",
-                                "type": "uint8"
+                                "internalType": "address",
+                                "name": "borrow",
+                                "type": "address"
                             },
                             {
-                                "internalType": "uint8",
-                                "name": "borrowDecimals",
-                                "type": "uint8"
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "supplyToken",
+                                "type": "tuple"
+                            },
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "address",
+                                        "name": "token0",
+                                        "type": "address"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "token1",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IFluidVault.Tokens",
+                                "name": "borrowToken",
+                                "type": "tuple"
                             },
                             {
                                 "internalType": "uint256",
@@ -3059,27 +3447,32 @@
                                 "type": "uint256"
                             },
                             {
+                                "internalType": "uint256",
+                                "name": "vaultType",
+                                "type": "uint256"
+                            },
+                            {
                                 "internalType": "bytes32",
-                                "name": "liquiditySupplyExchangePriceSlot",
+                                "name": "supplyExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityBorrowExchangePriceSlot",
+                                "name": "borrowExchangePriceSlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserSupplySlot",
+                                "name": "userSupplySlot",
                                 "type": "bytes32"
                             },
                             {
                                 "internalType": "bytes32",
-                                "name": "liquidityUserBorrowSlot",
+                                "name": "userBorrowSlot",
                                 "type": "bytes32"
                             }
                         ],
-                        "internalType": "struct IFluidVaultT1.ConstantViews",
+                        "internalType": "struct IFluidVault.ConstantViews",
                         "name": "constantVariables",
                         "type": "tuple"
                     },
@@ -3144,6 +3537,11 @@
                                 "internalType": "address",
                                 "name": "rebalancer",
                                 "type": "address"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "lastUpdateTimestamp",
+                                "type": "uint256"
                             }
                         ],
                         "internalType": "struct Structs.Configs",
@@ -3194,16 +3592,6 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "supplyRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "borrowRateVault",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
                                 "name": "supplyRateLiquidity",
                                 "type": "uint256"
                             },
@@ -3213,9 +3601,24 @@
                                 "type": "uint256"
                             },
                             {
-                                "internalType": "uint256",
-                                "name": "rewardsRate",
-                                "type": "uint256"
+                                "internalType": "int256",
+                                "name": "supplyRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "borrowRateVault",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateSupply",
+                                "type": "int256"
+                            },
+                            {
+                                "internalType": "int256",
+                                "name": "rewardsOrFeeRateBorrow",
+                                "type": "int256"
                             }
                         ],
                         "internalType": "struct Structs.ExchangePricesAndRates",
@@ -3236,12 +3639,12 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalSupplyLiquidity",
+                                "name": "totalSupplyLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "totalBorrowLiquidity",
+                                "name": "totalBorrowLiquidityOrDex",
                                 "type": "uint256"
                             },
                             {
