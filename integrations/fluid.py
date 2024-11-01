@@ -3,8 +3,7 @@ from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.fluid import vaultResolver_contract, vaultFactory_contract, vaultPositionResolver_contract
-from constants.fluid import susde
-import json
+from constants.integration_token import Token
 
 class FluidIntegration(
     Integration
@@ -23,16 +22,13 @@ class FluidIntegration(
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
-        try:
-            userPositions, vaultEntireDatas = call_with_retry(vaultResolver_contract.functions.positionsByUser(user), block)
-            for userPosition in userPositions:
-                if vaultEntireDatas[0][3][8][0] != susde:
-                    continue
-                balance += userPosition[9]
-            return balance/1e18
-        except Exception as e:
-            return 0
-
+        relevant_vaults = self.get_relevant_vaults(block)
+        for vault in relevant_vaults:
+            allUserPositions = call_with_retry(vaultPositionResolver_contract.functions.getAllVaultPositions(vault), block)
+            for userPosition in allUserPositions:
+                if userPosition[1] == user:
+                    balance += userPosition[2]
+        return balance/1e18
 
     def get_participants(self) -> list:
         participants = []
@@ -46,7 +42,6 @@ class FluidIntegration(
 
         try:
             current_block = W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.get_block_number()
-            total_nfts = call_with_retry(vaultResolver_contract.functions.totalPositions(), current_block)
             for i in relavantNfts:
                 owner = call_with_retry(vaultFactory_contract.functions.ownerOf(i), current_block)
                 if owner not in participants:
@@ -56,12 +51,10 @@ class FluidIntegration(
         return participants
     
     def get_relevant_vaults(self, block: int) -> list:
-        vaults = []
-        totalVaults = call_with_retry(vaultFactory_contract.functions.totalVaults(), block)
-        for i in range(1, totalVaults + 1):
-            vaultAddress = call_with_retry(vaultFactory_contract.functions.getVaultAddress(i), block)
+        vaults = call_with_retry(vaultResolver_contract.functions.getAllVaultsAddresses(), block)
+        for vaultAddress in vaults:
             supplyTokenOfVault = (call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block))[3][8][0]
-            if supplyTokenOfVault == susde:
+            if supplyTokenOfVault == Token.SUSDE:
                 vaults.append(vaultAddress)
         return vaults
 
