@@ -3,11 +3,12 @@ from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.fluid import vaultResolver_contract, vaultFactory_contract, vaultPositionResolver_contract
-from constants.integration_token import Token
+from constants.fluid import sUSDe
 
 class FluidIntegration(
     Integration
 ):
+
     def __init__(self):
         super().__init__(
             IntegrationID.FLUID,
@@ -19,6 +20,7 @@ class FluidIntegration(
             None,
             None,
         )
+        self.blocknumber_to_susdeVaults = {}
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
@@ -51,12 +53,26 @@ class FluidIntegration(
         return participants
     
     def get_relevant_vaults(self, block: int) -> list:
+        if block in self.blocknumber_to_susdeVaults:
+            return self.blocknumber_to_susdeVaults[block]
+        
+        
+        if self.blocknumber_to_susdeVaults != {}:
+            totalVaults = call_with_retry(vaultResolver_contract.functions.getTotalVaults(), block)
+            for block_number in self.blocknumber_to_susdeVaults:
+                totalVaults_at_block = call_with_retry(vaultResolver_contract.functions.getTotalVaults(), block_number)
+                if totalVaults == totalVaults_at_block:
+                    self.blocknumber_to_susdeVaults[block] = self.blocknumber_to_susdeVaults[block_number]
+                    return self.blocknumber_to_susdeVaults[block_number]
+
         vaults = call_with_retry(vaultResolver_contract.functions.getAllVaultsAddresses(), block)
+        relevantVaults = []
         for vaultAddress in vaults:
             supplyTokenOfVault = (call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block))[3][8][0]
-            if supplyTokenOfVault == Token.SUSDE:
-                vaults.append(vaultAddress)
-        return vaults
+            if supplyTokenOfVault == sUSDe:
+                relevantVaults.append(vaultAddress)
+        self.blocknumber_to_susdeVaults[block] = relevantVaults
+        return relevantVaults
 
 
 if __name__ == "__main__":
