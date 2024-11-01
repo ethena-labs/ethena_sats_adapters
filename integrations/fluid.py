@@ -15,7 +15,7 @@ class FluidIntegration(
             21016131,
             Chain.ETHEREUM,
             None,
-            20,
+            5,
             1,
             None,
             None,
