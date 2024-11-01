@@ -59,20 +59,17 @@ class FluidIntegration(
         vaults = []
         totalVaults = call_with_retry(vaultFactory_contract.functions.totalVaults(), block)
         for i in range(1, totalVaults + 1):
-            print(i)
             vaultAddress = call_with_retry(vaultFactory_contract.functions.getVaultAddress(i), block)
             supplyTokenOfVault = (call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block))[3][8][0]
-            print(supplyTokenOfVault)
             if supplyTokenOfVault == susde:
                 vaults.append(vaultAddress)
-                print(vaults)
         return vaults
 
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-    # print(example_integration.get_relevant_vaults(21088189))
-    # print(example_integration.get_participants())
+    print(example_integration.get_relevant_vaults(21088189))
+    print(example_integration.get_participants())
     print(
         example_integration.get_balance("0x169dC0999f4dD957EbcB68a7A8AFfe87c57C4faE", 21079685)
     )
