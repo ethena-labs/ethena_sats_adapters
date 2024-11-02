@@ -2,7 +2,7 @@ from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
-from utils.fluid import vaultResolver_contract, vaultFactory_contract, vaultPositionResolver_contract
+from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract
 from constants.fluid import sUSDe
 
 class FluidIntegration(
@@ -24,28 +24,28 @@ class FluidIntegration(
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
-        relevant_vaults = self.get_relevant_vaults(block)
-        for vault in relevant_vaults:
-            allUserPositions = call_with_retry(vaultPositionResolver_contract.functions.getAllVaultPositions(vault), block)
-            for userPosition in allUserPositions:
-                if userPosition[1] == user:
-                    balance += userPosition[2]
-        return balance/1e18
+        try:
+            userPositions, vaultEntireDatas = call_with_retry(vaultResolver_contract.functions.positionsByUser(user), block)
+            for i in range(len(userPositions)):
+                if vaultEntireDatas[i][3][8][0] == sUSDe:
+                    balance += userPositions[i][9]
+            return balance/1e18
+        except Exception as e:
+            return 0
 
     def get_participants(self) -> list:
         participants = []
         current_block = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
 
         relevant_vaults = self.get_relevant_vaults(current_block)
-        relavantNfts = []
+        relavantUserPositions = []
 
-        for vault in relevant_vaults:
-            relavantNfts += call_with_retry(vaultPositionResolver_contract.functions.getAllVaultNftIds(vault), current_block)
 
         try:
-            current_block = W3_BY_CHAIN[Chain.ETHEREUM]["w3"].eth.get_block_number()
-            for i in relavantNfts:
-                owner = call_with_retry(vaultFactory_contract.functions.ownerOf(i), current_block)
+            for vault in relevant_vaults:
+                relavantUserPositions += call_with_retry(vaultPositionResolver_contract.functions.getAllVaultPositions(vault), current_block)
+            for userPosition in relavantUserPositions:
+                owner = userPosition[1]
                 if owner not in participants:
                     participants.append(owner)
         except Exception as e:
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     print(example_integration.get_relevant_vaults(21088189))
     print(example_integration.get_participants())
     print(
-        example_integration.get_balance("0x169dC0999f4dD957EbcB68a7A8AFfe87c57C4faE", 21079685)
+        example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21079685)
     )
