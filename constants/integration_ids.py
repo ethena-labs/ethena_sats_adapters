@@ -140,6 +140,9 @@ class IntegrationID(Enum):
     # Hyperdrive
     HYPERDRIVE_SUSDE = ('hyperdrive_susde', 'ElementDAO 182 Day sUSDe Hyperdrive', Token.SUSDE)
 
+    # Fluid
+    FLUID = ('Fluid_susde', 'Fluid sUSDe', Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
