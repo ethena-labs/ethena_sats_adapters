@@ -2,8 +2,9 @@ from constants.chains import Chain
 from constants.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
-from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract
+from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract, dexResolver_contract
 from constants.fluid import USDe
+import json
 
 class FluidIntegration(
     Integration
@@ -15,7 +16,7 @@ class FluidIntegration(
             21016131,
             Chain.ETHEREUM,
             None,
-            20,
+            30,
             1,
             None,
             None,
@@ -27,8 +28,13 @@ class FluidIntegration(
         try:
             userPositions, vaultEntireDatas = call_with_retry(vaultResolver_contract.functions.positionsByUser(user), block)
             for i in range(len(userPositions)):
-                if vaultEntireDatas[i][3][8][0] == USDe and userPositions[i][10] != 40000:
-                    balance += userPositions[i][9]
+                if vaultEntireDatas[i][3][8][0] == USDe and userPositions[i][10] == 40000:
+                    # underlying dex as supply token in the vault
+                    dexAddress = vaultEntireDatas[i][3][6]
+                    # fetching the dex state to get the shares to tokens ratio
+                    dexstate = dexResolver_contract.functions.getDexState(dexAddress).call(block_identifier=block)
+                    token0PerSupplyShare = dexstate[-4]
+                    balance += userPositions[i][9] * token0PerSupplyShare
             return balance/1e18
         except Exception as e:
             return 0
@@ -77,13 +83,13 @@ class FluidIntegration(
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-    # print("getting relevant vaults")
-    # print(example_integration.get_relevant_vaults(21088189))
+    print("getting relevant vaults")
+    print(example_integration.get_relevant_vaults(21151876))
 
-    # print("\n\n\ngetting participants")
-    # print(example_integration.get_participants())
+    print("\n\n\ngetting participants")
+    print(example_integration.get_participants())
 
-    # print("\n\n\n getting balance")
+    print("\n\n\n getting balance")
     print(
-        example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21079685)
+        example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21151876)
     )
