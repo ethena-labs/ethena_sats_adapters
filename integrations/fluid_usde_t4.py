@@ -34,8 +34,8 @@ class FluidIntegration(
                 if vaultEntireDatas[i][3][8][0] == USDe and userPositions[i][10] == 40000:
                     # underlying dex as supply token in the vault
                     dexAddress = vaultEntireDatas[i][3][6]
-                    # fetching the dex state to get the shares to tokens ratio
                     dexstate = dexResolver_contract.functions.getDexState(dexAddress).call(block_identifier=block)
+                    # fetching the dex state to get the shares to tokens ratio
                     token0PerSupplyShare = dexstate[-4]
                     balance += userPositions[i][9] * token0PerSupplyShare
             return balance/1e18
