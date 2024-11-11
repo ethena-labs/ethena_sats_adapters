@@ -23,7 +23,8 @@ class FluidIntegration(
         )
         self.blocknumber_to_usdeVaults = {}
         latestBlockNumber = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
-        self.relevant_vaults = self.get_relevant_vaults(latestBlockNumber)
+        self.relevant_vaults = []
+        self.get_relevant_vaults(latestBlockNumber)
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
@@ -78,6 +79,7 @@ class FluidIntegration(
             if supplyTokenOfVault == USDe:
                 relevantVaults.append(vaultAddress)
         self.blocknumber_to_usdeVaults[block] = relevantVaults
+        self.relevant_vaults = relevantVaults
         return relevantVaults
 
 
