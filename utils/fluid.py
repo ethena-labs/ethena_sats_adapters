@@ -2,7 +2,6 @@ import json
 from utils.web3_utils import (
     w3,
 )
-
 from constants.fluid import vaultResolver, vaultPositionResolver, dexResolver
 
 with open("abi/fluid_vault_resolver.json") as f:
