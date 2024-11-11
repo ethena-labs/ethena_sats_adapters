@@ -22,6 +22,8 @@ class FluidIntegration(
             None,
         )
         self.blocknumber_to_usdeVaults = {}
+        latestBlockNumber = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
+        self.relevant_vaults = self.get_relevant_vaults(latestBlockNumber)
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
@@ -42,13 +44,11 @@ class FluidIntegration(
     def get_participants(self) -> list:
         participants = []
         current_block = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
-
-        relevant_vaults = self.get_relevant_vaults(current_block)
         relavantUserPositions = []
 
 
         try:
-            for vault in relevant_vaults:
+            for vault in self.relevant_vaults:
                 relavantUserPositions += call_with_retry(vaultPositionResolver_contract.functions.getAllVaultPositions(vault), current_block)
             for userPosition in relavantUserPositions:
                 owner = userPosition[1]
