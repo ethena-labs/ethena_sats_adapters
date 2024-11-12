@@ -21,10 +21,7 @@ class FluidIntegration(
             None,
             None,
         )
-        self.blocknumber_to_usdeVaults = {}
-        latestBlockNumber = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
-        self.relevant_vaults = []
-        self.get_relevant_vaults(latestBlockNumber)
+        self.relevant_vaults = ["0x1B4EC865915872AEc7A30423fdA2584C9fa894C5"]
 
     def get_balance(self, user: str, block: int) -> float:
         balance = 0
@@ -60,35 +57,10 @@ class FluidIntegration(
         except Exception as e:
             print(f"Error: {str(e)}")
         return participants
-    
-    def get_relevant_vaults(self, block: int) -> list:
-        if block in self.blocknumber_to_usdeVaults:
-            return self.blocknumber_to_usdeVaults[block]
-        
-        
-        if self.blocknumber_to_usdeVaults != {}:
-            totalVaults = call_with_retry(vaultResolver_contract.functions.getTotalVaults(), block)
-            for block_number in self.blocknumber_to_usdeVaults:
-                totalVaults_at_block = call_with_retry(vaultResolver_contract.functions.getTotalVaults(), block_number)
-                if totalVaults == totalVaults_at_block:
-                    self.blocknumber_to_usdeVaults[block] = self.blocknumber_to_usdeVaults[block_number]
-                    return self.blocknumber_to_usdeVaults[block_number]
-
-        vaults = call_with_retry(vaultResolver_contract.functions.getAllVaultsAddresses(), block)
-        relevantVaults = []
-        for vaultAddress in vaults:
-            supplyTokenOfVault = (call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block))[3][8][0]
-            if supplyTokenOfVault == USDe:
-                relevantVaults.append(vaultAddress)
-        self.blocknumber_to_usdeVaults[block] = relevantVaults
-        self.relevant_vaults = relevantVaults
-        return relevantVaults
 
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-    print("getting relevant vaults")
-    print(example_integration.get_relevant_vaults(21151876))
 
     print("\n\n\ngetting participants")
     print(example_integration.get_participants())
