@@ -77,8 +77,13 @@ class FluidIntegration(
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
+    print("getting relevant vaults")
     print(example_integration.get_relevant_vaults(21088189))
+
+    print("\n\n\ngetting participants")
     print(example_integration.get_participants())
+
+    print("\n\n\n getting balance")
     print(
         example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21079685)
     )
