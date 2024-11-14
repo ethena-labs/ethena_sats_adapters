@@ -27,7 +27,7 @@ class FluidIntegration(
         try:
             userPositions, vaultEntireDatas = call_with_retry(vaultResolver_contract.functions.positionsByUser(user), block)
             for i in range(len(userPositions)):
-                if vaultEntireDatas[i][3][8][0] == USDe and userPositions[i][10] != 40000:
+                if (vaultEntireDatas[i][3][8][0] == USDe or vaultEntireDatas[i][3][8][1] == USDe) and userPositions[i][10] != 40000:
                     balance += userPositions[i][9]
             return balance/1e18
         except Exception as e:
@@ -68,8 +68,8 @@ class FluidIntegration(
         vaults = call_with_retry(vaultResolver_contract.functions.getAllVaultsAddresses(), block)
         relevantVaults = []
         for vaultAddress in vaults:
-            supplyTokenOfVault = (call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block))[3][8][0]
-            if supplyTokenOfVault == USDe:
+            vaultData = call_with_retry(vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block)
+            if (vaultData[3][8][0] == USDe or vaultData[3][8][1] == USDe) and not (vaultData[1] and vaultData[2]):
                 relevantVaults.append(vaultAddress)
         self.blocknumber_to_usdeVaults[block] = relevantVaults
         return relevantVaults
@@ -77,13 +77,9 @@ class FluidIntegration(
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-    # print("getting relevant vaults")
-    # print(example_integration.get_relevant_vaults(21088189))
+    current_block = W3_BY_CHAIN[example_integration.chain]["w3"].eth.get_block_number()
+    print("getting relevant vaults")
+    print(example_integration.get_relevant_vaults(current_block))
 
-    # print("\n\n\ngetting participants")
-    # print(example_integration.get_participants())
-
-    # print("\n\n\n getting balance")
-    print(
-        example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21079685)
-    )
+    print("\n\n\ngetting participants")
+    print(example_integration.get_participants())

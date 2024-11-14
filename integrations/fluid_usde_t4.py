@@ -29,7 +29,7 @@ class FluidIntegration(
             userPositions, vaultEntireDatas = call_with_retry(vaultResolver_contract.functions.positionsByUser(user), block)
             dexStates = {}
             for i in range(len(userPositions)):
-                if vaultEntireDatas[i][3][8][0] == USDe and userPositions[i][10] == 40000:
+                if (vaultEntireDatas[i][3][8][0] == USDe or vaultEntireDatas[i][3][8][1] == USDe) and userPositions[i][10] == 40000:
                     # underlying dex as supply token in the vault
                     dexAddress = vaultEntireDatas[i][3][6]
                     if dexAddress not in dexStates:
@@ -61,11 +61,6 @@ class FluidIntegration(
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-
+    current_block = W3_BY_CHAIN[example_integration.chain]["w3"].eth.get_block_number()
     print("\n\n\ngetting participants")
     print(example_integration.get_participants())
-
-    print("\n\n\n getting balance")
-    print(
-        example_integration.get_balance("0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21151876)
-    )
