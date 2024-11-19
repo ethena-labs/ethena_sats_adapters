@@ -115,7 +115,7 @@ class Nuri(Integration):
 
         return total_balance
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         page_size = 999
         start_block = NURI_DEPLOYMENT_BLOCK
         target_block = w3_scroll.eth.get_block_number()
@@ -145,12 +145,13 @@ class Nuri(Integration):
 
             start_block += page_size
 
-        self.participants = list(all_users)
-        return self.participants
+        self.participants = all_users
+        return all_users
 
 
 if __name__ == "__main__":
     nuri = Nuri()
     # print(nuri.get_balance(Web3.to_checksum_address("0xCE29ECB0D2d8c8f0126ED923C50A35cFb0B613A8"), 7249275))
-    # print(nuri.get_participants())
+    participants = nuri.get_participants(None)
+    print(participants)
     # print(nuri.get_balance(nuri.participants[0], 7249275))

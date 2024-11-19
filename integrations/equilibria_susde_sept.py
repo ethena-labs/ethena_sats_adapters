@@ -19,6 +19,6 @@ if __name__ == "__main__":
     print(equilibria_integration.get_participants())
     print(
         equilibria_integration.get_balance(
-            list(equilibria_integration.get_participants())[0], "latest"
+            list(equilibria_integration.get_participants())[0]
         )
     )

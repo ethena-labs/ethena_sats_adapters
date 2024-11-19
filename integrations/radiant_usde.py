@@ -19,14 +19,11 @@ class RadiantIntegration(Integration):
         print(self.vault_data)
 
         super().__init__(
-            integration_id,
-            self.vault_data["start"],
-            self.vault_data["chain"],
-            None,
-            20,
-            1,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=self.vault_data["start"],
+            chain=self.vault_data["chain"],
+            summary_cols=None,
+            page_size=20,
         )
 
     def get_balance(self, user: str, block: int) -> float:
@@ -38,7 +35,7 @@ class RadiantIntegration(Integration):
             self.vault_data["lending_pool"],
         )
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None = None) -> set[str]:
         logging.info(
             f"[{self.integration_id.get_description()}] Getting participants..."
         )
@@ -56,10 +53,7 @@ if __name__ == "__main__":
 
     print("Block:", current_block)
     print("Found Radiant Participants:")
-    print(len(example_integration.get_participants()))
-    print("Found Balance of First Participant:", example_integration.participants[0])
-    print(
-        example_integration.get_balance(
-            example_integration.participants[0], current_block
-        )
-    )
+    participants = example_integration.get_participants(None)
+    print(len(participants))
+    print("Found Balance of First Participant:", participants[0])
+    print(example_integration.get_balance(participants[0], current_block))

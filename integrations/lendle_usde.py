@@ -20,7 +20,7 @@ class LendleIntegration(Integration):
             None,
         )
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str) -> float:
         bal = call_with_retry(
             lendle_usde_contract.functions.balanceOf(user),
             block,
@@ -31,7 +31,7 @@ class LendleIntegration(Integration):
         return round((bal / 10**18), 4)
 
     # Important: This function should only be called once and should cache the results by setting self.participants
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         page_size = 1900
         start_block = LENDLE_USDE_DEPLOYMENT_BLOCK
         target_block = w3_mantle.eth.get_block_number()
@@ -49,16 +49,11 @@ class LendleIntegration(Integration):
                 all_users.add(transfer["args"]["to"])
             start_block += page_size
 
-        all_users = list(all_users)
-        self.participants = all_users
-        return all_users
+        return set(all_users)
 
 
 if __name__ == "__main__":
     lendle_integration = LendleIntegration()
-    print(lendle_integration.get_participants())
-    print(
-        lendle_integration.get_balance(
-            list(lendle_integration.participants)[0], "latest"
-        )
-    )
+    participants = lendle_integration.get_participants(None)
+    print(participants)
+    print(lendle_integration.get_balance(list(participants)[0], "latest"))

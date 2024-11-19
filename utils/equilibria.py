@@ -48,7 +48,7 @@ class EquilibriaIntegration(Integration):
         self.lp_contract = lp_contract
         self.lp_contract_id = lp_contract_id
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
         equilibria_deposit_contract = w3.eth.contract(
             address=equilibria_deposit_ethereum, abi=equilibria_deposit
         )

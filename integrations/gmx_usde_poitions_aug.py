@@ -64,7 +64,7 @@ class GMXPositionsIntegration(Integration):
 
         return total_collateral_amount
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -87,12 +87,12 @@ class GMXPositionsIntegration(Integration):
 
         accounts = [position["account"] for position in participants["positions"]]
 
-        return list(set(accounts))
+        return set(accounts)
 
 
 if __name__ == "__main__":
     gmx_integration = GMXPositionsIntegration()
-    # print(gmx_integration.get_participants())
+    print(gmx_integration.get_participants(None))
     print(
         gmx_integration.get_balance(
             "0xDb59AB7d951f3D9F1d2E764c3A6F7507E11a4e4e", 238320844

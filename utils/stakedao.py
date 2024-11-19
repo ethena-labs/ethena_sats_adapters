@@ -36,16 +36,16 @@ class StakeDAOIntegration(Integration):
             chain,
             None,
             reward_multiplier,
-            balance_multiplier,
-            excluded_addresses,
-            None,
-            None,
+            balance_multiplier=balance_multiplier,
+            excluded_addresses=excluded_addresses,
         )
         self.lp_contract = lp_contract
 
     def get_balance(self, user: str, block: int) -> float:
 
-        stakeDAOVaultContract = w3.eth.contract(address=self.lp_contract, abi=vault_abi)
+        stakeDAOVaultContract = w3.eth.contract(
+            address=w3.to_checksum_address(self.lp_contract), abi=vault_abi
+        )
 
         # Get lpt token address from Stake DAO vault
         pendlePoolAddress = call_with_retry(

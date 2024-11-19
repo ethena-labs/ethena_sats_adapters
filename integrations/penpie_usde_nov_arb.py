@@ -14,9 +14,4 @@ if __name__ == "__main__":
         1,
         [PENDLE_LOCKER_ARBITRUM],
     )
-    # print(penpie_integration.get_participants())
-    print(
-        penpie_integration.get_balance(
-            "0xe95176DF139a93D706655B32Df087a97e212B78E", "latest"
-        )
-    )
+    print(penpie_integration.get_balance("0xe95176DF139a93D706655B32Df087a97e212B78E"))

@@ -40,10 +40,10 @@ class LyraIntegration(Integration):
             return get_effective_balance(
                 user,
                 block,
-                self.vault_data["integration_token"],
-                self.vault_data["bridge"],
-                self.vault_data["vault_token"],
-                W3_BY_CHAIN[example_integration.chain]["w3"].eth.get_block(block)[
+                integration_token=self.vault_data["integration_token"],
+                bridge=self.vault_data["bridge"],
+                vault_token=self.vault_data["vault_token"],
+                timestamp=W3_BY_CHAIN[self.chain]["w3"].eth.get_block(block)[
                     "timestamp"
                 ],
             )
@@ -51,21 +51,21 @@ class LyraIntegration(Integration):
         else:
             return get_exchange_balance(user, block)
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         logging.info(
             f"[{self.integration_id.get_description()}] Getting participants..."
         )
         if self.vault_data["detail_type"] == DetailType.Vault:
             self.participants = get_vault_users(
-                self.start_block,
-                self.vault_data["page_size"],
-                self.vault_data["vault_token"],
-                self.chain,
+                start_block=self.start_block,
+                page_size=self.vault_data["page_size"],
+                vault_token=self.vault_data["vault_token"],
+                chain=self.chain,
             )
         else:
             self.participants = get_exchange_users()
 
-        return self.participants
+        return set(self.participants)
 
 
 if __name__ == "__main__":
@@ -73,10 +73,7 @@ if __name__ == "__main__":
     current_block = W3_BY_CHAIN[example_integration.chain]["w3"].eth.get_block_number()
 
     print("Found Lyra Participants:")
-    print(example_integration.get_participants())
+    participants = example_integration.get_participants(None)
+    print(participants)
     print("Found Balance of First Participant:")
-    print(
-        example_integration.get_balance(
-            list(example_integration.participants)[0], current_block
-        )
-    )
+    print(example_integration.get_balance(list(participants)[0], current_block))

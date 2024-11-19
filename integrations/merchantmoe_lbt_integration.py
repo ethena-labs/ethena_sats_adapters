@@ -45,7 +45,7 @@ class MerchantMoeIntegration(Integration):
         upper_bin_bound = active_id + 183
         bin_range = list(range(lower_bin_bound, upper_bin_bound + 1))
 
-        total_liquidity = 0
+        total_liquidity = 0.0
         logging.info(
             f"[{self.name}] Calling Liquidity Helper Contract for User: {user}, for bin ids: {bin_range}"
         )
@@ -64,14 +64,14 @@ class MerchantMoeIntegration(Integration):
         )
         return total_liquidity
 
-    def get_participants(self) -> list:
-        if self.participants is not None:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
+        if self.participants:
             return self.participants
 
         logging.info(f"[{self.name}] Getting participants...")
         page_size = 1900
         start_block = self.start_block
-        w3_client = W3_BY_CHAIN["mantle"]["w3"]
+        w3_client = W3_BY_CHAIN[self.chain]["w3"]
         target_block = w3_client.eth.get_block_number()
         all_users = set()
         while start_block < target_block:
@@ -108,9 +108,6 @@ if __name__ == "__main__":
         lb_pair_contract,
         liquidity_helper_contract,
     )
-    print(merchant_moe_integration.get_participants())
-    print(
-        merchant_moe_integration.get_balance(
-            list(merchant_moe_integration.get_participants())[1], "latest"
-        )
-    )
+    participants = merchant_moe_integration.get_participants()
+    print(participants)
+    print(merchant_moe_integration.get_balance(list(participants)[1], "latest"))

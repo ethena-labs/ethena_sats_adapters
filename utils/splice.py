@@ -181,7 +181,7 @@ class SpliceIntegration(Integration):
     def get_description(self):
         return self.integration_id.get_description()
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str) -> float:
         logging.info(
             f"[{self.get_description()}] Getting balance for {user} at block {block}"
         )
@@ -197,4 +197,4 @@ class SpliceIntegration(Integration):
         logging.info(
             f"[{self.get_description()}] Found {len(self.participants)} participants"
         )
-        return self.participants
+        return set(self.participants)

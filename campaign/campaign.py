@@ -1,4 +1,5 @@
 from typing import List
+from utils import pendle
 from web3 import Web3
 
 from constants.chains import Chain
@@ -28,8 +29,8 @@ INTEGRATIONS: List[Integration] = [
     PendleLPTIntegration(
         integration_id=IntegrationID.PENDLE_USDE_LPT,
         start_block=PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
-        sy_contract=None,
-        lp_contract=None,
+        sy_contract=pendle.sy_contract,
+        lp_contract=pendle.lpt_contract,
         summary_cols=[SummaryColumn.PENDLE_SHARDS],
         chain=Chain.ETHEREUM,
         reward_multiplier=20,
@@ -37,8 +38,8 @@ INTEGRATIONS: List[Integration] = [
     PendleLPTIntegration(
         integration_id=IntegrationID.PENDLE_ARBITRUM_USDE_LPT,
         start_block=PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
-        sy_contract=None,
-        lp_contract=None,
+        sy_contract=pendle.usde_arb_SY_contract,
+        lp_contract=pendle.usde_arb_LPT_contract,
         summary_cols=[SummaryColumn.PENDLE_ARBITRUM_SHARDS],
         chain=Chain.ARBITRUM,
         reward_multiplier=20,
@@ -47,6 +48,7 @@ INTEGRATIONS: List[Integration] = [
         integration_id=IntegrationID.PENDLE_USDE_YT,
         start_block=PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         summary_cols=[SummaryColumn.PENDLE_SHARDS],
+        yt_contract=pendle.yt_contract,
         chain=Chain.ETHEREUM,
         reward_multiplier=20,
     ),
@@ -54,6 +56,7 @@ INTEGRATIONS: List[Integration] = [
         integration_id=IntegrationID.PENDLE_ARBITRUM_USDE_YT,
         start_block=PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         summary_cols=[SummaryColumn.PENDLE_ARBITRUM_SHARDS],
+        yt_contract=pendle.usde_arb_YT_contract,
         chain=Chain.ARBITRUM,
         reward_multiplier=20,
     ),

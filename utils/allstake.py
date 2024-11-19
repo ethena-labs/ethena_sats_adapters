@@ -71,14 +71,13 @@ class AllstakeIntegration(Integration):
         print(self.strategy_info)
 
         super().__init__(
-            integration_id,
-            self.strategy_info["start"],
-            self.strategy_info["chain"],
-            None,
-            20,
-            1,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=self.strategy_info["start"],
+            chain=self.strategy_info["chain"],
+            summary_cols=None,
+            page_size=20,
+            balance_multiplier=1,
+            reward_multiplier=None,
         )
 
     def get_balance(self, user: str, block: int) -> float:
@@ -89,7 +88,7 @@ class AllstakeIntegration(Integration):
             self.strategy_info["strategy"],
         )
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         logging.info(
             f"[{self.integration_id.get_description()}] Getting participants..."
         )

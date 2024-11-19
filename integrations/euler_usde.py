@@ -43,7 +43,7 @@ class EulerIntegration(Integration):
 
         return asset_balance
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -77,9 +77,6 @@ class EulerIntegration(Integration):
 
 if __name__ == "__main__":
     example_integration = EulerIntegration()
-    print(example_integration.get_participants())
-    print(
-        example_integration.get_balance(
-            list(example_integration.get_participants())[0], 20677865
-        )
-    )
+    participants = example_integration.get_participants(None)
+    print(participants)
+    print(example_integration.get_balance(list(participants)[0], 20677865))

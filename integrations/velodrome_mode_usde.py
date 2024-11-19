@@ -28,9 +28,6 @@ class VelodromeIntegration(Integration):
 
 if __name__ == "__main__":
     velodrome_integration = VelodromeIntegration()
-    print(velodrome_integration.get_participants())
-    print(
-        velodrome_integration.get_balance(
-            velodrome_integration.participants[0], 10100000
-        )
-    )
+    participants = velodrome_integration.get_participants()
+    print(participants)
+    print(velodrome_integration.get_balance(participants[0], 10100000))

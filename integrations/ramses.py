@@ -111,7 +111,7 @@ class Ramses(Integration):
 
         return total_balance
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None = None) -> set[str]:
         page_size = 999
         start_block = RAMSES_DEPLOYMENT_BLOCK
         target_block = w3_arb.eth.get_block_number()
@@ -141,8 +141,8 @@ class Ramses(Integration):
 
             start_block += page_size
 
-        self.participants = list(all_users)
-        return self.participants
+        self.participants = all_users
+        return all_users
 
 
 if __name__ == "__main__":
@@ -161,7 +161,9 @@ if __name__ == "__main__":
         participants = ramses.get_participants()
         print(f"Number of participants: {len(participants)}")
         if participants:
-            first_participant_balance = ramses.get_balance(participants[0], test_block)
+            first_participant_balance = ramses.get_balance(
+                list(participants)[0], test_block
+            )
             print(f"Balance for first participant: {first_participant_balance}")
     except Exception as e:
         print(f"An error occurred: {e}")

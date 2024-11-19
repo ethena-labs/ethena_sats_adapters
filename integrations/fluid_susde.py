@@ -13,7 +13,7 @@ class FluidIntegration(Integration):
             IntegrationID.FLUID,
             21016131,
             Chain.ETHEREUM,
-            None,
+            [],
             5,
             1,
             None,
@@ -34,7 +34,7 @@ class FluidIntegration(Integration):
         except Exception as e:
             return 0
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         participants = []
         current_block = W3_BY_CHAIN[self.chain]["w3"].eth.get_block_number()
 
@@ -55,7 +55,7 @@ class FluidIntegration(Integration):
                     participants.append(owner)
         except Exception as e:
             print(f"Error: {str(e)}")
-        return participants
+        return set(participants)
 
     def get_relevant_vaults(self, block: int) -> list:
         if block in self.blocknumber_to_susdeVaults:
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print(example_integration.get_relevant_vaults(21088189))
 
     print("\n\n\ngetting participants")
-    print(example_integration.get_participants())
+    print(example_integration.get_participants(None))
 
     print("\n\n\n getting balance")
     print(

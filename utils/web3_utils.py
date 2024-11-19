@@ -126,7 +126,7 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
                 raise e
 
 
-def multicall(w3: Web3, calls: list, block_identifier: int = "latest"):
+def multicall(w3: Web3, calls: list, block_identifier: int | str = "latest"):
     multicall_contract = w3.eth.contract(address=MULTICALL_ADDRESS, abi=MULTICALL_ABI)
 
     aggregate_calls = []

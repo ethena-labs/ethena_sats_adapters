@@ -71,5 +71,6 @@ class Synthetix(Integration):
 
 if __name__ == "__main__":
     synthetix = Synthetix()
-    print(synthetix.get_participants())
-    print(synthetix.get_balance(synthetix.participants[0], 227610000))
+    participants = synthetix.get_participants(None)
+    print(len(participants))
+    print(synthetix.get_balance(participants[0], 227610000))

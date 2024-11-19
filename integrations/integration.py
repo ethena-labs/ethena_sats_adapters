@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Set
+from eth_typing import ChecksumAddress
 
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
@@ -13,11 +14,11 @@ class Integration(ABC):
         integration_id: IntegrationID,
         start_block: int,
         chain: Chain,
-        summary_cols: list[SummaryColumn],
+        summary_cols: list[SummaryColumn] | None = None,
         reward_multiplier: int = 1,
         balance_multiplier: int = 1,
-        excluded_addresses: List[str] = None,
-        end_block: int = None,
+        excluded_addresses: Optional[Set[ChecksumAddress]] = None,
+        end_block: Optional[int] = None,
         reward_multiplier_func=None,
         ethereal_multiplier: int = 0,
         ethereal_multiplier_func=None,
@@ -25,7 +26,7 @@ class Integration(ABC):
         self.integration_id = integration_id
         self.start_block = start_block
         self.end_block = end_block
-        self.participants = None
+        self.participants = set()
         self.chain = chain
         self.summary_cols = summary_cols
         self.reward_multiplier = reward_multiplier
@@ -35,9 +36,8 @@ class Integration(ABC):
         self.ethereal_multiplier = ethereal_multiplier
         self.ethereal_multiplier_func = ethereal_multiplier_func
 
-    @abstractmethod
     def get_balance(self, user: str, block: int) -> float:
-        pass
+        raise NotImplementedError
 
     # either get_participants OR get_block_balances must be implemented
     def get_participants(

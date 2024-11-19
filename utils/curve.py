@@ -1,7 +1,9 @@
 import json
 from dataclasses import dataclass
+from typing import List
 
-from constants.chains import Chain
+from web3 import Web3
+
 from constants.summary_columns import SummaryColumn
 from constants.curve import RewardContractConfig
 
@@ -50,7 +52,7 @@ class Curve(Integration):
             integration_id=reward_config.integration_id,
             start_block=reward_config.genesis_block,
             chain=reward_config.chain,
-            summary_cols=SummaryColumn.CURVE_LLAMALEND_SHARDS,
+            summary_cols=[SummaryColumn.CURVE_LLAMALEND_SHARDS],
         )
 
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
@@ -58,7 +60,7 @@ class Curve(Integration):
         with open(self.reward_config.abi_filename, "r") as f:
             abi = json.load(f)
             self.contract = self.w3.eth.contract(
-                address=self.reward_config.address, abi=abi
+                address=Web3.to_checksum_address(self.reward_config.address), abi=abi
             )
         self.contract_function = self.contract.functions.user_state
         self.contract_event = self.contract.events.Borrow()
@@ -128,7 +130,7 @@ class Curve(Integration):
     def get_current_block(self) -> int:
         return self.w3.eth.get_block_number()
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None = None) -> set[str]:
         """
         Fetch all participants who have borrowed from the LlamaLend market.
 
@@ -138,7 +140,7 @@ class Curve(Integration):
         page_size = 50000
         current_block = self.get_current_block()
         if self.last_indexed_block == current_block:
-            return [user_info.address for user_info in self.start_state]
+            return {user_info.address for user_info in self.start_state}
 
         start_block = max(self.start_block, self.last_indexed_block + 1)
 

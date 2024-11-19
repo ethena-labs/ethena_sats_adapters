@@ -1,3 +1,4 @@
+from typing import List, Optional, Set
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from integrations.integration import Integration
@@ -12,7 +13,7 @@ class Firm(Integration):
             IntegrationID.FIRM_SUSDE,
             FIRM_SUSDE_DEPLOYMENT_BLOCK,
             Chain.ETHEREUM,
-            None,
+            [],
             20,
             1,
             None,
@@ -29,7 +30,10 @@ class Firm(Integration):
         )
         return balance / 1e18
 
-    def get_participants(self) -> list:
+    def get_participants(
+        self,
+        blocks: Optional[List[int]],
+    ) -> Set[str]:
         page_size = 1900
         start_block = FIRM_SUSDE_DEPLOYMENT_BLOCK
         target_block = w3.eth.get_block_number()
@@ -46,15 +50,12 @@ class Firm(Integration):
             for escrow_creation in escrow_creations:
                 all_users.add(escrow_creation["args"]["user"])
             start_block += page_size
-
-        all_users = list(all_users)
-        self.participants = all_users
         return all_users
 
 
 if __name__ == "__main__":
     firm = Firm()
-    participants = firm.get_participants()
+    participants = firm.get_participants(None)
     print("participants", participants)
     currentBlock = w3.eth.get_block_number()
     if len(participants) > 0:

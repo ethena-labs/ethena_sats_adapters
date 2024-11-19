@@ -2,7 +2,7 @@ import json
 import requests
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from integrations.integration import Integration
+from models.integration import Integration
 from constants.summary_columns import SummaryColumn
 from utils.web3_utils import w3_arb, fetch_events_logs_with_retry, call_with_retry
 

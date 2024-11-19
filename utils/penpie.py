@@ -49,16 +49,15 @@ class PENPIEIntegration(Integration):
         )
         self.lp_contract = lp_contract
 
-    def get_balance(self, user: str, block: int) -> float:
-        # print(self.chain==Chain.ETHEREUM)
-
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
         if self.chain == Chain.ETHEREUM:
             masterpenpiecontract = w3.eth.contract(
                 address=master_penpie_ethereum, abi=master_penpie
             )
         if self.chain == Chain.ARBITRUM:
             masterpenpiecontract = w3_arb.eth.contract(
-                address=master_penpie_arbitrum, abi=master_penpie
+                address=w3_arb.to_checksum_address(master_penpie_arbitrum),
+                abi=master_penpie,
             )
 
         # Get lpt token address from Stake DAO vault
@@ -117,10 +116,12 @@ class PENPIEIntegration(Integration):
         print(lpt_bal / 10**18)
 
         if self.chain == Chain.ETHEREUM:
-            receiptcontract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
+            receiptcontract = w3.eth.contract(
+                address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
         if self.chain == Chain.ARBITRUM:
             receiptcontract = w3_arb.eth.contract(
-                address=self.lp_contract, abi=erc20_abi
+                address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
             )
 
         # Get gauge total suply

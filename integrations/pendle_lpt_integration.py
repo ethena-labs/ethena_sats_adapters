@@ -26,21 +26,21 @@ class PendleLPTIntegration(Integration):
             [[ChecksumAddress]], list  # type: ignore
         ] = get_pendle_participants_v3,
         chain: Chain = Chain.ETHEREUM,
-        summary_cols: list[SummaryColumn] = None,
+        summary_cols: list[SummaryColumn] | None = None,
         reward_multiplier: int = 1,
         balance_multiplier: int = 1,
-        end_block: int = None,
-        reward_multiplier_func: Callable[[int], int] = None,
+        end_block: int | None = None,
+        reward_multiplier_func: Callable[[int], int] | None = None,
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            summary_cols,
-            reward_multiplier,
-            balance_multiplier,
-            end_block,
-            reward_multiplier_func,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            summary_cols=summary_cols,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            end_block=end_block,
+            reward_multiplier_func=reward_multiplier_func,
         )
         self.sy_contract = sy_contract
         self.lp_contract = lp_contract
@@ -49,7 +49,7 @@ class PendleLPTIntegration(Integration):
         )
         self.get_participants_func = get_participants_func
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str) -> float:
         logging.info(
             f"[{self.get_description()}] Getting balance for {user} at block {block}"
         )
@@ -79,7 +79,7 @@ class PendleLPTIntegration(Integration):
         print(round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4))
         return round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4)
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -103,5 +103,6 @@ if __name__ == "__main__":
         pendle.lpt_contract,
         reward_multiplier=20,
     )
-    print(integration.get_participants())
-    print(integration.get_balance(list(integration.get_participants())[0], "latest"))
+    participants = integration.get_participants()
+    print(participants)
+    print(integration.get_balance(list(participants)[0], "latest"))

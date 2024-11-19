@@ -21,7 +21,7 @@ class Hyperdrive(Integration):
             IntegrationID.HYPERDRIVE_SUSDE,
             HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
             Chain.ETHEREUM,
-            None,
+            [],
             20,
             1,
             None,

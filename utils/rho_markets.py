@@ -52,7 +52,6 @@ class RhoMarkets(Integration):
                 all_users.add(user["id"])
         except Exception as e:
             print(e)
-        all_users = list(all_users)
         self.participants = all_users
         return all_users
 
@@ -98,8 +97,7 @@ class RhoMarkets(Integration):
                 last_id = accounts[-1]["id"]
             else:
                 raise Exception(
-                    f"Query failed with status code {
-                                response.status_code}: {response.text}"
+                    f"Query failed with status code {response.status_code}: {response.text}"
                 )
 
         return all_accounts

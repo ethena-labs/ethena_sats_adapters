@@ -19,7 +19,7 @@ class DetailType(Enum):
 class LyraVaultDetails(TypedDict):
     detail_type: DetailType
     start: int
-    chain: str
+    chain: Chain
     page_size: int
     integration_token: Contract | None
     bridge: Contract | None
