@@ -12,7 +12,7 @@ with open("abi/ERC20_abi.json") as f:
 
 class StrategyConfig(TypedDict):
     start: int
-    chain: str
+    chain: Chain
     underlying: Contract
     strategy: Contract
     page_size: int

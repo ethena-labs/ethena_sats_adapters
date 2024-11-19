@@ -46,12 +46,12 @@ class Synthetix(Integration):
             total_balance += balance
         return total_balance / 1e18
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         page_size = 1900
         start_block = SYNTHETIX_ARB_DEPLOYMENT_BLOCK
         target_block = w3_arb.eth.get_block_number()
 
-        all_users = set()
+        all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             transfers = fetch_events_logs_with_retry(
@@ -64,7 +64,6 @@ class Synthetix(Integration):
                 all_users.add(transfer["args"]["to"])
             start_block += page_size
 
-        all_users = list(all_users)
         self.participants = all_users
         return all_users
 
@@ -73,4 +72,4 @@ if __name__ == "__main__":
     synthetix = Synthetix()
     participants = synthetix.get_participants(None)
     print(len(participants))
-    print(synthetix.get_balance(participants[0], 227610000))
+    print(synthetix.get_balance(list(participants)[0], 227610000))

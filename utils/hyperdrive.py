@@ -14,10 +14,10 @@ getcontext().prec = 100  # Set precision for Decimal calculations
 
 def get_first_contract_block(contract_address):
     # do binary search up to latest block
-    latest_block = w3.eth.get_block_number()
-    earliest_block = 0
+    latest_block: int = w3.eth.get_block_number()
+    earliest_block: int = 0
     while earliest_block < latest_block:
-        mid_block = (earliest_block + latest_block) // 2
+        mid_block: int = (earliest_block + latest_block) // 2
         attempt_to_get_code = w3.eth.get_code(
             account=contract_address, block_identifier=mid_block
         )
@@ -36,9 +36,9 @@ def get_first_contract_block(contract_address):
 
 
 def get_hyperdrive_participants(pool, start_block=None):
-    target_block = w3.eth.get_block_number()
-    all_users = set()
-    all_ids = set()
+    target_block: int = w3.eth.get_block_number()
+    all_users: set[str] = set()
+    all_ids: set[int] = set()
     start_block = start_block or get_first_contract_block(pool)
     assert all_users is not None, "error: all_users is None"
     assert all_ids is not None, "error: all_ids is None"

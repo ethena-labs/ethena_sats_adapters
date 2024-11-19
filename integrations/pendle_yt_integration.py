@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List, Optional
 import logging
 
 from eth_typing import ChecksumAddress
@@ -20,10 +20,10 @@ class PendleYTIntegration(Integration):
         start_block: int,
         yt_contract: Contract,
         get_participants_func: Callable[
-            [[ChecksumAddress]], list  # type: ignore
+            [list[ChecksumAddress]], set[str]
         ] = get_pendle_participants_v3,
         chain: Chain = Chain.ETHEREUM,
-        summary_cols: list[SummaryColumn] = None,
+        summary_cols: Optional[List[SummaryColumn]] = None,
         reward_multiplier: int = 1,
         balance_multiplier: int = 1,
         end_block: int | None = None,

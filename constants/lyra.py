@@ -76,7 +76,7 @@ LYRA_CONTRACTS_AND_START_BY_TOKEN: Dict[IntegrationID, LyraVaultDetails] = {
         ),
         page_size=20000,
     ),
-    IntegrationID.LYRA_SUSDE_EXCHANGE_DEPOSIT: LyraVaultDetails(
+    IntegrationID.LYRA_SUSDE_EXCHANGE_DEPOSIT: LyraVaultDetails(  # type: ignore
         detail_type=DetailType.Exchange,
         start=11481048,
         chain=Chain.Lyra,

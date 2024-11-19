@@ -111,7 +111,7 @@ class Curve(Integration):
 
         return states
 
-    def get_user_state(self, user: str, block: int) -> float:
+    def get_user_state(self, user: str, block: int) -> list:
         """
         Retrieve the collateral balance for a user at a specific block.
 
@@ -170,4 +170,4 @@ class Curve(Integration):
         self.start_state.extend(all_users)
         self.last_indexed_block = current_block
 
-        return [user_info.address for user_info in self.start_state]
+        return {user_info.address for user_info in self.start_state}

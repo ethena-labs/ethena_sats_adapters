@@ -23,7 +23,7 @@ class RadiantIntegration(Integration):
             start_block=self.vault_data["start"],
             chain=self.vault_data["chain"],
             summary_cols=None,
-            page_size=20,
+            reward_multiplier=20,
         )
 
     def get_balance(self, user: str, block: int) -> float:
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     print("Found Radiant Participants:")
     participants = example_integration.get_participants(None)
     print(len(participants))
-    print("Found Balance of First Participant:", participants[0])
-    print(example_integration.get_balance(participants[0], current_block))
+    print("Found Balance of First Participant:", list(participants)[0])
+    print(example_integration.get_balance(list(participants)[0], current_block))

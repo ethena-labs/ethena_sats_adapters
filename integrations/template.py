@@ -4,7 +4,7 @@ from constants.summary_columns import SummaryColumn
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from web3 import Web3
-from web3_typing import ChecksumAddress
+from eth_typing import ChecksumAddress
 
 
 class ProtocolNameIntegration(
@@ -58,18 +58,16 @@ class ProtocolNameIntegration(
 
 if __name__ == "__main__":
     # TODO: Write simple tests for the integration
-    example_integration = (
-        ProtocolNameIntegration(
-            integration_id=IntegrationID.EXAMPLE,
-            start_block=20000000,
-            summary_cols=[SummaryColumn.TEMPLATE_PTS],
-            chain=Chain.ETHEREUM,
-            reward_multiplier=20,
-            excluded_addresses={
-                Web3.to_checksum_address("0x0000000000000000000000000000000000000000")
-            },
-            end_block=40000000,
-        ),
+    example_integration = ProtocolNameIntegration(
+        integration_id=IntegrationID.EXAMPLE,
+        start_block=20000000,
+        summary_cols=[SummaryColumn.TEMPLATE_PTS],
+        chain=Chain.ETHEREUM,
+        reward_multiplier=20,
+        excluded_addresses={
+            Web3.to_checksum_address("0x0000000000000000000000000000000000000000")
+        },
+        end_block=40000000,
     )
     print(
         example_integration.get_block_balances(
@@ -86,8 +84,14 @@ if __name__ == "__main__":
     print(
         example_integration.get_block_balances(
             cached_data={
-                20000000: {"0x123": 100, "0x456": 200},
-                20000001: {"0x123": 101, "0x456": 201},
+                20000000: {
+                    Web3.to_checksum_address("0x123"): 100,
+                    Web3.to_checksum_address("0x456"): 200,
+                },
+                20000001: {
+                    Web3.to_checksum_address("0x123"): 101,
+                    Web3.to_checksum_address("0x456"): 201,
+                },
             },
             blocks=[20000002],
         )

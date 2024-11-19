@@ -7,7 +7,7 @@ if __name__ == "__main__":
     integration = AllstakeIntegration(IntegrationID.ALLSTAKE_SUSDE)
     current_block = W3_BY_CHAIN[integration.chain]["w3"].eth.get_block_number()
 
-    participants = integration.get_participants()
+    participants = integration.get_participants(None)
     print("Get Participants:")
     print(participants)
     print("Get Balances of All Participants:")

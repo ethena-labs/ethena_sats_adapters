@@ -15,7 +15,7 @@ if __name__ == "__main__":
         Chain.ETHEREUM,
         25,
         1,
-        [PENDLE_LOCKER_ETHEREUM],
+        {PENDLE_LOCKER_ETHEREUM},
     )
     # print(penpie_integration.get_participants())
     print(

@@ -36,7 +36,7 @@ class MerchantMoeIntegration(Integration):
         self.lbt_contract = lbt_contract
         self.liquidity_helper_contract = liquidity_helper_contract
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
         active_id = call_with_retry(self.lbt_contract.functions.getActiveId(), block)
 
         # calculate the amount in bins for ids that are +/- 20% from active price
@@ -99,7 +99,7 @@ class MerchantMoeIntegration(Integration):
 
         logging.info(f"[{self.name}] {len(all_users)} users found")
         self.participants = all_users
-        return list(all_users)
+        return all_users
 
 
 if __name__ == "__main__":
@@ -108,6 +108,6 @@ if __name__ == "__main__":
         lb_pair_contract,
         liquidity_helper_contract,
     )
-    participants = merchant_moe_integration.get_participants()
+    participants = merchant_moe_integration.get_participants(None)
     print(participants)
-    print(merchant_moe_integration.get_balance(list(participants)[1], "latest"))
+    print(merchant_moe_integration.get_balance(list(participants)[1]))

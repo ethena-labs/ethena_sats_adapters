@@ -44,8 +44,8 @@ class RhoMarkets(Integration):
         )
         return balance * exchangeRate / (1e18 * 1e18)
 
-    def get_participants(self) -> list:
-        all_users = set()
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
+        all_users: set[str] = set()
         try:
             users = self.fetch_compound_users("rUSDe")
             for user in users:

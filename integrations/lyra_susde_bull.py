@@ -40,9 +40,9 @@ class LyraIntegration(Integration):
             return get_effective_balance(
                 user,
                 block,
-                integration_token=self.vault_data["integration_token"],
-                bridge=self.vault_data["bridge"],
-                vault_token=self.vault_data["vault_token"],
+                integration_token=self.vault_data["integration_token"],  # type: ignore
+                bridge=self.vault_data["bridge"],  # type: ignore
+                vault_token=self.vault_data["vault_token"],  # type: ignore
                 timestamp=W3_BY_CHAIN[self.chain]["w3"].eth.get_block(block)[
                     "timestamp"
                 ],
@@ -58,8 +58,8 @@ class LyraIntegration(Integration):
         if self.vault_data["detail_type"] == DetailType.Vault:
             self.participants = get_vault_users(
                 start_block=self.start_block,
-                page_size=self.vault_data["page_size"],
-                vault_token=self.vault_data["vault_token"],
+                page_size=self.vault_data["page_size"],  # type: ignore
+                vault_token=self.vault_data["vault_token"],  # type: ignore
                 chain=self.chain,
             )
         else:

@@ -23,7 +23,7 @@ class PendleLPTIntegration(Integration):
         sy_contract: Contract,
         lp_contract: Contract,
         get_participants_func: Callable[
-            [[ChecksumAddress]], list  # type: ignore
+            [list[ChecksumAddress]], set[str]
         ] = get_pendle_participants_v3,
         chain: Chain = Chain.ETHEREUM,
         summary_cols: list[SummaryColumn] | None = None,
@@ -51,7 +51,7 @@ class PendleLPTIntegration(Integration):
 
     def get_balance(self, user: str, block: int | str) -> float:
         logging.info(
-            f"[{self.get_description()}] Getting balance for {user} at block {block}"
+            f"[{self.integration_id.get_description()}] Getting balance for {user} at block {block}"
         )
         sy_bal = call_with_retry(
             self.sy_contract.functions.balanceOf(self.lp_contract.address),
@@ -103,6 +103,6 @@ if __name__ == "__main__":
         pendle.lpt_contract,
         reward_multiplier=20,
     )
-    participants = integration.get_participants()
+    participants = integration.get_participants(None)
     print(participants)
     print(integration.get_balance(list(participants)[0], "latest"))

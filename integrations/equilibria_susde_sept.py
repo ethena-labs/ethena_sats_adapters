@@ -13,12 +13,12 @@ if __name__ == "__main__":
         Chain.ETHEREUM,
         20,
         1,
-        [PENDLE_LOCKER_ETHEREUM],
+        {PENDLE_LOCKER_ETHEREUM},
     )
 
-    print(equilibria_integration.get_participants())
+    print(equilibria_integration.get_participants(None))
     print(
         equilibria_integration.get_balance(
-            list(equilibria_integration.get_participants())[0]
+            list(equilibria_integration.get_participants(None))[0]
         )
     )

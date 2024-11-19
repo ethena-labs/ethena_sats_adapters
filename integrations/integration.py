@@ -26,7 +26,7 @@ class Integration(ABC):
         self.integration_id = integration_id
         self.start_block = start_block
         self.end_block = end_block
-        self.participants = set()
+        self.participants: set[str] = set()
         self.chain = chain
         self.summary_cols = summary_cols
         self.reward_multiplier = reward_multiplier

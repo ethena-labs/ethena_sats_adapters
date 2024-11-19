@@ -21,13 +21,13 @@ class VelodromeIntegration(Integration):
     def get_balance(self, user: str, block: int) -> float:
         return fetch_balance(user, block, USDE_MODE_TOKEN)
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         self.participants = fetch_participants(USDE_MODE_TOKEN)
         return self.participants
 
 
 if __name__ == "__main__":
     velodrome_integration = VelodromeIntegration()
-    participants = velodrome_integration.get_participants()
+    participants = velodrome_integration.get_participants(None)
     print(participants)
-    print(velodrome_integration.get_balance(participants[0], 10100000))
+    print(velodrome_integration.get_balance(list(participants)[0], 10100000))

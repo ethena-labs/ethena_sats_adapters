@@ -14,7 +14,7 @@ with open("abi/radiant_lending_pool.json") as f:
 
 class RadiantLendingDetails(TypedDict):
     start: int
-    chain: str
+    chain: Chain
     collateral_address: str
     r_token_contract: Contract
     lending_pool: Contract

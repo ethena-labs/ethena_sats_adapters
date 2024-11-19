@@ -2,11 +2,13 @@ import logging
 import os
 import time
 import traceback
+from typing import Union, Literal
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
 
 from web3 import Web3
+from web3.types import HexStr, HexBytes, BlockIdentifier
 
 from utils.slack import slack_message
 from constants.chains import Chain
@@ -89,10 +91,10 @@ def fetch_events_logs_with_retry(
     label: str,
     contract_event,
     from_block: int,
-    to_block: int = "latest",
+    to_block: int | str = "latest",
     retries: int = 3,
     delay: int = 2,
-    filter: dict = None,
+    filter: dict | None = None,
 ) -> dict:
     for attempt in range(retries):
         try:
@@ -109,6 +111,7 @@ def fetch_events_logs_with_retry(
                 logging.error(msg)
                 slack_message(msg)
                 raise e
+    return {}
 
 
 def call_with_retry(contract_function, block="latest", retries=3, delay=2):
@@ -126,8 +129,10 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
                 raise e
 
 
-def multicall(w3: Web3, calls: list, block_identifier: int | str = "latest"):
-    multicall_contract = w3.eth.contract(address=MULTICALL_ADDRESS, abi=MULTICALL_ABI)
+def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest"):
+    multicall_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(MULTICALL_ADDRESS), abi=MULTICALL_ABI
+    )
 
     aggregate_calls = []
     for call in calls:

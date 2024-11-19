@@ -13,7 +13,9 @@ from utils.web3_utils import (
     w3,
     w3_arb,
 )
-from typing import List
+from typing import Optional, Set
+from web3.contract import Contract
+from eth_typing import ChecksumAddress
 
 with open("abi/penpie_master.json") as f:
     master_penpie = json.load(f)
@@ -34,18 +36,15 @@ class PENPIEIntegration(Integration):
         chain: Chain,
         reward_multiplier: int,
         balance_multiplier: int,
-        excluded_addresses: List[str],
+        excluded_addresses: Optional[Set[ChecksumAddress]] = None,
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            None,
-            reward_multiplier,
-            balance_multiplier,
-            excluded_addresses,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            excluded_addresses=excluded_addresses,
         )
         self.lp_contract = lp_contract
 
@@ -142,11 +141,10 @@ class PENPIEIntegration(Integration):
         print(user, userShare * lpt_bal / 100)
         return userShare * lockerSyBalance / 100
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
-        # logging.info(f"[{self.get_description()}] Getting participants...")
         self.participants = self.get_penpie_participants()
         logging.info(
             f"[{self.get_description()}] Found {len(self.participants)} participants"
@@ -155,17 +153,25 @@ class PENPIEIntegration(Integration):
 
     def get_penpie_participants(self):
         all_users = set()
-
         start = self.start_block
+
         if self.chain == Chain.ETHEREUM:
-            contract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
-        if self.chain == Chain.ARBITRUM:
-            contract = w3_arb.eth.contract(address=self.lp_contract, abi=erc20_abi)
+            contract = w3.eth.contract(
+                address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+        elif self.chain == Chain.ARBITRUM:
+            contract = w3_arb.eth.contract(
+                address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+        else:
+            return set()
         page_size = 1900
         if self.chain == Chain.ETHEREUM:
             target_block = w3.eth.get_block_number()
-        if self.chain == Chain.ARBITRUM:
+        elif self.chain == Chain.ARBITRUM:
             target_block = w3_arb.eth.get_block_number()
+        else:
+            return set()
         while start < target_block:
             to_block = min(start + page_size, target_block)
             deposits = fetch_events_logs_with_retry(

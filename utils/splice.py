@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Callable
 
 from utils.web3_utils import W3_BY_CHAIN, call_with_retry, fetch_events_logs_with_retry
 from web3.contract import Contract
@@ -19,7 +20,7 @@ from constants.splice import (
     SUSDE_DEPLOYMENT_BLOCK,
 )
 
-w3 = W3_BY_CHAIN["mode"]["w3"]
+w3 = W3_BY_CHAIN[Chain.MODE]["w3"]
 
 
 ########################################################################
@@ -116,7 +117,7 @@ def get_splice_participants_v3(token_addresses, start: int):
 # Configs
 ########################################################################
 
-config = {
+config: dict[IntegrationID, dict] = {
     IntegrationID.SPLICE_USDE_YT: {
         "chain": Chain.MODE,
         "start_block": USDE_DEPLOYMENT_BLOCK,
@@ -166,14 +167,12 @@ config = {
 class SpliceIntegration(Integration):
     def __init__(self, integration_id: IntegrationID):
         super().__init__(
-            integration_id,
-            config[integration_id]["start_block"],
-            config[integration_id]["chain"],
-            None,  # SummaryColumn
-            config[integration_id]["sats_multiplier"],  # SATS multiplier
-            1,
-            config[integration_id]["end_block"],
-            None,  # reward multiplier fn
+            integration_id=integration_id,
+            start_block=config[integration_id]["start_block"],
+            chain=config[integration_id]["chain"],
+            reward_multiplier=config[integration_id]["sats_multiplier"],
+            balance_multiplier=1,
+            end_block=config[integration_id]["end_block"],
         )
         self.token_addresses = config[integration_id]["token_addresses"]
         self.get_balance_func = config[integration_id]["get_balance_func"]
@@ -181,13 +180,13 @@ class SpliceIntegration(Integration):
     def get_description(self):
         return self.integration_id.get_description()
 
-    def get_balance(self, user: str, block: int | str) -> float:
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
         logging.info(
             f"[{self.get_description()}] Getting balance for {user} at block {block}"
         )
-        return self.get_balance_func(user, block)
+        return self.get_balance_func(user, block)  # type: ignore
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
         logging.info(f"[{self.get_description()}] Getting participants...")

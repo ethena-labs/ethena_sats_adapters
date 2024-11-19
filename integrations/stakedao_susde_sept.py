@@ -8,4 +8,4 @@ if __name__ == "__main__":
         SUSDE_SEPT_DEPLOYMENT_BLOCK,
         SUSDE_SEPT,
     )
-    print(stakedao_integration.get_participants())
+    print(stakedao_integration.get_participants(None))

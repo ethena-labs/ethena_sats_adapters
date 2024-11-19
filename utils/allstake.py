@@ -75,9 +75,8 @@ class AllstakeIntegration(Integration):
             start_block=self.strategy_info["start"],
             chain=self.strategy_info["chain"],
             summary_cols=None,
-            page_size=20,
+            reward_multiplier=20,
             balance_multiplier=1,
-            reward_multiplier=None,
         )
 
     def get_balance(self, user: str, block: int) -> float:

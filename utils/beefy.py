@@ -6,10 +6,10 @@ from integrations.integration_ids import IntegrationID
 from constants.beefy import BEEFY_LRT_API_URL
 
 CHAIN_TO_API_URL_PREFIX = {
-    [Chain.ARBITRUM]: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/arbitrum",
-    [Chain.FRAXTAL]: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/fraxtal",
-    [Chain.MANTLE]: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/mantle",
-    [Chain.OPTIMISM]: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/optimism",
+    Chain.ARBITRUM: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/arbitrum",
+    Chain.FRAXTAL: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/fraxtal",
+    Chain.MANTLE: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/mantle",
+    Chain.OPTIMISM: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/optimism",
 }
 
 
@@ -43,7 +43,7 @@ class BeefyIntegration(Integration):
 
         return float(data["effective_balance"])
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         """
         Get all participants of the protocol, ever.
         This function should only be called once and should cache the results by setting self.participants

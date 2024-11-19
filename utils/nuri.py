@@ -1,6 +1,4 @@
-import os
 import json
-from dotenv import load_dotenv
 from utils.web3_utils import (
     w3_scroll,
 )
@@ -18,7 +16,4 @@ nfp_manager = w3_scroll.eth.contract(
     address=NURI_NFP_MANAGER_ADDRESS, abi=nfp_manager_abi
 )
 
-pool = w3_scroll.eth.contract(
-    address=NURI_POOL_ADDRESS, abi=pool_abi
-)
-
+pool = w3_scroll.eth.contract(address=NURI_POOL_ADDRESS, abi=pool_abi)

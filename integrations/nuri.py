@@ -2,15 +2,13 @@ from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from integrations.integration import Integration
 from constants.nuri import (
-    NURI_NFP_MANAGER_ADDRESS,
-    NURI_POOL_ADDRESS,
     NURI_DEPLOYMENT_BLOCK,
     SCROLL_USDE_TOKEN_ADDRESS,
 )
 from constants.summary_columns import SummaryColumn
 from utils.nuri import nfp_manager, pool
 from utils.web3_utils import w3_scroll, fetch_events_logs_with_retry, call_with_retry
-from web3 import Web3
+
 import math
 
 
@@ -120,7 +118,7 @@ class Nuri(Integration):
         start_block = NURI_DEPLOYMENT_BLOCK
         target_block = w3_scroll.eth.get_block_number()
 
-        all_users = set()
+        all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             try:

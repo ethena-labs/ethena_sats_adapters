@@ -116,7 +116,7 @@ class Ramses(Integration):
         start_block = RAMSES_DEPLOYMENT_BLOCK
         target_block = w3_arb.eth.get_block_number()
 
-        all_users = set()
+        all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             try:

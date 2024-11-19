@@ -8,9 +8,10 @@ from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
     w3,
-    w3_arb,
 )
-from typing import List
+from typing import Optional, Set
+from web3 import Web3
+from eth_typing import ChecksumAddress
 
 with open("abi/equilibria_deposit.json") as f:
     equilibria_deposit = json.load(f)
@@ -32,20 +33,17 @@ class EquilibriaIntegration(Integration):
         chain: Chain,
         reward_multiplier: int,
         balance_multiplier: int,
-        excluded_addresses: List[str],
+        excluded_addresses: Optional[Set[ChecksumAddress]] = None,
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            None,
-            reward_multiplier,
-            balance_multiplier,
-            excluded_addresses,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            excluded_addresses=excluded_addresses,
         )
-        self.lp_contract = lp_contract
+        self.lp_contract = Web3.to_checksum_address(lp_contract)
         self.lp_contract_id = lp_contract_id
 
     def get_balance(self, user: str, block: int | str = "latest") -> float:
@@ -129,14 +127,14 @@ class EquilibriaIntegration(Integration):
         print("-------------------------------------------------")
         return userShare * lockerSyBalance / 100
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
         self.participants = self.get_equilibria_participants()
         return self.participants
 
-    def get_equilibria_participants(self):
+    def get_equilibria_participants(self) -> set[str]:
         all_users = set()
 
         start = self.start_block

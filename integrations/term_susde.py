@@ -1,11 +1,10 @@
-from typing import List
 import requests
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from constants.integration_token import Token
 from constants.summary_columns import SummaryColumn
 from integrations.integration import Integration
-
+from web3 import Web3
 
 ###############################################################################
 # Integration helpers #########################################################
@@ -121,10 +120,10 @@ class TermFinanceIntegration(Integration):
             url=term_finance_subgraph_url_mainnet,
             query=repo_lockers_query,
         )
-        repo_lockers = []
+        repo_lockers = set()
         if repo_lockers_response is not None:
             for result in repo_lockers_response["termRepos"]:
-                repo_lockers.append(result["termRepoLocker"])
+                repo_lockers.add(Web3.to_checksum_address(result["termRepoLocker"]))
         super().__init__(
             integration_id=IntegrationID.TERM_SUSDE,
             start_block=16380765,
@@ -160,7 +159,7 @@ class TermFinanceIntegration(Integration):
 
         return total_balance
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         # Make two queries: one to get borrower repo collateral and one to get borrower bid collateral
         participants_results = fetch_data(
             url=term_finance_subgraph_url_mainnet,
@@ -177,9 +176,9 @@ class TermFinanceIntegration(Integration):
             for result in participants_results["termBidCollaterals"]:
                 participants.add(result["bid"]["bidder"])
         else:
-            print(f"Failed to get participants")
+            print("Failed to get participants")
 
-        return list(participants)
+        return participants
 
     def get_id(self) -> IntegrationID:
         return self.integration_id
@@ -196,33 +195,9 @@ class TermFinanceIntegration(Integration):
     def get_chain(self) -> Chain:
         return self.chain
 
-    def get_summary_cols(self) -> list[SummaryColumn]:
-        return self.summary_cols
-
-    def get_reward_multiplier(self, block: int) -> int:
-        if self.reward_multiplier_func is not None:
-            return self.reward_multiplier_func(block)
-        return self.reward_multiplier
-
-    def get_balance_multiplier(self) -> int:
-        return self.balance_multiplier
-
-    def get_start_block(self) -> int:
-        return self.start_block
-
-    def get_end_block(self) -> int:
-        if self.end_block is None:
-            return (
-                2**31 - 1
-            )  # if no end block is specified, return the maximum possible block number
-        return self.end_block
-
-    def get_excluded_addresses(self) -> List[str]:
-        return self.excluded_addresses
-
     def is_user_a_participant(self, user: str) -> bool:
         if self.participants is None:
-            self.get_participants()
+            self.get_participants(None)
         return user in self.participants
 
 
@@ -232,9 +207,9 @@ class TermFinanceIntegration(Integration):
 
 if __name__ == "__main__":
     example_integration = TermFinanceIntegration()
-    print(example_integration.get_participants())
+    print(example_integration.get_participants(None))
     print(
         example_integration.get_balance(
-            list(example_integration.get_participants())[0], 20169604
+            list(example_integration.get_participants(None))[0], 20169604
         )
     )

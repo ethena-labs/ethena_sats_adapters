@@ -22,12 +22,12 @@ class Ambient(Integration):
         Get the balance of a user at a given block
         """
         url = f"{AMBIENT_SCROLL_API_URL}/sats/scroll/balance"
-        params = {"user": user, "block": block}
-        response = requests.get(url, params=params)
+        params = {"user": str(user), "block": str(block)}
+        response = requests.get(url, params=params)  # type: ignore
         data = response.json()
         return data["data"]
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         """
         Get all participants of the protocol, ever.
         This function should only be called once and should cache the results by setting self.participants
@@ -41,5 +41,5 @@ class Ambient(Integration):
 if __name__ == "__main__":
     # Simple tests for the integration
     ambient = Ambient()
-    print(ambient.get_participants())
-    print(ambient.get_balance(list(ambient.get_participants())[2], 7372500))
+    print(ambient.get_participants(None))
+    print(ambient.get_balance(list(ambient.get_participants(None))[2], 7372500))
