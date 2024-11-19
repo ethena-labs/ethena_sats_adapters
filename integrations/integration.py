@@ -48,7 +48,6 @@ class Integration(ABC):
 
     # either get_participants OR get_block_balances must be implemented
     def get_block_balances(
-        self,
-        blocks: List[int],
+        self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[str, float]]:
         raise NotImplementedError

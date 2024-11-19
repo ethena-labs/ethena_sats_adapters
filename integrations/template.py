@@ -53,7 +53,8 @@ class ProtocolNameIntegration(
                 where each inner dictionary maps user addresses to their token balance
                 at that block.
         """
-        pass
+        # TODO: Implement your logic here
+        return {}
 
 
 if __name__ == "__main__":
