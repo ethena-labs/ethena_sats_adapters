@@ -5,7 +5,7 @@ from eth_typing import ChecksumAddress
 from web3.contract import Contract
 
 from constants.chains import Chain
-from models.integration import Integration
+from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
 from utils.pendle import get_pendle_participants_v3

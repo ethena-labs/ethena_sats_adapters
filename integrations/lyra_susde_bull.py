@@ -2,7 +2,7 @@ from utils.web3_utils import W3_BY_CHAIN
 import logging
 
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.lyra import (
     get_vault_users,
     get_effective_balance,

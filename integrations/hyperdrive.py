@@ -1,6 +1,6 @@
 from decimal import Decimal
 from constants.chains import Chain
-from models.integration import Integration
+from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 from constants.hyperdrive import (
     HYPERDRIVE_SUSDE_POOL_ADDRESS,

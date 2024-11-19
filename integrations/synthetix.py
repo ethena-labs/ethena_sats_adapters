@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.synthetix import SYNTHETIX_ARB_DEPLOYMENT_BLOCK, ARB_USDE_TOKEN_ADDRESS
 from constants.summary_columns import SummaryColumn
 from utils.synthetix import core_proxy_contract, core_account_proxy_contract

@@ -4,7 +4,7 @@ from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from constants.integration_token import Token
 from constants.summary_columns import SummaryColumn
-from models.integration import Integration
+from integrations.integration import Integration
 
 
 ###############################################################################

@@ -10,7 +10,7 @@ from constants.merchantmoe import (
     METH_USDE_MERCHANT_MOE_LBT_DEPLOYMENT_BLOCK,
     METH_USDE_MERCHANT_MOE_LBT_CONTRACT,
 )
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.merchantmoe import lb_pair_contract, liquidity_helper_contract
 from utils.web3_utils import W3_BY_CHAIN, fetch_events_logs_with_retry, call_with_retry
 

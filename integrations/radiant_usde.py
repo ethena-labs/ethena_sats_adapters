@@ -2,7 +2,7 @@ from utils.web3_utils import W3_BY_CHAIN
 import logging
 
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.radiant import get_radiant_lenders, get_effective_balance
 from constants.radiant import (
     RADIANT_CONTRACTS_AND_START_BY_TOKEN,

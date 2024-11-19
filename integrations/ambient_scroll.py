@@ -1,7 +1,7 @@
 import requests
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
 from constants.ambient import AMBIENT_SCROLL_DEPLOYMENT_BLOCK, AMBIENT_SCROLL_API_URL
 

@@ -3,7 +3,7 @@ from constants.rho_markets import (
     RHO_MARKETS_SCROLL_DEPLOYMENT_BLOCK,
     RHO_MARKETS_SCROLL_RUSDE_ADDRESS,
 )
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
 from integrations.integration_ids import IntegrationID
 from constants.chains import Chain

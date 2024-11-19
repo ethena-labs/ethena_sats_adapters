@@ -2,7 +2,7 @@ import json
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from constants.euler import USDE_VAULT_ADDRESS
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,

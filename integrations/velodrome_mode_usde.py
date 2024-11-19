@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.velodrome import VELODROME_MODE_START_BLOCK, USDE_MODE_TOKEN
 from utils.velodrome import fetch_balance, fetch_participants
 

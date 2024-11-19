@@ -1,6 +1,6 @@
 import requests
 from constants.chains import Chain
-from models.integration import Integration
+from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 
 from constants.beefy import BEEFY_LRT_API_URL

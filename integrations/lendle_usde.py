@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
 from constants.lendle import LENDLE_USDE_DEPLOYMENT_BLOCK
 from utils.web3_utils import w3_mantle, fetch_events_logs_with_retry, call_with_retry

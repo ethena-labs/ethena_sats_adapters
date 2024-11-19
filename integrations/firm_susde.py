@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.firm import FIRM_SUSDE_DEPLOYMENT_BLOCK
 from utils.firm import get_escrow_contract, firm_susde_market_contract
 from utils.web3_utils import w3, fetch_events_logs_with_retry, call_with_retry

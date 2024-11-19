@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.equilibria import PENDLE_LOCKER_ETHEREUM
 from constants.equilibria import equilibria_deposit_ethereum
 import json

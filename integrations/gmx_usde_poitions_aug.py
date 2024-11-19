@@ -10,7 +10,7 @@ from constants.gmx import (
 )
 from utils.gmx import gmx_synthetics_reader_contract
 from constants.summary_columns import SummaryColumn
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import call_with_retry
 
 

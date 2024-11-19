@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from constants.nuri import (
     NURI_NFP_MANAGER_ADDRESS,
     NURI_POOL_ADDRESS,

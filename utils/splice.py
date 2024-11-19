@@ -6,7 +6,7 @@ from web3.contract import Contract
 from functools import partial
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 
 from constants.splice import (
     USDE_SY,

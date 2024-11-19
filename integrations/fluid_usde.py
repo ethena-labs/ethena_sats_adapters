@@ -1,6 +1,6 @@
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract
 from constants.fluid import USDe
