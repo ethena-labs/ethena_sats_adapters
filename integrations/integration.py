@@ -19,6 +19,8 @@ class Integration(ABC):
         excluded_addresses: List[str] = None,
         end_block: int = None,
         reward_multiplier_func=None,
+        ethereal_multiplier: int = 0,
+        ethereal_multiplier_func=None,
     ):
         self.integration_id = integration_id
         self.start_block = start_block
@@ -30,6 +32,8 @@ class Integration(ABC):
         self.balance_multiplier = balance_multiplier
         self.excluded_addresses = excluded_addresses
         self.reward_multiplier_func = reward_multiplier_func
+        self.ethereal_multiplier = ethereal_multiplier
+        self.ethereal_multiplier_func = ethereal_multiplier_func
 
     @abstractmethod
     def get_balance(self, user: str, block: int) -> float:
