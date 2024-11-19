@@ -33,5 +33,7 @@ class CachedBalancesIntegration(Integration):
             ethereal_multiplier_func=ethereal_multiplier_func,
         )
 
-    def get_block_balances(self, blocks: List[int]) -> Dict[int, Dict[str, float]]:
+    def get_block_balances(
+        self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
+    ) -> Dict[int, Dict[str, float]]:
         raise NotImplementedError
