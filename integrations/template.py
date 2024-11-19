@@ -39,7 +39,7 @@ class ProtocolNameIntegration(
     # TODO: Implement this function
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
-    ) -> Dict[int, Dict[str, float]]:
+    ) -> Dict[int, Dict[ChecksumAddress, float]]:
         """Get user balances for specified blocks, using cached data when available.
 
         Args:
@@ -49,7 +49,7 @@ class ProtocolNameIntegration(
             blocks (List[int]): List of block numbers to get balances for.
 
         Returns:
-            Dict[int, Dict[str, float]]: Dictionary mapping block numbers to user balances,
+            Dict[int, Dict[ChecksumAddress, float]]: Dictionary mapping block numbers to user balances,
                 where each inner dictionary maps user addresses to their token balance
                 at that block.
         """

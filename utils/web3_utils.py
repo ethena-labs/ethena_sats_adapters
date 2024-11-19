@@ -2,13 +2,12 @@ import logging
 import os
 import time
 import traceback
-from typing import Union, Literal
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
 
 from web3 import Web3
-from web3.types import HexStr, HexBytes, BlockIdentifier
+from web3.types import BlockIdentifier
 
 from utils.slack import slack_message
 from constants.chains import Chain

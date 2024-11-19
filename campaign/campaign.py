@@ -1,4 +1,12 @@
 from typing import List
+from constants.example_integrations import (
+    ACTIVE_ENA_START_BLOCK_EXAMPLE,
+    BEEFY_ARBITRUM_START_BLOCK_EXAMPLE,
+)
+from integrations.beefy_cached_balance_example_integration import (
+    BeefyCachedBalanceIntegration,
+)
+from integrations.claimed_ena_example_integration import ClaimedEnaIntegration
 from utils import pendle
 from web3 import Web3
 
@@ -25,7 +33,24 @@ INTEGRATIONS: List[Integration] = [
         },
         end_block=40000000,
     ),
-    # Examples
+    # Example integration using cached user balances for improved performance,
+    # reads from previous balance snapshots
+    ClaimedEnaIntegration(
+        integration_id=IntegrationID.CLAIMED_ENA_EXAMPLE,
+        start_block=ACTIVE_ENA_START_BLOCK_EXAMPLE,
+        summary_cols=[SummaryColumn.CLAIMED_ENA_PTS_EXAMPLE],
+        reward_multiplier=1,
+    ),
+    # Cached balances integration example, based on API calls
+    BeefyCachedBalanceIntegration(
+        integration_id=IntegrationID.BEEFY_CACHED_BALANCE_EXAMPLE,
+        start_block=BEEFY_ARBITRUM_START_BLOCK_EXAMPLE,
+        summary_cols=[SummaryColumn.BEEFY_CACHED_BALANCE_EXAMPLE],
+        chain=Chain.ARBITRUM,
+        reward_multiplier=1,
+    ),
+    # Simple Integration class examples (outdated),
+    # don't use these anymore
     PendleLPTIntegration(
         integration_id=IntegrationID.PENDLE_USDE_LPT,
         start_block=PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,

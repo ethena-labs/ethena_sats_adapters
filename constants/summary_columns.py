@@ -32,6 +32,13 @@ class SummaryColumn(Enum):
 
     CURVE_LLAMALEND_SHARDS = ("curve_llamalend_shards", SummaryColumnType.ETHENA_PTS)
 
+    CLAIMED_ENA_PTS_EXAMPLE = ("claimed_ena_example", SummaryColumnType.ETHENA_PTS)
+
+    BEEFY_CACHED_BALANCE_EXAMPLE = (
+        "beefy_cached_balance_example",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

@@ -386,6 +386,14 @@ class IntegrationID(Enum):
     # Fluid
     FLUID = ("Fluid_susde", "Fluid sUSDe", Token.SUSDE)
 
+    # Claimed ENA
+    CLAIMED_ENA_EXAMPLE = ("claimed_ena_example", "Claimed ENA Example", Token.ENA)
+    BEEFY_CACHED_BALANCE_EXAMPLE = (
+        "beefy_cached_balance_example",
+        "Beefy Cached Balance Example",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description

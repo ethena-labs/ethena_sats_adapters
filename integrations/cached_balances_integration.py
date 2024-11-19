@@ -35,5 +35,5 @@ class CachedBalancesIntegration(Integration):
 
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
-    ) -> Dict[int, Dict[str, float]]:
+    ) -> Dict[int, Dict[ChecksumAddress, float]]:
         raise NotImplementedError
