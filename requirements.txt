@@ -4,3 +4,4 @@ python-dotenv~=1.0.0
 requests==2.32.0
 tqdm~=4.66.4
 rich==13.7.1
+types-requests==2.31.0.6

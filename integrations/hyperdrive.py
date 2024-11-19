@@ -37,9 +37,9 @@ class Hyperdrive(Integration):
             start_block=HYPERDRIVE_SUSDE_POOL_DEPLOYMENT_BLOCK,
         )
 
-    def get_participants(self):
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         self.update_participants()
-        return self.pool_users
+        return self.pool_users  # type: ignore
 
     def get_balance(self, user: str, block: int) -> float:
         # update hyperdrive participants
