@@ -1,5 +1,5 @@
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from models.integration import Integration
 from constants.firm import FIRM_SUSDE_DEPLOYMENT_BLOCK
 from utils.firm import get_escrow_contract, firm_susde_market_contract

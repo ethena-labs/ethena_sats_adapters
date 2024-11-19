@@ -1,6 +1,6 @@
 import json
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.euler import SUSDE_VAULT_ADDRESS
 from constants.merchantmoe import DEAD_ADDRESS, ZERO_ADDRESS
 from models.integration import Integration

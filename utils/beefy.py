@@ -1,7 +1,7 @@
 import requests
 from constants.chains import Chain
 from models.integration import Integration
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 
 from constants.beefy import BEEFY_LRT_API_URL
 
@@ -12,9 +12,10 @@ CHAIN_TO_API_URL_PREFIX = {
     [Chain.OPTIMISM]: f"{BEEFY_LRT_API_URL}/api/v2/partner/ethena/optimism",
 }
 
+
 class BeefyIntegration(Integration):
     def __init__(
-        self, 
+        self,
         integration_id: IntegrationID,
         start_block: int,
         chain: Chain,
@@ -41,7 +42,6 @@ class BeefyIntegration(Integration):
         data = response.json()
 
         return float(data["effective_balance"])
-        
 
     def get_participants(self) -> list:
         """
@@ -52,8 +52,7 @@ class BeefyIntegration(Integration):
         url = f"{base_url}/users"
         response = requests.get(url)
         data = response.json()
-        
+
         self.participants = data
 
         return data
-

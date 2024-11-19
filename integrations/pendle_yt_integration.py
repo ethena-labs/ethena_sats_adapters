@@ -6,7 +6,7 @@ from web3.contract import Contract
 
 from constants.chains import Chain
 from models.integration import Integration
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
 from utils.pendle import get_pendle_participants_v3
 from utils.web3_utils import call_with_retry

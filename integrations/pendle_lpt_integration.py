@@ -8,7 +8,7 @@ from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
 from models.integration import Integration
 from utils import pendle
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
 from utils.pendle import get_pendle_participants_v3
 from utils.web3_utils import call_with_retry
@@ -83,7 +83,9 @@ class PendleLPTIntegration(Integration):
         if self.participants is not None:
             return self.participants
 
-        logging.info(f"[{self.integration_id.get_description()}] Getting participants...")
+        logging.info(
+            f"[{self.integration_id.get_description()}] Getting participants..."
+        )
         self.participants = self.get_participants_func(
             [self.sy_contract.address, self.lp_contract.address]
         )

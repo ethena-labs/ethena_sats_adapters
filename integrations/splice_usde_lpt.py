@@ -1,4 +1,4 @@
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from utils.splice import SpliceIntegration
 
 if __name__ == "__main__":

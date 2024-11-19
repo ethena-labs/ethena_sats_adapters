@@ -1,4 +1,4 @@
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from models.integration import Integration
 from utils.balancer import (
     get_vault_pool_token_balance,

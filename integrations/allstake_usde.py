@@ -1,5 +1,5 @@
 from utils.web3_utils import W3_BY_CHAIN
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from utils.allstake import AllstakeIntegration
 
 

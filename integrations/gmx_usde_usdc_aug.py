@@ -1,6 +1,12 @@
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 
-from constants.gmx import GMX_USDE_USDC_MARKET_BLOCK, GMX_USDE_USDC_MARKET_ADDRESS, USDC_TOKEN_ADDRESS, USDE_TOKEN_ADDRESS, WETH_TOKEN_ADDRESS
+from constants.gmx import (
+    GMX_USDE_USDC_MARKET_BLOCK,
+    GMX_USDE_USDC_MARKET_ADDRESS,
+    USDC_TOKEN_ADDRESS,
+    USDE_TOKEN_ADDRESS,
+    WETH_TOKEN_ADDRESS,
+)
 from utils.gmx import GMXLPIntegration
 
 if __name__ == "__main__":

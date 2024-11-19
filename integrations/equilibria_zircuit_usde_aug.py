@@ -1,6 +1,10 @@
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from utils.equilibria import EquilibriaIntegration
-from constants.equilibria import Zircuit_USDe_AUG, Zircuit_USDe_AUG_ID, Zircuit_USDe_AUG_DEPLOYMENT_BLOCK
+from constants.equilibria import (
+    Zircuit_USDe_AUG,
+    Zircuit_USDe_AUG_ID,
+    Zircuit_USDe_AUG_DEPLOYMENT_BLOCK,
+)
 from constants.chains import Chain
 from constants.equilibria import PENDLE_LOCKER_ETHEREUM
 
@@ -13,9 +17,12 @@ if __name__ == "__main__":
         Chain.ETHEREUM,
         20,
         1,
-        [PENDLE_LOCKER_ETHEREUM]
-
+        [PENDLE_LOCKER_ETHEREUM],
     )
 
     print(equilibria_integration.get_participants())
-    print(equilibria_integration.get_balance(list(equilibria_integration.get_participants())[0], "latest"))
+    print(
+        equilibria_integration.get_balance(
+            list(equilibria_integration.get_participants())[0], "latest"
+        )
+    )

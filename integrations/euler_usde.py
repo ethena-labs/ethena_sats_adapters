@@ -1,6 +1,6 @@
 import json
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.euler import USDE_VAULT_ADDRESS
 from models.integration import Integration
 from utils.web3_utils import (
@@ -13,9 +13,7 @@ with open("abi/euler_evault.json") as f:
     evault_abi = json.load(f)
 
 
-class EulerIntegration(
-    Integration
-): 
+class EulerIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.EULER_USDE,
@@ -28,14 +26,17 @@ class EulerIntegration(
             None,
         )
 
-        self.vault_contract = w3.eth.contract(address = USDE_VAULT_ADDRESS, abi=evault_abi)
+        self.vault_contract = w3.eth.contract(
+            address=USDE_VAULT_ADDRESS, abi=evault_abi
+        )
 
     def get_balance(self, user: str, block: int) -> float:
         try:
-            etoken_balance = call_with_retry(self.vault_contract.functions.balanceOf(user), block)
+            etoken_balance = call_with_retry(
+                self.vault_contract.functions.balanceOf(user), block
+            )
             asset_balance = call_with_retry(
-                self.vault_contract.functions.convertToAssets(etoken_balance),
-                block
+                self.vault_contract.functions.convertToAssets(etoken_balance), block
             )
         except Exception as ex:
             print("Error getting balance for user %s: %s", user, ex)
@@ -58,7 +59,7 @@ class EulerIntegration(
                 f"Euler Vault {self.vault_contract}",
                 self.vault_contract.events.Transfer(),
                 start,
-                current_batch_end
+                current_batch_end,
             )
 
             for transfer in transfers:

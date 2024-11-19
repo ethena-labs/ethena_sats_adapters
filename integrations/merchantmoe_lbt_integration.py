@@ -3,7 +3,7 @@ import logging
 from web3.contract import Contract
 
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.merchantmoe import (
     ZERO_ADDRESS,
     DEAD_ADDRESS,
@@ -20,7 +20,7 @@ class MerchantMoeIntegration(Integration):
         self,
         start_block: int,
         lbt_contract: Contract,
-        liquidity_helper_contract: Contract
+        liquidity_helper_contract: Contract,
     ):
         super().__init__(
             IntegrationID.MERCHANT_MOE_METH_USDE_LBT,
@@ -36,12 +36,8 @@ class MerchantMoeIntegration(Integration):
         self.lbt_contract = lbt_contract
         self.liquidity_helper_contract = liquidity_helper_contract
 
-
     def get_balance(self, user: str, block: int) -> float:
-        active_id = call_with_retry(
-            self.lbt_contract.functions.getActiveId(),
-            block
-        )
+        active_id = call_with_retry(self.lbt_contract.functions.getActiveId(), block)
 
         # calculate the amount in bins for ids that are +/- 20% from active price
         # 10bp pair, log(1.20)/log(1.001) = 183 bins each side of range
@@ -50,18 +46,22 @@ class MerchantMoeIntegration(Integration):
         bin_range = list(range(lower_bin_bound, upper_bin_bound + 1))
 
         total_liquidity = 0
-        logging.info(f"[{self.name}] Calling Liquidity Helper Contract for User: {user}, for bin ids: {bin_range}")
+        logging.info(
+            f"[{self.name}] Calling Liquidity Helper Contract for User: {user}, for bin ids: {bin_range}"
+        )
         liquidity = call_with_retry(
             self.liquidity_helper_contract.functions.getLiquiditiesOf(
                 METH_USDE_MERCHANT_MOE_LBT_CONTRACT, user, bin_range
             ),
-            block
+            block,
         )
         total_liquidity += sum(liquidity)
 
         total_liquidity = round(total_liquidity / 10**18, 8)
 
-        logging.info(f"[{self.name}] {user} has {total_liquidity} total liquidity within 20% range of the active price")
+        logging.info(
+            f"[{self.name}] {user} has {total_liquidity} total liquidity within 20% range of the active price"
+        )
         return total_liquidity
 
     def get_participants(self) -> list:
@@ -80,10 +80,12 @@ class MerchantMoeIntegration(Integration):
                 f"{self.name} LBT TransferBatch events",
                 self.lbt_contract.events.TransferBatch(),
                 start_block,
-                to_block
+                to_block,
             )
 
-            logging.info(f"[{self.name}] Scanning blocks {start_block} to {to_block}, received {len(transfers)} mETH/USDe transfer events")
+            logging.info(
+                f"[{self.name}] Scanning blocks {start_block} to {to_block}, received {len(transfers)} mETH/USDe transfer events"
+            )
             for transfer in transfers:
                 from_address = transfer["args"]["from"]
                 to_address = transfer["args"]["to"]
@@ -107,4 +109,8 @@ if __name__ == "__main__":
         liquidity_helper_contract,
     )
     print(merchant_moe_integration.get_participants())
-    print(merchant_moe_integration.get_balance(list(merchant_moe_integration.get_participants())[1], "latest"))
+    print(
+        merchant_moe_integration.get_balance(
+            list(merchant_moe_integration.get_participants())[1], "latest"
+        )
+    )

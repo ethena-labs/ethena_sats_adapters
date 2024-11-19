@@ -1,5 +1,5 @@
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from models.integration import Integration
 from constants.equilibria import PENDLE_LOCKER_ETHEREUM
 from constants.equilibria import equilibria_deposit_ethereum
@@ -24,15 +24,15 @@ with open("abi/equilibria_lpt.json") as f:
 
 class EquilibriaIntegration(Integration):
     def __init__(
-            self,
-            integration_id: IntegrationID,
-            start_block: int,
-            lp_contract: str,
-            lp_contract_id: int,
-            chain: Chain,
-            reward_multiplier: int,
-            balance_multiplier: int,
-            excluded_addresses: List[str],
+        self,
+        integration_id: IntegrationID,
+        start_block: int,
+        lp_contract: str,
+        lp_contract_id: int,
+        chain: Chain,
+        reward_multiplier: int,
+        balance_multiplier: int,
+        excluded_addresses: List[str],
     ):
         super().__init__(
             integration_id,
@@ -49,7 +49,9 @@ class EquilibriaIntegration(Integration):
         self.lp_contract_id = lp_contract_id
 
     def get_balance(self, user: str, block: int) -> float:
-        equilibria_deposit_contract = w3.eth.contract(address=equilibria_deposit_ethereum, abi=equilibria_deposit)
+        equilibria_deposit_contract = w3.eth.contract(
+            address=equilibria_deposit_ethereum, abi=equilibria_deposit
+        )
 
         # Get lpt token address from Stake DAO vault
         poolInfo = call_with_retry(
@@ -99,9 +101,9 @@ class EquilibriaIntegration(Integration):
             print("total_active_supply is 0")
             return 0
 
-        lockerSyBalance = round(((sy_bal / 10 ** 18) * lpt_bal) / total_active_supply, 4)
-        print(sy_bal / 10 ** 18)
-        print(lpt_bal / 10 ** 18)
+        lockerSyBalance = round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4)
+        print(sy_bal / 10**18)
+        print(lpt_bal / 10**18)
 
         receipt_contract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
 
@@ -111,20 +113,20 @@ class EquilibriaIntegration(Integration):
             block,
         )
 
-        print('equilibria_pool_TotalSupply', equilibria_pool_TotalSupply)
+        print("equilibria_pool_TotalSupply", equilibria_pool_TotalSupply)
         # Get gauge user balance
         user_equilibria_pool_bal = call_with_retry(
             receipt_contract.functions.balanceOf(user),
             block,
         )
-        print('user_equilibria_pool_bal', user_equilibria_pool_bal)
+        print("user_equilibria_pool_bal", user_equilibria_pool_bal)
 
         # Get user share based on gauge#totalSupply / gauge#balanceOf(user) and lockerSyBalance
         userShare = user_equilibria_pool_bal * 100 / equilibria_pool_TotalSupply
 
         # print(user, userShare * lpt_bal / 100)
-        print('userShare  lockerSyBalance:', userShare * lockerSyBalance / 100)
-        print('-------------------------------------------------')
+        print("userShare  lockerSyBalance:", userShare * lockerSyBalance / 100)
+        print("-------------------------------------------------")
         return userShare * lockerSyBalance / 100
 
     def get_participants(self) -> list:
@@ -149,13 +151,18 @@ class EquilibriaIntegration(Integration):
                 start,
                 to_block,
             )
-            print('deposits', deposits)
-            print(start, to_block, len(deposits), "getting Equilibria Finance contract data")
+            print("deposits", deposits)
+            print(
+                start,
+                to_block,
+                len(deposits),
+                "getting Equilibria Finance contract data",
+            )
             for deposit in deposits:
-                if (deposit["args"]["_user"]):
+                if deposit["args"]["_user"]:
                     all_users.add(deposit["args"]["_user"])
                     print(deposit["args"]["_user"])
             start += page_size
-        print('all_users', len(all_users))
-        print('-------------------------------------------------')
+        print("all_users", len(all_users))
+        print("-------------------------------------------------")
         return all_users
