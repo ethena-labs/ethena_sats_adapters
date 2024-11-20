@@ -1,4 +1,5 @@
 import json
+from web3 import Web3
 from utils.web3_utils import (
     w3,
 )
@@ -18,5 +19,9 @@ firm_susde_market_contract = w3.eth.contract(
 
 
 def get_escrow_contract(user_address: str):
-    escrow_address = firm_susde_market_contract.functions.escrows(user_address)
-    return w3.eth.contract(address=escrow_address, abi=firm_simple_escrow_abi)
+    escrow_address: str = firm_susde_market_contract.functions.escrows(
+        user_address
+    ).call()
+    return w3.eth.contract(
+        address=Web3.to_checksum_address(escrow_address), abi=firm_simple_escrow_abi
+    )

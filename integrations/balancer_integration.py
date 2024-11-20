@@ -1,5 +1,6 @@
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from typing import List, Optional, Set
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 from utils.balancer import (
     get_vault_pool_token_balance,
     get_potential_token_holders,
@@ -21,7 +22,7 @@ class BalancerIntegration(Integration):
             integration_id,
             config.start_block,
             config.chain,
-            None,
+            [],
             20,
             1,
             None,
@@ -35,7 +36,7 @@ class BalancerIntegration(Integration):
         self.incentivized_token = config.incentivized_token
         self.incentivized_token_decimals = config.incentivized_token_decimals
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
         """
         Retrieve the balance of the user in the incentivized Ethena token.
 
@@ -64,7 +65,10 @@ class BalancerIntegration(Integration):
             / pow(10, self.incentivized_token_decimals)
         )
 
-    def get_participants(self) -> list:
+    def get_participants(
+        self,
+        blocks: Optional[List[int]],
+    ) -> Set[str]:
         """
         Retrieve the set of all unique participants who might have staked Balancer Pool Tokens (BPTs).
 
@@ -78,13 +82,11 @@ class BalancerIntegration(Integration):
             self.chain, self.aura_address, self.start_block
         )
 
-        self.participants = set(aura_holders + gauge_holders)
-        return self.participants
+        return set(aura_holders + gauge_holders)
 
 
 if __name__ == "__main__":
     balancer = BalancerIntegration(IntegrationID.BALANCER_FRAXTAL_FRAX_USDE)
-    # print(balancer.get_participants())
     participants = {
         "0x58d70BFa5B7dEf2B44c2B6c6e1F50bed4950B4D6",
         "0x5836130b9f34deeb78C7642f37E921F913E4C3d6",
@@ -138,5 +140,4 @@ if __name__ == "__main__":
         "0xC0fC2fA4629A1a23Ded78193ac16dfe6FFc05269",
     }
     for participant in participants:
-        print(participant, balancer.get_balance(participant, "latest"))
-    # print(balancer.get_balance(list(participants)[0], "latest"))
+        print(participant, balancer.get_balance(participant))

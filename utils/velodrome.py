@@ -1,23 +1,27 @@
-import os
 import json
-from dotenv import load_dotenv
 from utils.web3_utils import (
     w3_mode,
     fetch_events_logs_with_retry,
     call_with_retry,
 )
-
-from constants.velodrome import VELODROME_MODE_SUGAR_ADDRESS, PAGE_SIZE, VELODROME_MODE_START_BLOCK
+from web3 import Web3
+from constants.velodrome import (
+    VELODROME_MODE_SUGAR_ADDRESS,
+    PAGE_SIZE,
+    VELODROME_MODE_START_BLOCK,
+)
 
 with open("abi/velodrome_sugar.json") as f:
     sugar_abi = json.load(f)
 
 with open("abi/velodrome_pool.json") as f:
-            pool_abi = json.load(f)
+    pool_abi = json.load(f)
 
 sugar_contract = w3_mode.eth.contract(
-    address=VELODROME_MODE_SUGAR_ADDRESS, abi=sugar_abi
+    address=Web3.to_checksum_address(VELODROME_MODE_SUGAR_ADDRESS),
+    abi=sugar_abi,
 )
+
 
 def fetch_pools(block):
     total_pools = []
@@ -31,13 +35,14 @@ def fetch_pools(block):
         )
 
         total_pools.extend(pools)
-        
+
         if len(pools) < PAGE_SIZE:
             break
 
         offset += PAGE_SIZE
 
     return total_pools
+
 
 def fetch_participants(token):
     latest_block = w3_mode.eth.get_block_number()
@@ -61,8 +66,8 @@ def fetch_participants(token):
         for lp in lps:
             participants.add(lp["args"]["to"])
 
-    participants = list(participants)
     return participants
+
 
 def fetch_balance(user, block, token):
     all_pools = fetch_pools(block)

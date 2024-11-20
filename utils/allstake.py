@@ -6,26 +6,37 @@ from web3.contract import Contract
 from utils.web3_utils import call_with_retry
 import logging
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.allstake import ALLSTAKE_STRATEGIES
-from models.integration import Integration
+from integrations.integration import Integration
 from decimal import Decimal
 
 
 SHARES_OFFSET = 1000
 BALANCE_OFFSET = 1000
 
-def get_underlying_balance(user: str, block: int, underlying: Contract, strategy: Contract):
+
+def get_underlying_balance(
+    user: str, block: int, underlying: Contract, strategy: Contract
+):
     """
     User's underlying token balance = underlying token balance of strategy contract * strategy.balanceOf(user) / strategy.totalSupply()
     """
 
-    total_underlying_balance = call_with_retry(underlying.functions.balanceOf(strategy.address), block) + BALANCE_OFFSET
-    total_shares = call_with_retry(strategy.functions.totalSupply(), block) + SHARES_OFFSET
+    total_underlying_balance = (
+        call_with_retry(underlying.functions.balanceOf(strategy.address), block)
+        + BALANCE_OFFSET
+    )
+    total_shares = (
+        call_with_retry(strategy.functions.totalSupply(), block) + SHARES_OFFSET
+    )
     user_shares = call_with_retry(strategy.functions.balanceOf(user), block)
     return Decimal(user_shares * total_underlying_balance) / Decimal(total_shares)
 
-def get_strategy_users(start_block: int, page_size: int, strategy: Contract, chain: Chain):
+
+def get_strategy_users(
+    start_block: int, page_size: int, strategy: Contract, chain: Chain
+):
     """
     Gets all participants that have ever interacted with the strategy by fetching all transfer events.
     """
@@ -60,14 +71,12 @@ class AllstakeIntegration(Integration):
         print(self.strategy_info)
 
         super().__init__(
-            integration_id,
-            self.strategy_info["start"],
-            self.strategy_info["chain"],
-            None,
-            20,
-            1,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=self.strategy_info["start"],
+            chain=self.strategy_info["chain"],
+            summary_cols=None,
+            reward_multiplier=20,
+            balance_multiplier=1,
         )
 
     def get_balance(self, user: str, block: int) -> float:
@@ -78,8 +87,10 @@ class AllstakeIntegration(Integration):
             self.strategy_info["strategy"],
         )
 
-    def get_participants(self) -> list:
-        logging.info(f"[{self.integration_id.get_description()}] Getting participants...")
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
+        logging.info(
+            f"[{self.integration_id.get_description()}] Getting participants..."
+        )
         self.participants = get_strategy_users(
             self.start_block,
             self.strategy_info["page_size"],

@@ -1,29 +1,32 @@
 import json
 from dataclasses import dataclass
+from typing import List
 
-from constants.chains import Chain
+from web3 import Web3
+
 from constants.summary_columns import SummaryColumn
 from constants.curve import RewardContractConfig
 
-from models.integration import Integration
+from integrations.integration import Integration
 
 from utils.web3_utils import (
-    W3_BY_CHAIN, 
-    fetch_events_logs_with_retry, 
+    W3_BY_CHAIN,
+    fetch_events_logs_with_retry,
     call_with_retry,
     multicall,
 )
+
 
 @dataclass(frozen=True)
 class UserState:
     address: str
     state: tuple
     block: int
-    
+
     def __init__(self, address: str, state: list, block: int):
-        object.__setattr__(self, 'address', address)
-        object.__setattr__(self, 'state', tuple(state))
-        object.__setattr__(self, 'block', block)
+        object.__setattr__(self, "address", address)
+        object.__setattr__(self, "state", tuple(state))
+        object.__setattr__(self, "block", block)
 
     def __hash__(self):
         return hash((self.address, self.state, self.block))
@@ -31,11 +34,11 @@ class UserState:
 
 class Curve(Integration):
     """
-    Base class for Curve integrations.    
+    Base class for Curve integrations.
     """
 
     def __init__(
-        self, 
+        self,
         reward_config: RewardContractConfig,
     ):
         """
@@ -44,27 +47,26 @@ class Curve(Integration):
         Args:
             reward_config (RewardContractConfig): The configuration for the reward contract.
         """
-        
+
         super().__init__(
             integration_id=reward_config.integration_id,
             start_block=reward_config.genesis_block,
             chain=reward_config.chain,
-            summary_cols=SummaryColumn.CURVE_LLAMALEND_SHARDS,
+            summary_cols=[SummaryColumn.CURVE_LLAMALEND_SHARDS],
         )
-        
+
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
         self.reward_config = reward_config
         with open(self.reward_config.abi_filename, "r") as f:
             abi = json.load(f)
             self.contract = self.w3.eth.contract(
-                address=self.reward_config.address,
-                abi=abi
+                address=Web3.to_checksum_address(self.reward_config.address), abi=abi
             )
         self.contract_function = self.contract.functions.user_state
         self.contract_event = self.contract.events.Borrow()
         self.start_state: List[UserState] = []
         self.last_indexed_block: int = 0
-            
+
     def get_balance(self, user: str, block: int) -> float:
         """
         Retrieve the collateral balance for a user at a specific block.
@@ -77,7 +79,7 @@ class Curve(Integration):
             float: The user's collateral balance in wei.
         """
         return self.get_user_state(user, block)[self.reward_config.state_arg_no]
-        
+
     def get_user_states(self, block: int) -> list:
         """
         Retrieve user states for all participants at a specific block.
@@ -103,13 +105,13 @@ class Curve(Integration):
                 UserState(
                     address=user_info.address,
                     state=result[self.reward_config.state_arg_no],
-                    block=block
+                    block=block,
                 )
             )
 
         return states
-    
-    def get_user_state(self, user: str, block: int) -> float:
+
+    def get_user_state(self, user: str, block: int) -> list:
         """
         Retrieve the collateral balance for a user at a specific block.
 
@@ -124,11 +126,11 @@ class Curve(Integration):
             self.contract_function(user),
             block,
         )
-        
+
     def get_current_block(self) -> int:
         return self.w3.eth.get_block_number()
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None = None) -> set[str]:
         """
         Fetch all participants who have borrowed from the LlamaLend market.
 
@@ -138,7 +140,7 @@ class Curve(Integration):
         page_size = 50000
         current_block = self.get_current_block()
         if self.last_indexed_block == current_block:
-            return [user_info.address for user_info in self.start_state]
+            return {user_info.address for user_info in self.start_state}
 
         start_block = max(self.start_block, self.last_indexed_block + 1)
 
@@ -167,5 +169,5 @@ class Curve(Integration):
 
         self.start_state.extend(all_users)
         self.last_indexed_block = current_block
-        
-        return [user_info.address for user_info in self.start_state]
+
+        return {user_info.address for user_info in self.start_state}

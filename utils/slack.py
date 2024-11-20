@@ -5,9 +5,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def slack_message(message: str):
     response = requests.post(
-        os.getenv("SLACK_WEBHOOK"),
+        os.getenv("SLACK_WEBHOOK", ""),
         json={
             "text": message,
         },

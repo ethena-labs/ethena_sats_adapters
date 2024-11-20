@@ -1,18 +1,18 @@
 # Overview
 
-This repo offers a self service approach to Ethena Sats Campaign integrations.
+This repo offers a self service approach to Ethena Points Campaign integrations.
 
 # Instructions
 
-For your protocol to be included and your users to receive sats, you should submit a PR to this repo. Here some guidelines to follow:
+For your protocol to be included and your users to receive points, you should submit a PR to this repo. Here some guidelines to follow:
 
 1. Make a copy of `.env.example` and name it `.env`.
 2. Run `pip install -r requirements.txt` to install the required packages.
-3. Add your integration metadata to `constants/integration_ids.py`.
-4. Make a copy of `integrations/template.py`, naming the file `[protocol name].py` and place in the `integrations` directory.
-5. Your integration must be a class that inherits from `Integration` and implements the `get_balance` and `get_participants` methods.
-6. The `get_balance` method should return the balance of a given user at a given block.
-7. The `get_participants` method should return a list of all users that have interacted with the protocol.
+3. Add your integration metadata to `integrations/integration_ids.py`.
+4. Create a new summary column in `constants/summary_columns.py`.
+5. Make a copy of [Template](integrations/template.py), naming the file `[protocol name]_integration.py` and place in the `integrations` directory.
+6. Your integration must be a class that inherits from `CachedBalancesIntegration` and implements the `get_block_balances` method.
+7. The `get_block_balances` method should return a dict of block numbers to a dict of user addresses to balances at that block. (Note: Not all blocks are queried by this service in production- only a sampling, but your code should be capable of handling any block number.)
 8. Write some basic tests at the bottom of the file to ensure your integration is working correctly.
 9. Submit a PR to this repo with your integration and ping the Ethena team in Telegram.
 
@@ -20,5 +20,11 @@ For your protocol to be included and your users to receive sats, you should subm
 
 - Integrations must follow this architecture and be written in python.
 - Pendle integrations are included as examples of functioning integrations. Run `python -m integrations.pendle_lpt_integration` to see the output.
-- The `get_balance` and `get_participants` methods should be as efficient as possible.
-- We prefer that on chain RPC calls are used to get information as much as possible due to reliability and trustlessness. For example one could cycle through events for `get_participants` and read from a smart contract for `get_balance`. Off chain calls to apis or subgraphs are acceptable if necessary. If usage is not reasonable or the external service is not reliable, users may not receive their sats.
+- The `get_block_balances` method should be as efficient as possible. So the use of the cached data from previous blocks if possible is highly encouraged.
+- We prefer that on chain RPC calls are used to get information as much as possible due to reliability and trustlessness. Off chain calls to apis or subgraphs are acceptable if necessary. If usage is not reasonable or the external service is not reliable, users may not receive their points.
+
+# Example Integrations
+- [ClaimedEnaIntegration](integrations/claimed_ena_example_integration.py): This integration demonstrates how to track ENA token claims using cached balance snapshots for improved performance. It reads from previous balance snapshots to efficiently track user claim history.
+- [BeefyCachedBalanceExampleIntegration](integrations/beefy_cached_balance_example_integration.py): This integration is an example of a cached balance integration that is based on API calls.
+- [PendleLPTIntegration](integrations/pendle_lpt_integration.py): (Legacy Example) A basic integration showing Pendle LPT staking tracking. Note: This is a non-cached implementation included only for reference - new integrations should use the cached approach for better efficiency.
+- [PendleYTIntegration](integrations/pendle_yt_integration.py): (Legacy Example) A basic integration showing Pendle YT staking tracking. Note: This is a non-cached implementation included only for reference - new integrations should use the cached approach for better efficiency.

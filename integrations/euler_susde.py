@@ -1,9 +1,9 @@
 import json
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.euler import SUSDE_VAULT_ADDRESS
 from constants.merchantmoe import DEAD_ADDRESS, ZERO_ADDRESS
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
@@ -47,11 +47,11 @@ class EulerIntegration(Integration):
 
         return round(asset_balance / 1e18, 4)
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
-        all_users = set()
+        all_users: set[str] = set()
         start = self.start_block
         end = w3.eth.get_block_number()
 
@@ -81,6 +81,6 @@ class EulerIntegration(Integration):
 
 if __name__ == "__main__":
     example_integration = EulerIntegration()
-    participants = example_integration.get_participants()
+    participants = example_integration.get_participants(None)
     print(participants)
-    print(example_integration.get_balance(participants[0], 20677865))
+    print(example_integration.get_balance(list(participants)[0], 20677865))

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 
 ## If you want to integrate another Balancer Pool, first add it to the IntegrationID enum in integration_ids.py
 ## Then, add a new entry to the INTEGRATION_CONFIGS dictionary below. Aura integration is optional.
@@ -42,7 +42,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x56bA1E88340fD53968f686490519Fb0fBB692a39",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_ARBITRUM_GHO_USDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_ARBITRUM_GHO_USDE: IntegrationConfig(
         chain=Chain.ARBITRUM,
         start_block=225688025,
         incentivized_token=Token.USDE.value,
@@ -51,7 +51,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         gauge_address="0xf2d151c40C18d8097AAa5157eE8f447CBe217269",
         aura_address="0x106398c0a78AE85F501FEE16d53A81401469b9B8",
     ),
-    IntegrationID.BALANCER_ARBITRUM_WAGHO_USDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_ARBITRUM_WAGHO_USDE: IntegrationConfig(
         chain=Chain.ARBITRUM,
         start_block=245277323,
         incentivized_token=Token.USDE.value,
@@ -60,7 +60,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         gauge_address="0xcfab2efef3affdd158568dc896115eac26b3c498",
         aura_address="0x8f2c4c4ad0b45a3c740e7f7fbc5a106659adeee7",
     ),
-    IntegrationID.BALANCER_ARBITRUM_GYD_SUSDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_ARBITRUM_GYD_SUSDE: IntegrationConfig(
         chain=Chain.ARBITRUM,
         start_block=240466292,
         incentivized_token=Token.SUSDE.value,
@@ -69,7 +69,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         gauge_address="0xdEC026525FE4FEF54857bCF551aEA97aBc24A673",
         aura_address="0x2d7cFe43BcDf10137924a20445B763Fb40E5871c",
     ),
-    IntegrationID.BALANCER_ARBITRUM_SUSDE_SFRAX.value: IntegrationConfig(
+    IntegrationID.BALANCER_ARBITRUM_SUSDE_SFRAX: IntegrationConfig(
         chain=Chain.ARBITRUM,
         start_block=197330091,
         incentivized_token=Token.SUSDE.value,
@@ -79,7 +79,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x0a6a427867a3274909A04276cB5589AE8Cc2dfc7",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_ARBITRUM_SUSDE_USDC.value: IntegrationConfig(
+    IntegrationID.BALANCER_ARBITRUM_SUSDE_USDC: IntegrationConfig(
         chain=Chain.ARBITRUM,
         start_block=197316005,
         incentivized_token=Token.SUSDE.value,
@@ -89,7 +89,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x043A59D13884DddCa18b99C3C184C29aAd973b35",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_ETHEREUM_WSTETH_SUSDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_ETHEREUM_WSTETH_SUSDE: IntegrationConfig(
         chain=Chain.ETHEREUM,
         start_block=20005052,
         incentivized_token=Token.SUSDE.value,
@@ -98,7 +98,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         gauge_address="0xbd00c7cbe59dddbd784c899ac173b7ba514b9997",
         aura_address="0x99d9e4d3078f7c9c5b792999749290a54fb87257",
     ),
-    IntegrationID.BALANCER_ETHEREUM_BAOUSD_SUSDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_ETHEREUM_BAOUSD_SUSDE: IntegrationConfig(
         chain=Chain.ETHEREUM,
         start_block=20169334,
         incentivized_token=Token.SUSDE.value,
@@ -108,7 +108,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0xd34793bf42d922b04e7e53253f7195725a4a7e9d",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_ETHEREUM_SUSDE_USDC.value: IntegrationConfig(
+    IntegrationID.BALANCER_ETHEREUM_SUSDE_USDC: IntegrationConfig(
         chain=Chain.ETHEREUM,
         start_block=19663564,
         incentivized_token=Token.SUSDE.value,
@@ -118,7 +118,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x4b87dcff2f45535775a9564229119dca5e697a10",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_ETHEREUM_SUSDE_GYD.value: IntegrationConfig(
+    IntegrationID.BALANCER_ETHEREUM_SUSDE_GYD: IntegrationConfig(
         chain=Chain.ETHEREUM,
         start_block=20569775,
         incentivized_token=Token.SUSDE.value,
@@ -127,7 +127,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         gauge_address="0x146b6030E6d6a6398B918E9854652a71C9537180",
         aura_address="0x1f2b312c30b08c1957bd3ada616e77bc7bff51ff",
     ),
-    IntegrationID.BALANCER_FRAXTAL_SFRAX_SDAI_SUSDE.value: IntegrationConfig(
+    IntegrationID.BALANCER_FRAXTAL_SFRAX_SDAI_SUSDE: IntegrationConfig(
         chain=Chain.FRAXTAL,
         start_block=5931675,
         incentivized_token=Token.SUSDE.value,
@@ -137,7 +137,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         aura_address="0x8bb2303ab3ff8bcb1833b71ca14fde75cb88d0b8",
         has_preminted_bpts=True,
     ),
-    IntegrationID.BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC.value: IntegrationConfig(
+    IntegrationID.BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC: IntegrationConfig(
         chain=Chain.FRAXTAL,
         start_block=6859850,
         incentivized_token=Token.USDE.value,

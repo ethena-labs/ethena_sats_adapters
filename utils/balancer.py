@@ -21,11 +21,13 @@ ZERO_ADRESS = "0x0000000000000000000000000000000000000000"
 
 
 def get_vault_pool_token_balance(
-    chain: Chain, pool_id: str, token_address: str, block: int
+    chain: Chain, pool_id: str, token_address: str, block: int | str
 ) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    vaut_contract = w3.eth.contract(address=BALANCER_VAULT, abi=vault_abi)
+    vaut_contract = w3.eth.contract(
+        address=w3.to_checksum_address(BALANCER_VAULT), abi=vault_abi
+    )
 
     tokens, balances, _ = call_with_retry(
         vaut_contract.functions.getPoolTokens(pool_id),
@@ -39,10 +41,14 @@ def get_vault_pool_token_balance(
         raise ValueError(f"Token {token_address} not found in the Pool {pool_id}")
 
 
-def get_user_balance(chain: Chain, user: str, token_address: str, block: int) -> float:
+def get_user_balance(
+    chain: Chain, user: str, token_address: str, block: int | str
+) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    token_contract = w3.eth.contract(address=token_address, abi=erc20_abi)
+    token_contract = w3.eth.contract(
+        address=w3.to_checksum_address(token_address), abi=erc20_abi
+    )
 
     user_balance = call_with_retry(
         token_contract.functions.balanceOf(user),
@@ -53,7 +59,7 @@ def get_user_balance(chain: Chain, user: str, token_address: str, block: int) ->
 
 
 def get_bpt_supply(
-    chain: Chain, bpt_address: str, has_preminted_bpts: bool, block: int
+    chain: Chain, bpt_address: str, has_preminted_bpts: bool, block: int | str
 ) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
@@ -84,7 +90,9 @@ def get_potential_token_holders(
 ) -> list:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    token_contract = w3.eth.contract(address=token_address, abi=erc20_abi)
+    token_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(token_address), abi=erc20_abi
+    )
 
     token_holders = set()
     latest_block = w3.eth.get_block_number()

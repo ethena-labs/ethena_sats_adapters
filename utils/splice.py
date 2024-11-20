@@ -1,25 +1,26 @@
 import json
 import logging
+from typing import Callable
 
 from utils.web3_utils import W3_BY_CHAIN, call_with_retry, fetch_events_logs_with_retry
 from web3.contract import Contract
 from functools import partial
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 
 from constants.splice import (
-	USDE_SY,
-	USDE_YT,
-	USDE_LPT,
-	USDE_DEPLOYMENT_BLOCK,
-	SUSDE_SY,
-	SUSDE_YT,
-	SUSDE_LPT,
-	SUSDE_DEPLOYMENT_BLOCK,
+    USDE_SY,
+    USDE_YT,
+    USDE_LPT,
+    USDE_DEPLOYMENT_BLOCK,
+    SUSDE_SY,
+    SUSDE_YT,
+    SUSDE_LPT,
+    SUSDE_DEPLOYMENT_BLOCK,
 )
 
-w3 = W3_BY_CHAIN['mode']['w3']
+w3 = W3_BY_CHAIN[Chain.MODE]["w3"]
 
 
 ########################################################################
@@ -46,27 +47,35 @@ susde_lpt_contract = w3.eth.contract(address=SUSDE_LPT, abi=lpt_abi)
 # Get Balance Functions
 ########################################################################
 
+
 def get_lpt_balance(
-    user: str, 
+    user: str,
     block: int,
-	sy_contract: Contract, 
-	lp_contract: Contract, 
+    sy_contract: Contract,
+    lp_contract: Contract,
 ):
-    sy_bal = call_with_retry(sy_contract.functions.balanceOf(lp_contract.address), block)
+    sy_bal = call_with_retry(
+        sy_contract.functions.balanceOf(lp_contract.address), block
+    )
     if sy_bal == 0:
-    	return 0
+        return 0
     lpt_bal = call_with_retry(lp_contract.functions.activeBalance(user), block)
     if lpt_bal == 0:
         return 0
-    total_active_supply = call_with_retry(lp_contract.functions.totalActiveSupply(), block)
-    
+    total_active_supply = call_with_retry(
+        lp_contract.functions.totalActiveSupply(), block
+    )
+
     if total_active_supply == 0:
         print("total_active_supply is 0")
         return 0
 
-    print(f"sy_bal: {sy_bal}, lpt_bal: {lpt_bal}, total_active_supply: {total_active_supply}")
+    print(
+        f"sy_bal: {sy_bal}, lpt_bal: {lpt_bal}, total_active_supply: {total_active_supply}"
+    )
     print(round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4))
     return round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4)
+
 
 def get_yt_balance(user: str, block: int, yt_contract: Contract) -> float:
     res = call_with_retry(yt_contract.functions.balanceOf(user), block)
@@ -79,6 +88,7 @@ def get_yt_balance(user: str, block: int, yt_contract: Contract) -> float:
 # Get Participants Functions
 ########################################################################
 
+
 def get_splice_participants_v3(token_addresses, start: int):
     page_size = 1900
     all_users = set()
@@ -86,8 +96,8 @@ def get_splice_participants_v3(token_addresses, start: int):
 
     for i in range(len(token_addresses)):
         token = token_addresses[i]
-        contract = w3.eth.contract(address=token, abi=erc20_abi)   
-        
+        contract = w3.eth.contract(address=token, abi=erc20_abi)
+
         while start < target_block:
             to_block = min(start + page_size, target_block)
             transfers = fetch_events_logs_with_retry(
@@ -107,38 +117,44 @@ def get_splice_participants_v3(token_addresses, start: int):
 # Configs
 ########################################################################
 
-config = {
-	IntegrationID.SPLICE_USDE_YT: {
-		'chain': Chain.MODE,
-		'start_block': USDE_DEPLOYMENT_BLOCK,
-		'end_block': None,
-		'sats_multiplier': 20,
-		'token_addresses': [usde_yt_contract.address],
-		'get_balance_func': partial(get_yt_balance, yt_contract=usde_yt_contract),
-	},
-	IntegrationID.SPLICE_USDE_LPT: {
-		'chain': Chain.MODE,
-		'start_block': USDE_DEPLOYMENT_BLOCK,
-		'end_block': None,
-		'sats_multiplier': 20,
-		'token_addresses': [usde_sy_contract.address, usde_lpt_contract.address],
-		'get_balance_func': partial(get_lpt_balance, sy_contract=usde_sy_contract, lp_contract=usde_lpt_contract),
-	},
+config: dict[IntegrationID, dict] = {
+    IntegrationID.SPLICE_USDE_YT: {
+        "chain": Chain.MODE,
+        "start_block": USDE_DEPLOYMENT_BLOCK,
+        "end_block": None,
+        "sats_multiplier": 20,
+        "token_addresses": [usde_yt_contract.address],
+        "get_balance_func": partial(get_yt_balance, yt_contract=usde_yt_contract),
+    },
+    IntegrationID.SPLICE_USDE_LPT: {
+        "chain": Chain.MODE,
+        "start_block": USDE_DEPLOYMENT_BLOCK,
+        "end_block": None,
+        "sats_multiplier": 20,
+        "token_addresses": [usde_sy_contract.address, usde_lpt_contract.address],
+        "get_balance_func": partial(
+            get_lpt_balance, sy_contract=usde_sy_contract, lp_contract=usde_lpt_contract
+        ),
+    },
     IntegrationID.SPLICE_SUSDE_YT: {
-        'chain': Chain.MODE,
-        'start_block': SUSDE_DEPLOYMENT_BLOCK,
-        'end_block': None,
-        'sats_multiplier': 20,
-        'token_addresses': [susde_yt_contract.address],
-        'get_balance_func': partial(get_yt_balance, yt_contract=susde_yt_contract),
+        "chain": Chain.MODE,
+        "start_block": SUSDE_DEPLOYMENT_BLOCK,
+        "end_block": None,
+        "sats_multiplier": 20,
+        "token_addresses": [susde_yt_contract.address],
+        "get_balance_func": partial(get_yt_balance, yt_contract=susde_yt_contract),
     },
     IntegrationID.SPLICE_SUSDE_LPT: {
-        'chain': Chain.MODE,
-        'start_block': SUSDE_DEPLOYMENT_BLOCK,
-        'end_block': None,
-        'sats_multiplier': 20,
-        'token_addresses': [susde_sy_contract.address, susde_lpt_contract.address],
-        'get_balance_func': partial(get_lpt_balance, sy_contract=susde_sy_contract, lp_contract=susde_lpt_contract),
+        "chain": Chain.MODE,
+        "start_block": SUSDE_DEPLOYMENT_BLOCK,
+        "end_block": None,
+        "sats_multiplier": 20,
+        "token_addresses": [susde_sy_contract.address, susde_lpt_contract.address],
+        "get_balance_func": partial(
+            get_lpt_balance,
+            sy_contract=susde_sy_contract,
+            lp_contract=susde_lpt_contract,
+        ),
     },
 }
 
@@ -147,32 +163,37 @@ config = {
 # Integration Class
 ########################################################################
 
-class SpliceIntegration(Integration):  
+
+class SpliceIntegration(Integration):
     def __init__(self, integration_id: IntegrationID):
         super().__init__(
-            integration_id,  
-            config[integration_id]['start_block'],  
-            config[integration_id]['chain'],  
-            None,  # SummaryColumn 
-            config[integration_id]['sats_multiplier'],  # SATS multiplier 
-            1, 
-            config[integration_id]['end_block'],  
-            None,  # reward multiplier fn 
+            integration_id=integration_id,
+            start_block=config[integration_id]["start_block"],
+            chain=config[integration_id]["chain"],
+            reward_multiplier=config[integration_id]["sats_multiplier"],
+            balance_multiplier=1,
+            end_block=config[integration_id]["end_block"],
         )
-        self.token_addresses = config[integration_id]['token_addresses']
-        self.get_balance_func = config[integration_id]['get_balance_func']
+        self.token_addresses = config[integration_id]["token_addresses"]
+        self.get_balance_func = config[integration_id]["get_balance_func"]
 
     def get_description(self):
         return self.integration_id.get_description()
 
-    def get_balance(self, user: str, block: int) -> float:
-        logging.info(f"[{self.get_description()}] Getting balance for {user} at block {block}")
-        return self.get_balance_func(user, block)
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
+        logging.info(
+            f"[{self.get_description()}] Getting balance for {user} at block {block}"
+        )
+        return self.get_balance_func(user, block)  # type: ignore
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
         logging.info(f"[{self.get_description()}] Getting participants...")
-        self.participants = get_splice_participants_v3(self.token_addresses, self.start_block)
-        logging.info(f"[{self.get_description()}] Found {len(self.participants)} participants")
-        return self.participants
+        self.participants = get_splice_participants_v3(
+            self.token_addresses, self.start_block
+        )
+        logging.info(
+            f"[{self.get_description()}] Found {len(self.participants)} participants"
+        )
+        return set(self.participants)

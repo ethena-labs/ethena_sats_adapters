@@ -1,12 +1,21 @@
 import json
+from typing import List, Optional, Set
 import requests
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
 from utils.web3_utils import w3_arb, fetch_events_logs_with_retry, call_with_retry
+from web3.contract import Contract
 
-from constants.gmx import GMX_SYNTHETICS_READER_CONTRACT_ADDRESS, GMX_WSTETH_USDE_MARKET_ADDRESS, GMX_DATA_STORE_CONTRACT_ADDRESS, GMX_USDE_USDC_MARKET_ADDRESS, GMX_MAX_PNL_FACTOR_FOR_TRADERS_KEY, GMX_PRICES_ENDPOINT
+from constants.gmx import (
+    GMX_SYNTHETICS_READER_CONTRACT_ADDRESS,
+    GMX_WSTETH_USDE_MARKET_ADDRESS,
+    GMX_DATA_STORE_CONTRACT_ADDRESS,
+    GMX_USDE_USDC_MARKET_ADDRESS,
+    GMX_MAX_PNL_FACTOR_FOR_TRADERS_KEY,
+    GMX_PRICES_ENDPOINT,
+)
 
 with open("abi/gmx_gm_token.json") as f:
     gmx_gm_token_abi = json.load(f)
@@ -23,22 +32,26 @@ gmx_wsteth_usde_market_contract = w3_arb.eth.contract(
 )
 
 gmx_synthetics_reader_contract = w3_arb.eth.contract(
-    address=GMX_SYNTHETICS_READER_CONTRACT_ADDRESS, abi=gmx_synthetics_reader_contract_abi
+    address=GMX_SYNTHETICS_READER_CONTRACT_ADDRESS,
+    abi=gmx_synthetics_reader_contract_abi,
 )
+
 
 def makePriceTuple(prices, token):
     return (
-        int(prices[token]['minPrice']),
-        int(prices[token]['maxPrice']),
+        int(prices[token]["minPrice"]),
+        int(prices[token]["maxPrice"]),
     )
 
-def getContract(contract_address):
+
+def getContract(contract_address) -> Optional[Contract]:
     if contract_address == GMX_USDE_USDC_MARKET_ADDRESS:
         return gmx_usde_usdc_market_contract
     elif contract_address == GMX_WSTETH_USDE_MARKET_ADDRESS:
         return gmx_wsteth_usde_market_contract
     else:
         return None
+
 
 class GMXLPIntegration(Integration):
     prices = None
@@ -49,14 +62,14 @@ class GMXLPIntegration(Integration):
     short_token_address = None
 
     def __init__(
-            self,
-            integration_id: IntegrationID,
-            start_block: int,
-            market_address: str,
-            index_token_address: str,
-            long_token_address: str,
-            short_token_address: str,
-        ):
+        self,
+        integration_id: IntegrationID,
+        start_block: int,
+        market_address: str,
+        index_token_address: str,
+        long_token_address: str,
+        short_token_address: str,
+    ):
         super().__init__(
             integration_id,
             start_block,
@@ -95,6 +108,8 @@ class GMXLPIntegration(Integration):
             )
         )
 
+        if self.market_contract is None:
+            return 0
         user_token_balance = call_with_retry(
             self.market_contract.functions.balanceOf(user),
             block,
@@ -105,7 +120,10 @@ class GMXLPIntegration(Integration):
 
         return gm_token_price * user_token_balance / oracle_price_decimals
 
-    def get_participants(self) -> list:
+    def get_participants(
+        self,
+        blocks: Optional[List[int]],
+    ) -> Set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -113,7 +131,7 @@ class GMXLPIntegration(Integration):
         start_block = self.start_block
         target_block = w3_arb.eth.get_block_number()
 
-        all_users = set()
+        all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
             transfers = fetch_events_logs_with_retry(
@@ -131,17 +149,19 @@ class GMXLPIntegration(Integration):
         return all_users
 
     def fetchTokenPrices(self):
-        if (self.prices):
+        if self.prices:
             return self.prices
 
         response = requests.get(GMX_PRICES_ENDPOINT)
 
         if response.status_code == 200:
             pricesCollection = response.json()
-            pricesDict = { item['tokenAddress']: item for item in pricesCollection }
+            pricesDict = {item["tokenAddress"]: item for item in pricesCollection}
             self.prices = pricesDict
             return self.prices
 
-        print(f"GMX: failed to fetch token prices with status code {response.status_code}")
+        print(
+            f"GMX: failed to fetch token prices with status code {response.status_code}"
+        )
 
         return None

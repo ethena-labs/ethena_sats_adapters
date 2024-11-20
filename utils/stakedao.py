@@ -1,6 +1,6 @@
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 from constants.stakedao import PENDLE_LOCKER
 import logging
 import json
@@ -9,7 +9,9 @@ from utils.web3_utils import (
     call_with_retry,
     w3,
 )
-from typing import List
+from typing import Optional, Set
+from eth_typing import ChecksumAddress
+from web3 import Web3
 
 with open("abi/stakedao_vault.json") as f:
     vault_abi = json.load(f)
@@ -28,24 +30,25 @@ class StakeDAOIntegration(Integration):
         chain: Chain = Chain.ETHEREUM,
         reward_multiplier: int = 20,
         balance_multiplier: int = 1,
-        excluded_addresses: List[str] = [PENDLE_LOCKER],
+        excluded_addresses: Optional[Set[ChecksumAddress]] = {
+            Web3.to_checksum_address(PENDLE_LOCKER),
+        },
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            None,
-            reward_multiplier,
-            balance_multiplier,
-            excluded_addresses,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            excluded_addresses=excluded_addresses,
         )
-        self.lp_contract = lp_contract
+        self.lp_contract = Web3.to_checksum_address(lp_contract)
 
     def get_balance(self, user: str, block: int) -> float:
 
-        stakeDAOVaultContract = w3.eth.contract(address=self.lp_contract, abi=vault_abi)
+        stakeDAOVaultContract = w3.eth.contract(
+            address=w3.to_checksum_address(self.lp_contract), abi=vault_abi
+        )
 
         # Get lpt token address from Stake DAO vault
         pendlePoolAddress = call_with_retry(
@@ -117,7 +120,7 @@ class StakeDAOIntegration(Integration):
         print(user, userShare * lockerSyBalance / 100)
         return userShare * lockerSyBalance / 100
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
