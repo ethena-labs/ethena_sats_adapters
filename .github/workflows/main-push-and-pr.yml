@@ -40,6 +40,3 @@ jobs:
 
       - name: Type check with mypy
         run: mypy . --explicit-package-bases --pretty --check-untyped-defs
-
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
