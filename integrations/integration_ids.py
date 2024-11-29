@@ -394,6 +394,10 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Zerolend
+    ZEROLEND_SUSDE = ("zerolend_susde_deposit","Zerolend sUSDe",Token.SUSDE)
+    ZEROLEND_USDE = ("zerolend_usde_deposit", "Zerolend USDe", Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
