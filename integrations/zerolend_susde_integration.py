@@ -58,6 +58,6 @@ if __name__ == "__main__":
     if len(participants) > 0:
         print(
             zerolend.get_balance(
-                list(participants)[len(participants) - 1], currentBlock-5
+                list(participants)[len(participants) - 1], currentBlock
             )
         )

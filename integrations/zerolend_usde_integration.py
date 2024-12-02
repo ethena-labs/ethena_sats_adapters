@@ -55,4 +55,4 @@ if __name__ == "__main__":
     print("participants", participants)
     currentBlock = w3.eth.get_block_number()
     if len(participants) > 0:
-        print(zerolend.get_balance(list(participants)[len(participants) - 1], currentBlock-5))
+        print(zerolend.get_balance(list(participants)[len(participants) - 1], currentBlock))
