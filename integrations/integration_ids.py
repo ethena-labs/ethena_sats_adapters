@@ -383,6 +383,11 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    POLYNOMIAL_SUSDE = (
+        "polynomial_susde",
+        "Polynomial sUSDe",
+        Token.SUSDE
+    )
     # Fluid
     FLUID = ("Fluid_susde", "Fluid sUSDe", Token.SUSDE)
 

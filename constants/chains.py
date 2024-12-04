@@ -11,3 +11,4 @@ class Chain(Enum):
     MODE = "Mode"
     OPTIMISM = "Optimism"
     Lyra = "Lyra"
+    POLYNOMIAL = "Polynomial"
