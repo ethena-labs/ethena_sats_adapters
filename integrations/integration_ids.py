@@ -393,6 +393,8 @@ class IntegrationID(Enum):
         "Beefy Cached Balance Example",
         Token.USDE,
     )
+    # Upshift sUSDe
+    UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
