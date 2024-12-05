@@ -54,14 +54,12 @@ class Synthetix(Integration):
         all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
-            print(start_block)
             transfers = fetch_events_logs_with_retry(
                 f"Synthetix V3 Arbitrum users from {start_block} to {to_block}",
                 core_account_proxy_contract.events.Transfer(),
                 start_block,
                 to_block,
             )
-            print(transfers)
             for transfer in transfers:
                 all_users.add(transfer["args"]["to"])
             start_block += page_size

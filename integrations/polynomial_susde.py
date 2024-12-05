@@ -26,7 +26,6 @@ class PolynomialIntegration(Integration):
             core_account_proxy_contract.functions.balanceOf(user),
             block,
         )
-
         # loop through the balance and get the account ids
         account_ids = []
         for i in range(balance):
@@ -50,9 +49,8 @@ class PolynomialIntegration(Integration):
 
       def get_participants(self, blocks: list[int] | None) -> set[str]:
         page_size = 1900
-        start_block = 60000000
+        start_block = POLYNOMIAL_DEPLOYMENT_BLOCK
         target_block = w3_polynomial.eth.get_block_number()
-
         all_users: set[str] = set()
         while start_block < target_block:
             to_block = min(start_block + page_size, target_block)
@@ -68,7 +66,6 @@ class PolynomialIntegration(Integration):
             start_block += page_size
 
         self.participants = all_users
-        print(all_users)
         return all_users
 
 
@@ -76,4 +73,4 @@ if __name__ == "__main__":
     polynomial = PolynomialIntegration()
     participants = polynomial.get_participants(None)
     print(len(participants))
-    print(polynomial.get_balance(list(participants)[0], 7557919))
+    print(polynomial.get_balance(list(participants)[0], 7359246))
