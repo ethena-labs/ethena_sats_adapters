@@ -7,7 +7,7 @@ from utils.balancer import (
     get_v2_bpt_supply,
     get_user_balance,
 )
-from constants.balancer import INTEGRATION_CONFIGS
+from constants.balancer_v2 import INTEGRATION_CONFIGS
 
 
 class BalancerV2Integration(Integration):
@@ -87,5 +87,5 @@ class BalancerV2Integration(Integration):
 
 if __name__ == "__main__":
     balancer = BalancerV2Integration(IntegrationID.BALANCER_FRAXTAL_FRAX_USDE)
-    participants = balancer.get_participants()
-    balances = balancer.get_balance(participants)
+    participants = balancer.get_participants(None)
+    balances = balancer.get_balance(list(participants)[0])

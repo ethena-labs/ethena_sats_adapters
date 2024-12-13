@@ -17,8 +17,8 @@ class IntegrationConfig:
     incentivized_token: str
     incentivized_token_decimals: int
     pool_address: str
-    gauge_address: str | None
-    aura_address: str | None
+    gauge_address: str | None = None
+    aura_address: str | None = None
 
 
 INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
@@ -26,6 +26,7 @@ INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
         chain=Chain.ETHEREUM,
         start_block=21374757,
         incentivized_token=Token.USDE.value,
+        incentivized_token_decimals=18,
         pool_address="0xc4Ce391d82D164c166dF9c8336DDF84206b2F812",
         gauge_address="0x4B891340b51889f438a03DC0e8aAAFB0Bc89e7A6",
     ),

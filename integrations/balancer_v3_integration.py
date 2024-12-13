@@ -42,8 +42,16 @@ class BalancerV3Integration(Integration):
         This method calculates the user's token balance based on the share of Balancer Pool Tokens (BPTs)
         staked either directly in Balancer gauges or via Aura Finance.
         """
-        gauge_balance = get_user_balance(self.chain, user, self.gauge_address, block)
-        aura_balance = get_user_balance(self.chain, user, self.aura_address, block)
+        gauge_balance = (
+            0
+            if self.gauge_address is None
+            else get_user_balance(self.chain, user, self.gauge_address, block)
+        )
+        aura_balance = (
+            0
+            if self.aura_address is None
+            else get_user_balance(self.chain, user, self.aura_address, block)
+        )
 
         bpt_supply = get_token_supply(self.chain, self.pool_address, block)
 
@@ -71,11 +79,20 @@ class BalancerV3Integration(Integration):
         This method identifies all addresses that have staked their BPT either directly
         in Balancer gauges or via Aura Finance. Non-staked BPT holders are not included.
         """
-        gauge_holders = get_potential_token_holders(
-            self.chain, self.gauge_address, self.start_block
+        gauge_holders = (
+            []
+            if self.gauge_address is None
+            else get_potential_token_holders(
+                self.chain, self.gauge_address, self.start_block
+            )
         )
-        aura_holders = get_potential_token_holders(
-            self.chain, self.aura_address, self.start_block
+
+        aura_holders = (
+            []
+            if self.aura_address is None
+            else get_potential_token_holders(
+                self.chain, self.aura_address, self.start_block
+            )
         )
 
         return set(aura_holders + gauge_holders)
@@ -84,4 +101,4 @@ class BalancerV3Integration(Integration):
 if __name__ == "__main__":
     balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_ETHEREUM_TESTING)
     participants = balancer.get_participants(None)
-    balances = balancer.get_balance(participants)
+    balances = balancer.get_balance(list(participants)[0])
