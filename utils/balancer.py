@@ -2,7 +2,7 @@ import json
 from web3 import Web3
 
 from constants.chains import Chain
-from constants.balancer import AURA_VOTER_PROXY, BALANCER_VAULT
+from constants.balancer import AURA_VOTER_PROXY, BALANCER_V2_VAULT, BALANCER_V3_VAULT
 from utils.web3_utils import W3_BY_CHAIN, fetch_events_logs_with_retry, call_with_retry
 
 
@@ -29,7 +29,7 @@ def get_vault_v2_pool_token_balance(
     w3 = W3_BY_CHAIN[chain]["w3"]
 
     vaut_contract = w3.eth.contract(
-        address=w3.to_checksum_address(BALANCER_VAULT), abi=vault_v2_abi
+        address=w3.to_checksum_address(BALANCER_V2_VAULT), abi=vault_v2_abi
     )
 
     tokens, balances, _ = call_with_retry(
@@ -50,7 +50,7 @@ def get_vault_v3_pool_token_balance(
     w3 = W3_BY_CHAIN[chain]["w3"]
 
     vaut_contract = w3.eth.contract(
-        address=w3.to_checksum_address(BALANCER_VAULT), abi=vault_v3_abi
+        address=w3.to_checksum_address(BALANCER_V3_VAULT), abi=vault_v3_abi
     )
 
     tokens, _, _, balances = call_with_retry(
