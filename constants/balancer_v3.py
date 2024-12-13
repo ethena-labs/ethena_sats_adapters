@@ -22,12 +22,12 @@ class IntegrationConfig:
 
 
 INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
-    IntegrationID.BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC: IntegrationConfig(
-        chain=Chain.FRAXTAL,
-        start_block=6859850,
+    IntegrationID.BALANCER_V3_ETHEREUM_TESTING: IntegrationConfig(
+        chain=Chain.ETHEREUM,
+        start_block=21374757,
         incentivized_token=Token.USDE.value,
-        pool_address="0x760b30eb4be3ccd840e91183e33e2953c6a31253000000000000000000000005",
-        gauge_address="0x982653b874b059871a46f66120c69503fe391979",
+        pool_address="0xc4Ce391d82D164c166dF9c8336DDF84206b2F812",
+        gauge_address="0x4B891340b51889f438a03DC0e8aAAFB0Bc89e7A6",
     ),
 }
 

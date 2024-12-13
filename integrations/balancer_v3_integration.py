@@ -82,6 +82,6 @@ class BalancerV3Integration(Integration):
 
 
 if __name__ == "__main__":
-    balancer = BalancerV3Integration(IntegrationID.BALANCER_FRAXTAL_FRAX_USDE)
+    balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_ETHEREUM_TESTING)
     participants = balancer.get_participants(None)
     balances = balancer.get_balance(participants)
