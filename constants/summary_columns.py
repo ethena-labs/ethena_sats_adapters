@@ -38,6 +38,10 @@ class SummaryColumn(Enum):
         "beefy_cached_balance_example",
         SummaryColumnType.ETHENA_PTS,
     )
+    AGNI_SATS = (
+        "agni_sats",
+        SummaryColumnType.ETHENA_PTS,
+    )
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
