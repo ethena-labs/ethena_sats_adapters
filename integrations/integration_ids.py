@@ -396,6 +396,14 @@ class IntegrationID(Enum):
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
+    # agni
+    AGNI = (
+        "agni",
+        "Agni",
+        Token.USDE,
+    )
+
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
