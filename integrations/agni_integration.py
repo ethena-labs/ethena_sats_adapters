@@ -58,7 +58,7 @@ class AgniIntegration(
 
         block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         for block in blocks:
-            user_data = {}
+            user_data:Dict[ChecksumAddress, float] = {}
             for pool_info in pool_info_list:
                 pool_user_balance = get_agni_all_user_balance(pool_info, pool_info_list[pool_info], block)
                 for user in pool_user_balance:

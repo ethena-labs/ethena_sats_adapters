@@ -124,23 +124,23 @@ def calculate_agni_tokens(tick, tick_lower, tick_upper, sqrt_ratio_x96, liquidit
 
 
 def get_agni_all_user_balance(pool: ChecksumAddress, users: Dict[ChecksumAddress, Set[int]],
-                              block=w3_mantle.eth.get_block_number()):
+                              block=w3_mantle.eth.get_block_number()) -> Dict[ChecksumAddress, float]:
     try:
         if block < START_BLOCK:
             return {}
-        if pool == Web3.to_checksum_address(usde_cmeth_025):
+        if pool == usde_cmeth_025:
             contract = usde_cmeth_025_contract
-        elif pool == Web3.to_checksum_address(usde_usdt_001):
+        elif pool == usde_usdt_001:
             contract = usde_usdt_001_contract
-        elif pool == Web3.to_checksum_address(susde_usde_005):
+        elif pool == susde_usde_005:
             contract = susde_usde_005_contract
-        elif pool == Web3.to_checksum_address(usdc_usde_001):
+        elif pool == usdc_usde_001:
             contract = usdc_usde_001_contract
         else:
             raise Exception("Unknown pool")
 
         print(users)
-        all_user_total_balances = {}
+        all_user_total_balances:Dict[ChecksumAddress, float] = {}
 
         if len(users) == 0:
             return all_user_total_balances

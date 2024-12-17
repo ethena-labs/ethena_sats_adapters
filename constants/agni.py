@@ -22,12 +22,12 @@ from utils.web3_utils import (
 MAX_TICK_RANGE=887272
 START_BLOCK=72629606
 
-usde_cmeth_025 = "0x95D39c45668D59141dc5bCC940e6C191f1ebB98c"
-usde_usdt_001 = "0x36A7aff497eeF6a9cd7d0e7bc243793fcb3E57E2"
-susde_usde_005 = "0x07277F7c1567b5324aA50a3d2F1F003E2287fBfc"
-usdc_usde_001 = "0xBCf99c834E65E8a58090E20eDc058279317865BD"
-agni_position_manager = "0x218bf598D1453383e2F4AA7b14fFB9BfB102D637"
-usde_address = '0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34'
+usde_cmeth_025 = Web3.to_checksum_address("0x95D39c45668D59141dc5bCC940e6C191f1ebB98c")
+usde_usdt_001 = Web3.to_checksum_address("0x36A7aff497eeF6a9cd7d0e7bc243793fcb3E57E2")
+susde_usde_005 = Web3.to_checksum_address("0x07277F7c1567b5324aA50a3d2F1F003E2287fBfc")
+usdc_usde_001 = Web3.to_checksum_address("0xBCf99c834E65E8a58090E20eDc058279317865BD")
+agni_position_manager = Web3.to_checksum_address("0x218bf598D1453383e2F4AA7b14fFB9BfB102D637")
+usde_address = Web3.to_checksum_address('0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34')
 
 
 
