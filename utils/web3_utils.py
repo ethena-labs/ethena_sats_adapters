@@ -29,6 +29,8 @@ FRAXTAL_NODE_URL = os.getenv("FRAXTAL_NODE_URL")
 w3_fraxtal = Web3(Web3.HTTPProvider(FRAXTAL_NODE_URL))
 LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
 w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
+POLYNOMIAL_NODE_URL = os.getenv("POLYNOMIAL_NODE_URL")
+w3_polynomial = Web3(Web3.HTTPProvider(POLYNOMIAL_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -55,6 +57,9 @@ W3_BY_CHAIN = {
     Chain.Lyra: {
         "w3": w3_lyra,
     },
+    Chain.POLYNOMIAL:{
+        "w3": w3_polynomial,
+    }
 }
 
 
