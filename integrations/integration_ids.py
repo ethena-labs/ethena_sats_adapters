@@ -223,6 +223,7 @@ class IntegrationID(Enum):
 
     # Lendle
     LENDLE_USDE_LPT = ("lendle_usde_lpt_bal", "Lendle Mantle USDe LPT", Token.USDE)
+    LENDLE_SUSDE_LPT = ("lendle_susde_lpt_bal", "Lendle Mantle sUSDe LPT", Token.SUSDE)
 
     # Lyra
     LYRA_SUSDE_BULL_MAINNET = (
