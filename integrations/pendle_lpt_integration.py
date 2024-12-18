@@ -6,9 +6,9 @@ from web3.contract import Contract
 
 from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
-from models.integration import Integration
+from integrations.integration import Integration
 from utils import pendle
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
 from utils.pendle import get_pendle_participants_v3
 from utils.web3_utils import call_with_retry
@@ -23,24 +23,24 @@ class PendleLPTIntegration(Integration):
         sy_contract: Contract,
         lp_contract: Contract,
         get_participants_func: Callable[
-            [[ChecksumAddress]], list  # type: ignore
+            [list[ChecksumAddress]], set[str]
         ] = get_pendle_participants_v3,
         chain: Chain = Chain.ETHEREUM,
-        summary_cols: list[SummaryColumn] = None,
+        summary_cols: list[SummaryColumn] | None = None,
         reward_multiplier: int = 1,
         balance_multiplier: int = 1,
-        end_block: int = None,
-        reward_multiplier_func: Callable[[int], int] = None,
+        end_block: int | None = None,
+        reward_multiplier_func: Callable[[int], int] | None = None,
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            summary_cols,
-            reward_multiplier,
-            balance_multiplier,
-            end_block,
-            reward_multiplier_func,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            summary_cols=summary_cols,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            end_block=end_block,
+            reward_multiplier_func=reward_multiplier_func,
         )
         self.sy_contract = sy_contract
         self.lp_contract = lp_contract
@@ -49,9 +49,9 @@ class PendleLPTIntegration(Integration):
         )
         self.get_participants_func = get_participants_func
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str) -> float:
         logging.info(
-            f"[{self.get_description()}] Getting balance for {user} at block {block}"
+            f"[{self.integration_id.get_description()}] Getting balance for {user} at block {block}"
         )
         sy_bal = call_with_retry(
             self.sy_contract.functions.balanceOf(self.lp_contract.address),
@@ -79,16 +79,18 @@ class PendleLPTIntegration(Integration):
         print(round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4))
         return round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4)
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
-        logging.info(f"[{self.get_description()}] Getting participants...")
+        logging.info(
+            f"[{self.integration_id.get_description()}] Getting participants..."
+        )
         self.participants = self.get_participants_func(
             [self.sy_contract.address, self.lp_contract.address]
         )
         logging.info(
-            f"[{self.get_description()}] Found {len(self.participants)} participants"
+            f"[{self.integration_id.get_description()}] Found {len(self.participants)} participants"
         )
         return self.participants
 
@@ -101,5 +103,6 @@ if __name__ == "__main__":
         pendle.lpt_contract,
         reward_multiplier=20,
     )
-    print(integration.get_participants())
-    print(integration.get_balance(list(integration.get_participants())[0], "latest"))
+    participants = integration.get_participants(None)
+    print(participants)
+    print(integration.get_balance(list(participants)[0], "latest"))

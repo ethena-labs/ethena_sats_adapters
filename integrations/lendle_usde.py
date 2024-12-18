@@ -1,14 +1,13 @@
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
 from constants.lendle import LENDLE_USDE_DEPLOYMENT_BLOCK
 from utils.web3_utils import w3_mantle, fetch_events_logs_with_retry, call_with_retry
 from utils.lendle import lendle_usde_contract
 
-class LendleIntegration(
-    Integration
-):
+
+class LendleIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.LENDLE_USDE_LPT,
@@ -21,7 +20,7 @@ class LendleIntegration(
             None,
         )
 
-    def get_balance(self, user: str, block: int) -> float:
+    def get_balance(self, user: str, block: int | str) -> float:
         bal = call_with_retry(
             lendle_usde_contract.functions.balanceOf(user),
             block,
@@ -32,7 +31,7 @@ class LendleIntegration(
         return round((bal / 10**18), 4)
 
     # Important: This function should only be called once and should cache the results by setting self.participants
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         page_size = 1900
         start_block = LENDLE_USDE_DEPLOYMENT_BLOCK
         target_block = w3_mantle.eth.get_block_number()
@@ -50,16 +49,11 @@ class LendleIntegration(
                 all_users.add(transfer["args"]["to"])
             start_block += page_size
 
-        all_users = list(all_users)
-        self.participants = all_users
-        return all_users
+        return set(all_users)
 
 
 if __name__ == "__main__":
     lendle_integration = LendleIntegration()
-    print(lendle_integration.get_participants())
-    print(
-        lendle_integration.get_balance(
-            list(lendle_integration.participants)[0], "latest"
-        )
-    )
+    participants = lendle_integration.get_participants(None)
+    print(participants)
+    print(lendle_integration.get_balance(list(participants)[0], "latest"))

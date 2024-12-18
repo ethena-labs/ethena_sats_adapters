@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Any, Dict
 from dotenv import load_dotenv
 from utils.web3_utils import (
     W3_BY_CHAIN,
@@ -8,6 +9,9 @@ from utils.web3_utils import (
     w3_mantle,
     w3_arb,
 )
+from constants.chains import Chain
+from web3.contract import Contract
+
 
 from constants.pendle import (
     LPT,
@@ -128,195 +132,195 @@ usde_arb_LPT_contract = w3_arb.eth.contract(address=usde_arb_LP, abi=lpt_abi)
 usde_arb_SY_contract = w3_arb.eth.contract(address=usde_arb_SY, abi=erc20_abi)
 usde_arb_YT_contract = w3_arb.eth.contract(address=usde_arb_YT, abi=erc20_abi)
 
-PENDLE_CONTRACT_AND_START_BY_LP_TOKEN = {
+PENDLE_CONTRACT_AND_START_BY_LP_TOKEN: Dict[str, Dict[str, Any]] = {
     SY: {
         "start": PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         "contract": sy_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     LPT: {
         "start": PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         "contract": lpt_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 20,
     },
     YT: {
         "start": PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         "contract": yt_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     sUSDe_LPT: {
         "start": PENDLE_SUSDE_JULY_DEPLOYMENT_BLOCK,
         "contract": susde_lpt_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 20,
     },
     sUSDe_SY: {
         "start": PENDLE_SUSDE_JULY_DEPLOYMENT_BLOCK,
         "contract": susde_sy_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     sUSDe_YT: {
         "start": PENDLE_SUSDE_JULY_DEPLOYMENT_BLOCK,
         "contract": susde_yt_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     SUSDE_LPT_SEPT: {
         "start": PENDLE_SUSDE_SEPT_DEPLOYMENT_BLOCK,
         "contract": SUSDE_LPT_SEPT_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 20,
     },
     SUSDE_SY_SEPT: {
         "start": PENDLE_SUSDE_SEPT_DEPLOYMENT_BLOCK,
         "contract": SUSDE_SY_SEPT_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     SUSDE_YT_SEPT: {
         "start": PENDLE_SUSDE_SEPT_DEPLOYMENT_BLOCK,
         "contract": SUSDE_YT_SEPT_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     sUSDe_LPT_old: {
         "start": PENDLE_SUSDE_APRIL_DEPLOYMENT_BLOCK,
         "contract": susde_lpt_contract_old,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 5,
     },
     sUSDe_SY_old: {
         "start": PENDLE_SUSDE_APRIL_DEPLOYMENT_BLOCK,
         "contract": susde_sy_contract_old,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     sUSDe_YT_old: {
         "start": PENDLE_SUSDE_APRIL_DEPLOYMENT_BLOCK,
         "contract": susde_yt_contract_old,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     mantle_LPT: {
         "start": PENDLE_MANTLE_DEPLOYMENT_BLOCK,
         "contract": mantle_lpt_contract,
-        "chain": "mantle",
+        "chain": Chain.MANTLE,
         "type": "lpt",
         "sats": 20,
     },
     mantle_SY: {
         "start": PENDLE_MANTLE_DEPLOYMENT_BLOCK,
         "contract": mantle_sy_contract,
-        "chain": "mantle",
+        "chain": Chain.MANTLE,
         "type": "sy",
     },
     mantle_YT: {
         "start": PENDLE_MANTLE_DEPLOYMENT_BLOCK,
         "contract": mantle_yt_contract,
-        "chain": "mantle",
+        "chain": Chain.MANTLE,
         "type": "yt",
     },
     USDe_zircuit_LPT: {
         "start": PENDLE_USDE_ZIRCUIT_DEPLOYMENT_BLOCK,
         "contract": USDe_zircuit_LPT_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 20,
     },
     USDe_zircuit_SY: {
         "start": PENDLE_USDE_ZIRCUIT_DEPLOYMENT_BLOCK,
         "contract": USDe_zircuit_SY_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     USDe_zircuit_YT: {
         "start": PENDLE_USDE_ZIRCUIT_DEPLOYMENT_BLOCK,
         "contract": USDe_zircuit_YT_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     ENA_LP: {
         "start": PENDLE_ENA_DEPLOYMENT_BLOCK,
         "contract": ENA_LPT_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 30,
     },
     ENA_YT: {
         "start": PENDLE_ENA_DEPLOYMENT_BLOCK,
         "contract": ENA_YT_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     ENA_SY: {
         "start": PENDLE_ENA_DEPLOYMENT_BLOCK,
         "contract": ENA_SY_contract,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     usde_arb_LP: {
         "start": PENDLE_USDE_ARB_DEPLOYMENT_BLOCK,
         "contract": usde_arb_LPT_contract,
-        "chain": "arb",
+        "chain": Chain.ARBITRUM,
         "type": "lpt",
         "sats": 20,
     },
     usde_arb_SY: {
         "start": PENDLE_USDE_ARB_DEPLOYMENT_BLOCK,
         "contract": usde_arb_SY_contract,
-        "chain": "arb",
+        "chain": Chain.ARBITRUM,
         "type": "sy",
     },
     usde_arb_YT: {
         "start": PENDLE_USDE_ARB_DEPLOYMENT_BLOCK,
         "contract": usde_arb_YT_contract,
-        "chain": "arb",
+        "chain": Chain.ARBITRUM,
         "type": "yt",
     },
     PENDLE_USDE_KARAK_LP: {
         "start": PENDLE_USDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_USDE_KARAK_LP_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 20,
     },
     PENDLE_USDE_KARAK_SY: {
         "start": PENDLE_USDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_USDE_KARAK_SY_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     PENDLE_USDE_KARAK_YT: {
         "start": PENDLE_USDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_USDE_KARAK_YT_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
     PENDLE_SUSDE_KARAK_LP: {
         "start": PENDLE_SUSDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_SUSDE_KARAK_LP_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "lpt",
         "sats": 5,
     },
     PENDLE_SUSDE_KARAK_SY: {
         "start": PENDLE_SUSDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_SUSDE_KARAK_SY_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "sy",
     },
     PENDLE_SUSDE_KARAK_YT: {
         "start": PENDLE_SUSDE_KARAK_DEPLOYMENT_BLOCK,
         "contract": PENDLE_SUSDE_KARAK_YT_CONTRACT,
-        "chain": "eth",
+        "chain": Chain.ETHEREUM,
         "type": "yt",
     },
 }
@@ -328,8 +332,10 @@ def get_pendle_participants_v3(token_addresses):
         token_data = PENDLE_CONTRACT_AND_START_BY_LP_TOKEN[token]
         if not token_data:
             continue
-        start = token_data["start"]
-        contract = token_data["contract"]
+        start: int = token_data["start"]
+        if start is None:
+            continue
+        contract: Contract = token_data["contract"]
         chain = token_data["chain"]
         web3_for_token = W3_BY_CHAIN[chain]["w3"]
         page_size = 1900

@@ -1,6 +1,6 @@
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
-from models.integration import Integration
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
 from constants.penpie import PENDLE_LOCKER_ETHEREUM
 from constants.penpie import PENDLE_LOCKER_ARBITRUM
 from constants.penpie import master_penpie_ethereum
@@ -13,7 +13,9 @@ from utils.web3_utils import (
     w3,
     w3_arb,
 )
-from typing import List
+from typing import Optional, Set
+from web3.contract import Contract
+from eth_typing import ChecksumAddress
 
 with open("abi/penpie_master.json") as f:
     master_penpie = json.load(f)
@@ -25,7 +27,6 @@ with open("abi/penpie_tokens.json") as f:
     penpie_tokens = json.load(f)
 
 
-
 class PENPIEIntegration(Integration):
     def __init__(
         self,
@@ -33,30 +34,30 @@ class PENPIEIntegration(Integration):
         start_block: int,
         lp_contract: str,
         chain: Chain,
-        reward_multiplier: int ,
+        reward_multiplier: int,
         balance_multiplier: int,
-        excluded_addresses: List[str],
+        excluded_addresses: Optional[Set[ChecksumAddress]] = None,
     ):
         super().__init__(
-            integration_id,
-            start_block,
-            chain,
-            None,
-            reward_multiplier,
-            balance_multiplier,
-            excluded_addresses,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=start_block,
+            chain=chain,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
+            excluded_addresses=excluded_addresses,
         )
         self.lp_contract = lp_contract
 
-    def get_balance(self, user: str, block: int) -> float:
-        # print(self.chain==Chain.ETHEREUM)
-
-        if(self.chain==Chain.ETHEREUM):
-            masterpenpiecontract = w3.eth.contract(address=master_penpie_ethereum, abi=master_penpie)
-        if(self.chain==Chain.ARBITRUM):
-            masterpenpiecontract = w3_arb.eth.contract(address=master_penpie_arbitrum, abi=master_penpie)
+    def get_balance(self, user: str, block: int | str = "latest") -> float:
+        if self.chain == Chain.ETHEREUM:
+            masterpenpiecontract = w3.eth.contract(
+                address=master_penpie_ethereum, abi=master_penpie
+            )
+        if self.chain == Chain.ARBITRUM:
+            masterpenpiecontract = w3_arb.eth.contract(
+                address=w3_arb.to_checksum_address(master_penpie_arbitrum),
+                abi=master_penpie,
+            )
 
         # Get lpt token address from Stake DAO vault
         pendlePoolAddress = call_with_retry(
@@ -64,9 +65,9 @@ class PENPIEIntegration(Integration):
             block,
         )
         # pendlePoolAddress = "0x107a2e3cD2BB9a32B9eE2E4d51143149F8367eBa"
-        if(self.chain==Chain.ETHEREUM):
+        if self.chain == Chain.ETHEREUM:
             lptContract = w3.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
-        if(self.chain==Chain.ARBITRUM):
+        if self.chain == Chain.ARBITRUM:
             lptContract = w3_arb.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
         print(pendlePoolAddress)
         # Get SY address
@@ -76,9 +77,9 @@ class PENPIEIntegration(Integration):
         )
 
         sy = tokens[0]
-        if(self.chain==Chain.ETHEREUM):
+        if self.chain == Chain.ETHEREUM:
             sy_contract = w3.eth.contract(address=sy, abi=erc20_abi)
-        if(self.chain==Chain.ARBITRUM):
+        if self.chain == Chain.ARBITRUM:
             sy_contract = w3_arb.eth.contract(address=sy, abi=erc20_abi)
 
         # Get SY balance in the Pendle pool
@@ -88,10 +89,10 @@ class PENPIEIntegration(Integration):
         )
         if sy_bal == 0:
             return 0
-        if(self.chain==Chain.ETHEREUM):
-            PENDLE_LOCKER=PENDLE_LOCKER_ETHEREUM
-        if(self.chain==Chain.ARBITRUM):
-            PENDLE_LOCKER=PENDLE_LOCKER_ARBITRUM
+        if self.chain == Chain.ETHEREUM:
+            PENDLE_LOCKER = PENDLE_LOCKER_ETHEREUM
+        if self.chain == Chain.ARBITRUM:
+            PENDLE_LOCKER = PENDLE_LOCKER_ARBITRUM
         # Get Stake DAO lpt balance
         lpt_bal = call_with_retry(
             lptContract.functions.activeBalance(PENDLE_LOCKER),
@@ -110,15 +111,17 @@ class PENPIEIntegration(Integration):
             return 0
 
         lockerSyBalance = round(((sy_bal / 10**18) * lpt_bal) / total_active_supply, 4)
-        print(sy_bal/10**18)
-        print(lpt_bal/10**18)
+        print(sy_bal / 10**18)
+        print(lpt_bal / 10**18)
 
-
-
-        if(self.chain==Chain.ETHEREUM):
-            receiptcontract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
-        if(self.chain==Chain.ARBITRUM):
-            receiptcontract = w3_arb.eth.contract(address=self.lp_contract, abi=erc20_abi)
+        if self.chain == Chain.ETHEREUM:
+            receiptcontract = w3.eth.contract(
+                address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+        if self.chain == Chain.ARBITRUM:
+            receiptcontract = w3_arb.eth.contract(
+                address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
 
         # Get gauge total suply
         penpeiepoolTotalSupply = call_with_retry(
@@ -138,11 +141,10 @@ class PENPIEIntegration(Integration):
         print(user, userShare * lpt_bal / 100)
         return userShare * lockerSyBalance / 100
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
-        # logging.info(f"[{self.get_description()}] Getting participants...")
         self.participants = self.get_penpie_participants()
         logging.info(
             f"[{self.get_description()}] Found {len(self.participants)} participants"
@@ -151,17 +153,25 @@ class PENPIEIntegration(Integration):
 
     def get_penpie_participants(self):
         all_users = set()
-
         start = self.start_block
-        if(self.chain==Chain.ETHEREUM):
-            contract = w3.eth.contract(address=self.lp_contract, abi=erc20_abi)
-        if(self.chain==Chain.ARBITRUM):
-            contract = w3_arb.eth.contract(address=self.lp_contract, abi=erc20_abi)
+
+        if self.chain == Chain.ETHEREUM:
+            contract = w3.eth.contract(
+                address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+        elif self.chain == Chain.ARBITRUM:
+            contract = w3_arb.eth.contract(
+                address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+        else:
+            return set()
         page_size = 1900
-        if(self.chain==Chain.ETHEREUM):
+        if self.chain == Chain.ETHEREUM:
             target_block = w3.eth.get_block_number()
-        if(self.chain==Chain.ARBITRUM):
+        elif self.chain == Chain.ARBITRUM:
             target_block = w3_arb.eth.get_block_number()
+        else:
+            return set()
         while start < target_block:
             to_block = min(start + page_size, target_block)
             deposits = fetch_events_logs_with_retry(
@@ -170,9 +180,12 @@ class PENPIEIntegration(Integration):
                 start,
                 to_block,
             )
-            print(start, to_block, len(deposits), "getting Stake DAO contract data")
+            # print(start, to_block, len(deposits), "getting Stake DAO contract data")
             for deposit in deposits:
-                if (deposit["args"]["to"]!="0x0000000000000000000000000000000000000000"):
+                if (
+                    deposit["args"]["to"]
+                    != "0x0000000000000000000000000000000000000000"
+                ):
                     all_users.add(deposit["args"]["to"])
                     print(deposit["args"]["to"])
             start += page_size
