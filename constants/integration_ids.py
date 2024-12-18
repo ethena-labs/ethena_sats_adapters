@@ -30,6 +30,18 @@ class IntegrationID(Enum):
     STAKEDAO_SUSDE_JULY_LPT = ('stakedao_susde_july_effective_lpt_held', 'Stake DAO sUSDe July LPT', Token.SUSDE)
     STAKEDAO_SUSDE_SEPT_LPT = ('stakedao_susde_sept_effective_lpt_held', 'Stake DAO sUSDe Sept LPT', Token.SUSDE)
     STAKEDAO_USDE_JULY_LPT = ('stakedao_usde_july_effective_lpt_held', 'Stake DAO USDe July LPT', Token.USDE)
+    
+    #PENPIE 
+    PENPIE_SUSDE_JULY_LPT=('penpie_susde_july_effective_lpt_held', 'PENPIE sUSDe July LPT', Token.SUSDE)
+    PENPIE_Karak_sUSDe_26SEP2024_LPT= ('PENPIE_Karak_sUSDe_26SEP2024_effective_lpt_held', 'Karak_sUSDe_26SEP2024', Token.SUSDE)
+    PENPIE_Karak_USDE_26SEP2024_LPT= ('PENPIE_Karak_USDE_26SEP2024_effective_lpt_held', 'Karak_USDE_26SEP2024', Token.USDE)
+    PENPIE_sUSDe25APR2024_LPT= ('PENPIE_sUSDe25APR2024_effective_lpt_held', 'sUSDe25APR2024', Token.SUSDE)
+    PENPIE_sUSDe26SEP2024_LPT= ('PENPIE_sUSDe26SEP2024_effective_lpt_held', 'sUSDe26SEP2024', Token.SUSDE)
+    PENPIE_USDe25JUL2024_LPT= ('PENPIE_USDe25JUL2024_effective_lpt_held', 'USDe25JUL2024', Token.USDE)
+    PENPIE_Zircuit_USDe27JUN2024_LPT= ('PENPIE_Zircuit_USDe27JUN2024_effective_lpt_held', 'Zircuit_USDe27JUN2024', Token.USDE)
+    PENPIE_ENA29AUG2024_LPT= ('PENPIE_ENA29AUG2024_effective_lpt_held', 'ENA29AUG2024', Token.ENA)
+    PENPIE_USDE_ARB_AUG2024_LPT= ('PENPIE_USDE_ARB_AUG2024_effective_lpt_held', 'USDE_ARB_AUG2024', Token.USDE)
+    
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = ('equilibria_susde_sept_effective_lpt_held', 'Equilibria sUSDe Sept LPT', Token.SUSDE)
@@ -48,6 +60,12 @@ class IntegrationID(Enum):
 
     # Lendle
     LENDLE_USDE_LPT = ('lendle_usde_lpt_bal', 'Lendle Mantle USDe LPT', Token.USDE)
+    
+    # Ambient
+    AMBIENT_SCROLL_LP = ('ambient_usde_scroll_lp_bal', 'Ambient Scroll LP', Token.USDE)
+    
+    # Nuri
+    NURI_USDE_LP = ('nuri_usde_lp_bal', 'Nuri USDe LP', Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
