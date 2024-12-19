@@ -29,6 +29,8 @@ FRAXTAL_NODE_URL = os.getenv("FRAXTAL_NODE_URL")
 w3_fraxtal = Web3(Web3.HTTPProvider(FRAXTAL_NODE_URL))
 LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
 w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
+SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
+w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -54,6 +56,9 @@ W3_BY_CHAIN = {
     },
     Chain.Lyra: {
         "w3": w3_lyra,
+    },
+    Chain.SWELL: {
+        "w3": w3_swell,
     },
 }
 
@@ -84,6 +89,10 @@ MULTICALL_ABI = [
 MULTICALL_ADDRESS = (
     "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 )
+MULTICALL_ADDRESS_BY_CHAIN = {
+    Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11",
+    Chain.SCROLL: "0xcA11bde05977b3631167028862bE2a173976CA11"
+}
 
 
 def fetch_events_logs_with_retry(
@@ -131,6 +140,30 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
 def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest"):
     multicall_contract = w3.eth.contract(
         address=Web3.to_checksum_address(MULTICALL_ADDRESS), abi=MULTICALL_ABI
+    )
+
+    aggregate_calls = []
+    for call in calls:
+        contract, fn_name, args = call
+        call_data = contract.encodeABI(fn_name=fn_name, args=args)
+        aggregate_calls.append((contract.address, call_data))
+
+    result = multicall_contract.functions.aggregate(aggregate_calls).call(
+        block_identifier=block_identifier
+    )
+
+    decoded_results = []
+    for i, call in enumerate(calls):
+        contract, fn_name, _ = call
+        function = contract.get_function_by_name(fn_name)
+        output_types = [output["type"] for output in function.abi["outputs"]]
+        decoded_results.append(decode(output_types, result[1][i]))
+
+    return decoded_results
+
+def multicall_by_address(w3: Web3, multical_address: str, calls: list, block_identifier: BlockIdentifier = "latest"):
+    multicall_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(multical_address), abi=MULTICALL_ABI
     )
 
     aggregate_calls = []

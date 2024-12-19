@@ -396,6 +396,14 @@ class IntegrationID(Enum):
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
+
+    # Tempest Finance
+    TEMPEST_SWELL_USDE = (
+        "tempest_swell_usde_held",
+        "Tempest Swell USDe",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
