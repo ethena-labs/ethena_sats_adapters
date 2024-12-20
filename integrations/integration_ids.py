@@ -245,6 +245,7 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ("velodrome_mode_susde", "Velodrome Mode sUSDe", Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ("ambient_usde_scroll_lp_bal", "Ambient Scroll LP", Token.USDE)
+    AMBIENT_SWELL_LP = ("ambient_usde_swell_lp_bal", "Ambient Swell LP", Token.USDE)
 
     # Balancer
     BALANCER_ARBITRUM_GHO_USDE = (
