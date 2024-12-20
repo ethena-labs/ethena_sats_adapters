@@ -66,7 +66,7 @@ class TempestCachedBalanceIntegration(CachedBalancesIntegration):
     ) -> Dict[ChecksumAddress, float]:
         logging.info(f"Getting data for Tempest at block {block}...")
 
-        if block < genesis_block:
+        if block <= genesis_block:
             return {}
         
         contract = self.vault_contract_by_address[vault_address]
@@ -90,6 +90,8 @@ class TempestCachedBalanceIntegration(CachedBalancesIntegration):
         
         # convert share balance to USDe balance
         for i in range(0, len(users)):
+            if balance_of_results[i][0] == 0:
+                continue
             data[users[i]] = balance_of_results[i][0] * total_assets / total_supply
         
         return data
@@ -124,5 +126,5 @@ if __name__ == "__main__":
         chain=Chain.SWELL,
         summary_cols=[SummaryColumn.TEMPEST_SWELL_SHARDS],
     )
-    balances = integration.get_block_balances(cached_data={}, blocks=[12008398])
+    balances = integration.get_block_balances(cached_data={}, blocks=[983436])
     print(balances)

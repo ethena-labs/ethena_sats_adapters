@@ -11,4 +11,4 @@ class Chain(Enum):
     MODE = "Mode"
     OPTIMISM = "Optimism"
     Lyra = "Lyra"
-    SWELL = "Scroll"
+    SWELL = "Swell"
