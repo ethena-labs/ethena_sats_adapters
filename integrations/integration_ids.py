@@ -245,6 +245,7 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ("velodrome_mode_susde", "Velodrome Mode sUSDe", Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ("ambient_usde_scroll_lp_bal", "Ambient Scroll LP", Token.USDE)
+    AMBIENT_SWELL_LP = ("ambient_usde_swell_lp_bal", "Ambient Swell LP", Token.USDE)
 
     # Balancer V2
     BALANCER_ARBITRUM_GHO_USDE = (
@@ -400,6 +401,24 @@ class IntegrationID(Enum):
         "Beefy Cached Balance Example",
         Token.USDE,
     )
+    # Upshift sUSDe
+    UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
+
+
+    # Tempest Finance
+    TEMPEST_SWELL_USDE = (
+        "tempest_swell_usde_held",
+        "Tempest Swell USDe",
+        Token.USDE,
+    )
+
+    # agni
+    AGNI = (
+        "agni",
+        "Agni",
+        Token.USDE,
+    )
+
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
