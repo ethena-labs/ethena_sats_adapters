@@ -83,16 +83,17 @@ class TempestCachedBalanceIntegration(CachedBalancesIntegration):
         balance_of_results = multicall_by_address(self.w3, self.multicall_address, balance_of_calls, block)
         
         # get vault totalAssets and totalSupply
-        vault_calls = [(contract, contract.functions.totalAssets.fn_name, None), (contract, contract.functions.totalSupply.fn_name, None)]
+        vault_calls = [(contract, contract.functions.getPositions.fn_name, None), (contract, contract.functions.totalSupply.fn_name, None)]
         vault_results = multicall_by_address(self.w3, self.multicall_address, vault_calls, block)
-        total_assets = vault_results[0][0]
+        # vault_results[0][0] is USDe in Ambient positions, vault_results[0][2] is idle USDe in the vault
+        total_usde = vault_results[0][0] + vault_results[0][2] 
         total_supply = vault_results[1][0]
         
         # convert share balance to USDe balance
         for i in range(0, len(users)):
             if balance_of_results[i][0] == 0:
                 continue
-            data[users[i]] = balance_of_results[i][0] * total_assets / total_supply
+            data[users[i]] = balance_of_results[i][0] * total_usde / total_supply
         
         return data
 
