@@ -310,9 +310,9 @@ class IntegrationID(Enum):
     )
 
     # Balancer V3
-    BALANCER_V3_ETHEREUM_TESTING = (  # TODO: Update after pool deployment
-        "balancer_v3_ethereum_testing",
-        "Balancer V3 Ethereum Testing",
+    BALANCER_V3_ETHEREUM_USDE_USDT = (
+        "balancer_v3_ethereum_usde_usdt",
+        "Balancer V3 Ethereum USDe/USDT",
         Token.USDE,
     )
 

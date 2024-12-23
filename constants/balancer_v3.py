@@ -1,13 +1,19 @@
+from enum import Enum
 from dataclasses import dataclass
 from typing import Dict, Optional
 
 from constants.chains import Chain
-from constants.balancer import Token
 from integrations.integration_ids import IntegrationID
 
 ## If you want to integrate another Balancer Pool, first add it to the IntegrationID enum in integration_ids.py
 ## Then, add a new entry to the INTEGRATION_CONFIGS dictionary below. Aura integration is optional.
 ## If the chain is not yet supported, add it to the Chain enum in chains.py and add RPCs to web3_utils.py.
+
+
+class Token(Enum):
+    WA_ETH_USDE = (
+        "0x5f9d59db355b4a60501544637b00e94082ca575b"  # Wrapped Aave Ethereum USDe
+    )
 
 
 @dataclass
@@ -22,13 +28,13 @@ class IntegrationConfig:
 
 
 INTEGRATION_CONFIGS: Dict[IntegrationID, IntegrationConfig] = {
-    IntegrationID.BALANCER_V3_ETHEREUM_TESTING: IntegrationConfig(
+    IntegrationID.BALANCER_V3_ETHEREUM_USDE_USDT: IntegrationConfig(
         chain=Chain.ETHEREUM,
-        start_block=21374757,
-        incentivized_token=Token.USDE.value,
+        start_block=21467086,
+        incentivized_token=Token.WA_ETH_USDE.value,
         incentivized_token_decimals=18,
-        pool_address="0xc4Ce391d82D164c166dF9c8336DDF84206b2F812",
-        gauge_address="0x4B891340b51889f438a03DC0e8aAAFB0Bc89e7A6",
+        pool_address="0xc1D48bB722a22Cc6Abf19faCbE27470F08B3dB8c",
+        gauge_address="0x95d260ac86B58D458187C819f87aAd2c7c4203eF",
     ),
 }
 

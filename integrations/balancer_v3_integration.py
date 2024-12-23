@@ -99,6 +99,6 @@ class BalancerV3Integration(Integration):
 
 
 if __name__ == "__main__":
-    balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_ETHEREUM_TESTING)
+    balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_ETHEREUM_USDE_USDT)
     participants = balancer.get_participants(None)
     balances = balancer.get_balance(list(participants)[0])
