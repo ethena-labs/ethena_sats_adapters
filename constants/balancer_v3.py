@@ -10,9 +10,9 @@ from integrations.integration_ids import IntegrationID
 ## If the chain is not yet supported, add it to the Chain enum in chains.py and add RPCs to web3_utils.py.
 
 
-class Token(Enum):
+class Token(Enum):  # Ensure address is checksummed
     WA_ETH_USDE = (
-        "0x5f9d59db355b4a60501544637b00e94082ca575b"  # Wrapped Aave Ethereum USDe
+        "0x5F9D59db355b4A60501544637b00e94082cA575b"  # Wrapped Aave Ethereum USDe
     )
 
 
