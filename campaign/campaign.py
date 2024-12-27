@@ -3,6 +3,7 @@ from constants.example_integrations import (
     ACTIVE_ENA_START_BLOCK_EXAMPLE,
     BEEFY_ARBITRUM_START_BLOCK_EXAMPLE,
     KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
+    RATEX_EXAMPLE_USDE_START_BLOCK,
 )
 from integrations.beefy_cached_balance_example_integration import (
     BeefyCachedBalanceIntegration,
@@ -10,6 +11,9 @@ from integrations.beefy_cached_balance_example_integration import (
 from integrations.claimed_ena_example_integration import ClaimedEnaIntegration
 from integrations.kamino_l2_delegation_example_integration import (
     KaminoL2DelegationExampleIntegration,
+)
+from integrations.ratex_l2_delegation_example_integration import (
+    RatexL2DelegationExampleIntegration,
 )
 from utils import pendle
 from web3 import Web3
@@ -53,12 +57,23 @@ INTEGRATIONS: List[Integration] = [
         chain=Chain.ARBITRUM,
         reward_multiplier=1,
     ),
+    # L2 Delegation example for non EVM chains, based on ts script
     KaminoL2DelegationExampleIntegration(
         integration_id=IntegrationID.KAMINO_SUSDE_COLLATERAL_EXAMPLE,
         start_block=KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
         market_address="BJnbcRHqvppTyGesLzWASGKnmnF1wq9jZu6ExrjT7wvF",
         token_address="EwBTjwCXJ3TsKP8dNTYnzRmBWRd6h48FdLFSAGJ3sCtx",
         decimals=9,
+        chain=Chain.SOLANA,
+        reward_multiplier=1,
+    ),
+    # L2 Delegation example for non EVM chains, based on API calls
+    RatexL2DelegationExampleIntegration(
+        integration_id=IntegrationID.RATEX_USDE_EXAMPLE,
+        start_block=RATEX_EXAMPLE_USDE_START_BLOCK,
+        summary_cols=[
+            SummaryColumn.RATEX_EXAMPLE_PTS,
+        ],
         chain=Chain.SOLANA,
         reward_multiplier=1,
     ),
