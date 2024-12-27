@@ -37,19 +37,19 @@ For your protocol to be included and your users to receive points, you should su
 
 # L2 Delegation Setup Requirements
 
-For non-EVM chain integrations (like Solana), your users must complete an additional delegation step to receive points. This process links their L2 wallet to their Ethereum address:
+For non-EVM chain integrations (like Solana) or users that don't control the same addresses in the L2 and Ethereum, your users must complete an additional delegation step to receive points. This process links their L2 wallet to their Ethereum address:
 
 1. Visit the [Ethena UI](https://app.ethena.fi) and connect your Ethereum wallet
-2. Navigate to "[Ethena Delegation Section](https://app.ethena.fi/delegation)"
+2. Navigate to [Ethena Delegation Section](https://app.ethena.fi/delegation)
 3. Click "Select Chain" and select.
-![Select Chain](readme_assets/select_chain.png)
+<img src="readme_assets/select_chain.png" alt="Select Chain" style="float: left; clear: left;">
 4. Click "Signing With" and select your wallet type.
-![Select Wallet Type](readme_assets/select_wallet_type.png)
+<img src="readme_assets/select_wallet_type.png" alt="Select Wallet Type" style="float: left; clear: left;">
 5. Connect your wallet and sign a message to prove ownership
 6. Once delegated, your L2 balances will be attributed to your Ethereum address for points calculation
 
 **Important Notes:**
-- Users must complete this delegation in order for their L2 balances to count towards points, they can delegate at any moment and they won't miss any past points.
+- Users can delegate at any moment and they won't miss any past points.
 
 # Examples
 ## Cached Balances Integrations (Default)
