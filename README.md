@@ -8,6 +8,7 @@ For your protocol to be included and your users to receive points, you should su
 
 1. Make a copy of `.env.example` and name it `.env`.
 2. Run `pip install -r requirements.txt` to install the required packages.
+   - If using TypeScript scripts (recommended for L2 delegated integrations), also run `pnpm install` or `npm install` in the root directory.
 3. Add your integration metadata to `integrations/integration_ids.py`.
 4. Create a new summary column in `constants/summary_columns.py`.
 5. Choose your integration type:
