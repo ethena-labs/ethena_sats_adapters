@@ -43,8 +43,10 @@ For non-EVM chain integrations (like Solana) or users that don't control the sam
 2. Navigate to [Ethena Delegation Section](https://app.ethena.fi/delegation)
 3. Click "Select Chain" and select.
 <img src="readme_assets/select_chain.png" alt="Select Chain" style="float: left; clear: left;">
+
 4. Click "Signing With" and select your wallet type.
 <img src="readme_assets/select_wallet_type.png" alt="Select Wallet Type" style="float: left; clear: left;">
+
 5. Connect your wallet and sign a message to prove ownership
 6. Once delegated, your L2 balances will be attributed to your Ethereum address for points calculation
 
