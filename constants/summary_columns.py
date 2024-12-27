@@ -39,8 +39,13 @@ class SummaryColumn(Enum):
         "beefy_cached_balance_example",
         SummaryColumnType.ETHENA_PTS,
     )
-    
+
     TEMPEST_SWELL_SHARDS = ("tempest_swell_shards", SummaryColumnType.ETHENA_PTS)
+
+    KAMINO_DELEGATED_PTS_EXAMPLE = (
+        "kamino_delegated_pts_example",
+        SummaryColumnType.ETHENA_PTS,
+    )
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name

@@ -31,6 +31,8 @@ LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
 w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
 SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
+SOLANA_NODE_URL = os.getenv("SOLANA_NODE_URL")
+w3_solana = Web3(Web3.HTTPProvider(SOLANA_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -54,11 +56,14 @@ W3_BY_CHAIN = {
     Chain.FRAXTAL: {
         "w3": w3_fraxtal,
     },
-    Chain.Lyra: {
+    Chain.LYRA: {
         "w3": w3_lyra,
     },
     Chain.SWELL: {
         "w3": w3_swell,
+    },
+    Chain.SOLANA: {
+        "w3": w3_solana,
     },
 }
 
@@ -89,9 +94,7 @@ MULTICALL_ABI = [
 MULTICALL_ADDRESS = (
     "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 )
-MULTICALL_ADDRESS_BY_CHAIN = {
-    Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"
-}
+MULTICALL_ADDRESS_BY_CHAIN = {Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"}
 
 
 def fetch_events_logs_with_retry(
@@ -160,7 +163,13 @@ def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest
 
     return decoded_results
 
-def multicall_by_address(w3: Web3, multical_address: str, calls: list, block_identifier: BlockIdentifier = "latest"):
+
+def multicall_by_address(
+    w3: Web3,
+    multical_address: str,
+    calls: list,
+    block_identifier: BlockIdentifier = "latest",
+):
     multicall_contract = w3.eth.contract(
         address=Web3.to_checksum_address(multical_address), abi=MULTICALL_ABI
     )
