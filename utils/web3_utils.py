@@ -5,6 +5,7 @@ import traceback
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
+from datetime import datetime
 
 from web3 import Web3
 from web3.types import BlockIdentifier
@@ -31,8 +32,6 @@ LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
 w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
 SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
-SOLANA_NODE_URL = os.getenv("SOLANA_NODE_URL")
-w3_solana = Web3(Web3.HTTPProvider(SOLANA_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -63,7 +62,7 @@ W3_BY_CHAIN = {
         "w3": w3_swell,
     },
     Chain.SOLANA: {
-        "w3": w3_solana,
+        "w3": w3,
     },
 }
 
@@ -192,3 +191,15 @@ def multicall_by_address(
         decoded_results.append(decode(output_types, result[1][i]))
 
     return decoded_results
+
+
+def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
+    wb3 = W3_BY_CHAIN[chain]["w3"]
+    block_info = wb3.eth.get_block(block)
+    timestamp = (
+        block_info["timestamp"]
+        if adjustment == 0
+        else block_info["timestamp"] - adjustment
+    )
+    timestamp_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H")
+    return timestamp_date
