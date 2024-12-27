@@ -13,6 +13,11 @@ For your protocol to be included and your users to receive points, you should su
 5. Choose your integration type:
    - For EVM compatible chains: Copy [CachedBalancesTemplate](integrations/template.py)
    - For non-EVM chains (e.g. Solana): Copy [L2DelegationTemplate](integrations/l2_delegation_template.py)
+     - We strongly recommend using a TypeScript script or similar to fetch balances for better reliability and maintainability
+     - See [KaminoL2DelegationExampleIntegration](integrations/kamino_l2_delegation_example_integration.py) for the recommended TypeScript approach
+       - Create your TypeScript script in the `ts/` directory
+       - Use the Kamino example as a reference for calling your script from Python
+     - API integration is also supported but less preferred (see [RatexL2DelegationExampleIntegration](integrations/ratex_l2_delegation_example_integration.py))
 6. Name your file `[protocol name]_integration.py` and place it in the `integrations` directory.
 7. Your integration must inherit from either:
    - `CachedBalancesIntegration` and implement the `get_block_balances` method
@@ -26,9 +31,24 @@ For your protocol to be included and your users to receive points, you should su
 # Guidelines
 
 - Integrations must follow this architecture and be written in python.
-- Pendle integrations are included as examples of functioning integrations. Run `python -m integrations.pendle_lpt_integration` to see the output.
 - The `get_block_balances` method should be as efficient as possible. So the use of the cached data from previous blocks if possible is highly encouraged.
 - We prefer that on chain RPC calls are used to get information as much as possible due to reliability and trustlessness. Off chain calls to apis or subgraphs are acceptable if necessary. If usage is not reasonable or the external service is not reliable, users may not receive their points.
+
+# L2 Delegation Setup Requirements
+
+For non-EVM chain integrations (like Solana), your users must complete an additional delegation step to receive points. This process links their L2 wallet to their Ethereum address:
+
+1. Visit the [Ethena UI](https://app.ethena.fi) and connect your Ethereum wallet
+2. Navigate to "[Ethena Delegation Section](https://app.ethena.fi/delegation)"
+3. Click "Select Chain" and select.
+![Select Chain](readme_assets/select_chain.png)
+4. Click "Signing With" and select your wallet type.
+![Select Wallet Type](readme_assets/select_wallet_type.png)
+5. Connect your wallet and sign a message to prove ownership
+6. Once delegated, your L2 balances will be attributed to your Ethereum address for points calculation
+
+**Important Notes:**
+- Users must complete this delegation in order for their L2 balances to count towards points, they can delegate at any moment and they won't miss any past points.
 
 # Examples
 ## Cached Balances Integrations (Default)

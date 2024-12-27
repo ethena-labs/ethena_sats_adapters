@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Set
+from typing import Callable, Dict, List, Optional, Set
 from eth_typing import ChecksumAddress
 
 from constants.summary_columns import SummaryColumn
@@ -22,8 +22,11 @@ class L2DelegationIntegration(CachedBalancesIntegration):
         chain: Chain = Chain.SOLANA,
         summary_cols: Optional[List[SummaryColumn]] = None,
         reward_multiplier: int = 20,
+        balance_multiplier: int = 1,
         excluded_addresses: Optional[Set[ChecksumAddress]] = None,
         end_block: Optional[int] = None,
+        ethereal_multiplier: int = 0,
+        ethereal_multiplier_func: Optional[Callable[[int, str], int]] = None,
     ):
         super().__init__(
             integration_id=integration_id,
@@ -31,8 +34,11 @@ class L2DelegationIntegration(CachedBalancesIntegration):
             chain=chain,
             summary_cols=summary_cols,
             reward_multiplier=reward_multiplier,
+            balance_multiplier=balance_multiplier,
             excluded_addresses=excluded_addresses,
             end_block=end_block,
+            ethereal_multiplier=ethereal_multiplier,
+            ethereal_multiplier_func=ethereal_multiplier_func,
         )
 
     def get_l2_block_balances(
