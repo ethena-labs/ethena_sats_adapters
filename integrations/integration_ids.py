@@ -395,9 +395,17 @@ class IntegrationID(Enum):
         "Beefy Cached Balance Example",
         Token.USDE,
     )
+
+    KAMINO_SUSDE_COLLATERAL_EXAMPLE = (
+        "kamino_susde_collateral_example",
+        "Kamino sUSDe Collateral Example",
+        Token.SUSDE,
+    )
+
+    RATEX_USDE_EXAMPLE = ("ratex_usde_example", "Ratex USDe Example", Token.USDE)
+
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
-
 
     # Tempest Finance
     TEMPEST_SWELL_USDE = (
@@ -412,7 +420,6 @@ class IntegrationID(Enum):
         "Agni",
         Token.USDE,
     )
-
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

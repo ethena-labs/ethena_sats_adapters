@@ -39,15 +39,20 @@ class Integration(ABC):
     def get_balance(self, user: str, block: int) -> float:
         raise NotImplementedError
 
-    # either get_participants OR get_block_balances must be implemented
     def get_participants(
         self,
         blocks: Optional[List[int]],
     ) -> Set[str]:
         raise NotImplementedError
 
-    # either get_participants OR get_block_balances must be implemented
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
+        raise NotImplementedError
+
+    def get_l2_block_balances(
+        self,
+        cached_data: Dict[int, Dict[str, float]],
+        blocks: List[int],
+    ) -> Dict[int, Dict[str, float]]:
         raise NotImplementedError
