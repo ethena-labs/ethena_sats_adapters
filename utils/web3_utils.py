@@ -5,6 +5,7 @@ import traceback
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
+from datetime import datetime
 
 from web3 import Web3
 from web3.types import BlockIdentifier
@@ -54,11 +55,14 @@ W3_BY_CHAIN = {
     Chain.FRAXTAL: {
         "w3": w3_fraxtal,
     },
-    Chain.Lyra: {
+    Chain.LYRA: {
         "w3": w3_lyra,
     },
     Chain.SWELL: {
         "w3": w3_swell,
+    },
+    Chain.SOLANA: {
+        "w3": w3,
     },
 }
 
@@ -89,9 +93,7 @@ MULTICALL_ABI = [
 MULTICALL_ADDRESS = (
     "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 )
-MULTICALL_ADDRESS_BY_CHAIN = {
-    Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"
-}
+MULTICALL_ADDRESS_BY_CHAIN = {Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"}
 
 
 def fetch_events_logs_with_retry(
@@ -160,7 +162,13 @@ def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest
 
     return decoded_results
 
-def multicall_by_address(w3: Web3, multical_address: str, calls: list, block_identifier: BlockIdentifier = "latest"):
+
+def multicall_by_address(
+    w3: Web3,
+    multical_address: str,
+    calls: list,
+    block_identifier: BlockIdentifier = "latest",
+):
     multicall_contract = w3.eth.contract(
         address=Web3.to_checksum_address(multical_address), abi=MULTICALL_ABI
     )
@@ -183,3 +191,15 @@ def multicall_by_address(w3: Web3, multical_address: str, calls: list, block_ide
         decoded_results.append(decode(output_types, result[1][i]))
 
     return decoded_results
+
+
+def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
+    wb3 = W3_BY_CHAIN[chain]["w3"]
+    block_info = wb3.eth.get_block(block)
+    timestamp = (
+        block_info["timestamp"]
+        if adjustment == 0
+        else block_info["timestamp"] - adjustment
+    )
+    timestamp_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H")
+    return timestamp_date
