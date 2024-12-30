@@ -248,7 +248,7 @@ class IntegrationID(Enum):
     AMBIENT_SCROLL_LP = ("ambient_usde_scroll_lp_bal", "Ambient Scroll LP", Token.USDE)
     AMBIENT_SWELL_LP = ("ambient_usde_swell_lp_bal", "Ambient Swell LP", Token.USDE)
 
-    # Balancer
+    # Balancer V2
     BALANCER_ARBITRUM_GHO_USDE = (
         "balancer_arbitrum_gho_usde",
         "Balancer Arbitrum GHO/USDe",
@@ -307,6 +307,13 @@ class IntegrationID(Enum):
     BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC = (
         "balancer_fraxtal_frax_usde_dai_usdt_usdc",
         "Balancer Fraxtal FRAX/USDe/DAI/USDT/USDC",
+        Token.USDE,
+    )
+
+    # Balancer V3
+    BALANCER_V3_ETHEREUM_USDE_USDT = (
+        "balancer_v3_ethereum_usde_usdt",
+        "Balancer V3 Ethereum USDe/USDT",
         Token.USDE,
     )
 
