@@ -50,8 +50,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         for block in sorted_blocks:
             # Check block_data first, then cached_data for previous block balances
             prev_block_user_balances = block_data.get(block - 1, cached_data.get(block - 1, {}))
-            print(prev_block_user_balances)
             block_data[block] = self.get_participants_data(block, prev_block_user_balances)
+
         return block_data
 
     def get_participants_data(self, block, prev_block_user_balances=None):
