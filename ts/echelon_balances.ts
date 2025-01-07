@@ -33,11 +33,11 @@ async function getStrategy() {
   });
 
   if (!block_data) {
-    throw new Error("Block not found");
+    throw new Error(`Block ${block} not found`);
   }
 
   if (!block_data.transactions) {
-    throw new Error("No transactions found");
+    throw new Error(`No transactions found in Block ${block}`);
   }
 
   const user_transactions = block_data.transactions.filter(
@@ -51,6 +51,7 @@ async function getStrategy() {
         function: `${LENDING_CONTRACT_ADDRESS}::lending::exchange_rate`,
         functionArguments: [market_address],
       },
+      options: { ledgerVersion: Number(block_data.last_version) },
     });
   const exchange_rate =
     Number(exchange_rate_numerator) / Number(exchange_rate_denominator);
@@ -63,15 +64,16 @@ async function getStrategy() {
     for (const event of echelon_events) {
       if (isSupplyEvent(event)) {
         user_balances[event.data.account_addr] +=
-          scaleByDecimals(Number(event.data.shares), decimals) * exchange_rate;
+          scaleDownByDecimals(Number(event.data.shares), decimals) *
+          exchange_rate;
       } else if (isWithdrawEvent(event)) {
-        user_balances[event.data.account_addr] -= scaleByDecimals(
+        user_balances[event.data.account_addr] -= scaleDownByDecimals(
           Number(event.data.amount),
           decimals
         );
       } else if (isLiquidateEvent(event)) {
         user_balances[event.data.borrower_addr] -=
-          scaleByDecimals(Number(event.data.seize_shares), decimals) *
+          scaleDownByDecimals(Number(event.data.seize_shares), decimals) *
           exchange_rate;
       }
     }
@@ -80,7 +82,7 @@ async function getStrategy() {
   console.log(JSON.stringify(user_balances));
 }
 
-function scaleByDecimals(value: number, decimals: number) {
+function scaleDownByDecimals(value: number, decimals: number) {
   return value / 10 ** decimals;
 }
 
