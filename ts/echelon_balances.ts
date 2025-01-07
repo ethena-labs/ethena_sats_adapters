@@ -46,21 +46,16 @@ async function getStrategy() {
   );
 
   // fetch exchange rate from echelon for the current block
+  let exchange_rate_updated = false;
   if (!exchange_rate) {
     exchange_rate = await getExchangeRate(Number(block_data.last_version));
+    exchange_rate_updated = true;
   }
 
   // iterate over all transactions and find all echelon events
-  let echelon_events_found = false;
+  let susde_market_events_found = false;
   for (const transaction of user_transactions) {
     const echelon_events = transaction.events.filter(isEchelonEvent);
-
-    // if there are echelon events found for the first time in this block,
-    // update the exchange rate as we know market state has been changed for the block
-    if (!echelon_events_found && echelon_events.length > 0) {
-      echelon_events_found = true;
-      exchange_rate = await getExchangeRate(Number(block_data.last_version));
-    }
 
     // iterate over all echelon events and update user balances with the differentials
     for (const event of echelon_events) {
@@ -70,16 +65,27 @@ async function getStrategy() {
       if (isSupplyEvent(event)) {
         user_address = event.data.account_addr;
         user_shares = Number(event.data.user_shares);
+        susde_market_events_found = true;
       } else if (isWithdrawEvent(event)) {
         user_address = event.data.account_addr;
         user_shares = Number(event.data.user_shares);
+        susde_market_events_found = true;
       } else if (isLiquidateEvent(event)) {
         user_address = event.data.borrower_addr;
         user_shares = Number(event.data.borrower_shares);
+        susde_market_events_found = true;
       } else {
         continue;
       }
 
+      // if there are sUSDe echelon market events found for the first time in this block and
+      // the exchange rate is not yet updated, update the exchange rate given we know market state has been changed in the block
+      if (susde_market_events_found && !exchange_rate_updated) {
+        exchange_rate = await getExchangeRate(Number(block_data.last_version));
+        exchange_rate_updated = true;
+      }
+
+      // update the user balance with the exchange rate
       user_balances[user_address] =
         scaleDownByDecimals(user_shares, decimals) * exchange_rate;
     }
