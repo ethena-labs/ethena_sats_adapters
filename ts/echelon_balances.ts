@@ -62,20 +62,24 @@ async function getStrategy() {
 
     // iterate over all echelon events and update user balances with the differentials
     for (const event of echelon_events) {
+      let user_address: string;
+      let user_shares: number;
+
       if (isSupplyEvent(event)) {
-        user_balances[event.data.account_addr] +=
-          scaleDownByDecimals(Number(event.data.shares), decimals) *
-          exchange_rate;
+        user_address = event.data.account_addr;
+        user_shares = Number(event.data.user_shares);
       } else if (isWithdrawEvent(event)) {
-        user_balances[event.data.account_addr] -= scaleDownByDecimals(
-          Number(event.data.amount),
-          decimals
-        );
+        user_address = event.data.account_addr;
+        user_shares = Number(event.data.user_shares);
       } else if (isLiquidateEvent(event)) {
-        user_balances[event.data.borrower_addr] -=
-          scaleDownByDecimals(Number(event.data.seize_shares), decimals) *
-          exchange_rate;
+        user_address = event.data.borrower_addr;
+        user_shares = Number(event.data.borrower_shares);
+      } else {
+        continue;
       }
+
+      user_balances[user_address] =
+        scaleDownByDecimals(user_shares, decimals) * exchange_rate;
     }
   }
 
