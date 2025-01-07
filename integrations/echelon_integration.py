@@ -37,6 +37,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         self.market_address = market_address
         self.decimals = str(decimals)
         self.echelon_ts_location = "ts/echelon_balances.ts"
+        self.exchange_rate_cache: float = 0
 
     def get_l2_block_balances(
         self, cached_data: Dict[int, Dict[str, float]], blocks: List[int]
@@ -50,7 +51,11 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         for block in sorted_blocks:
             # Check block_data first, then cached_data for previous block balances
             prev_block_user_balances = block_data.get(block - 1, cached_data.get(block - 1, {}))
-            block_data[block] = self.get_participants_data(block, prev_block_user_balances)
+            result = self.get_participants_data(block, prev_block_user_balances)
+
+            # Store the balances and cache the exchange rate
+            block_data[block] = result['balances']
+            self.exchange_rate_cache = result['exchange_rate']
 
         return block_data
 
@@ -65,7 +70,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                     self.market_address,
                     str(self.decimals),
                     str(block),
-                    json.dumps(prev_block_user_balances or {})
+                    json.dumps(prev_block_user_balances or {}),
+                    str(self.exchange_rate_cache)
                 ],
                 capture_output=True,
                 text=True,
@@ -77,8 +83,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             print("TypeScript stderr:", response.stderr)
             
             try:
-                balances = json.loads(response.stdout)
-                return balances
+                result = json.loads(response.stdout)
+                return result  # Now returns dict with both balances and exchange rate
             except json.JSONDecodeError as e:
                 print(f"JSON Decode Error: {e}")
                 print(f"Raw output: {response.stdout}")
