@@ -23,6 +23,7 @@ const user_balances: Record<string, number> = new Proxy(
     get: (target, prop) => target[prop] || 0,
   }
 );
+let exchange_rate = args[5] ? JSON.parse(args[5]) : null;
 
 async function getStrategy() {
   const block_data = await client.getBlockByHeight({
@@ -45,20 +46,21 @@ async function getStrategy() {
   );
 
   // fetch exchange rate from echelon for the current block
-  const [exchange_rate_numerator, exchange_rate_denominator] =
-    await client.view({
-      payload: {
-        function: `${LENDING_CONTRACT_ADDRESS}::lending::exchange_rate`,
-        functionArguments: [market_address],
-      },
-      options: { ledgerVersion: Number(block_data.last_version) },
-    });
-  const exchange_rate =
-    Number(exchange_rate_numerator) / Number(exchange_rate_denominator);
+  if (!exchange_rate) {
+    exchange_rate = await getExchangeRate(Number(block_data.last_version));
+  }
 
   // iterate over all transactions and find all echelon events
+  let echelon_events_found = false;
   for (const transaction of user_transactions) {
     const echelon_events = transaction.events.filter(isEchelonEvent);
+
+    // if there are echelon events found for the first time in this block,
+    // update the exchange rate as we know market state has been changed for the block
+    if (!echelon_events_found && echelon_events.length > 0) {
+      echelon_events_found = true;
+      exchange_rate = await getExchangeRate(Number(block_data.last_version));
+    }
 
     // iterate over all echelon events and update user balances with the differentials
     for (const event of echelon_events) {
@@ -83,7 +85,12 @@ async function getStrategy() {
     }
   }
 
-  console.log(JSON.stringify(user_balances));
+  console.log(
+    JSON.stringify({
+      balances: user_balances,
+      exchange_rate: exchange_rate,
+    })
+  );
 }
 
 function scaleDownByDecimals(value: number, decimals: number) {
@@ -113,6 +120,20 @@ function isLiquidateEvent(event: any) {
 
 function isEchelonEvent(event: any) {
   return event.type.includes(`${LENDING_CONTRACT_ADDRESS}::lending::`);
+}
+
+async function getExchangeRate(version: number) {
+  const [exchange_rate_numerator, exchange_rate_denominator] =
+    await client.view({
+      payload: {
+        function: `${LENDING_CONTRACT_ADDRESS}::lending::exchange_rate`,
+        functionArguments: [market_address],
+      },
+      options: { ledgerVersion: Number(version) },
+    });
+  const exchange_rate =
+    Number(exchange_rate_numerator) / Number(exchange_rate_denominator);
+  return exchange_rate;
 }
 
 const strategy = getStrategy().catch(console.error);
