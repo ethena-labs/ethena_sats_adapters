@@ -421,6 +421,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # InfinityPools
+    INFINITYPOOLS = (
+        "infinityPools",
+        "InfinityPools",
+        Token.SUSDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description

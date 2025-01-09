@@ -32,6 +32,8 @@ LYRA_NODE_URL = os.getenv("LYRA_NODE_URL")
 w3_lyra = Web3(Web3.HTTPProvider(LYRA_NODE_URL))
 SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
+BASE_NODE_URL = os.getenv("BASE_NODE_URL")
+w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -64,6 +66,9 @@ W3_BY_CHAIN = {
     Chain.SOLANA: {
         "w3": w3,
     },
+    Chain.BASE: {
+        "w3": w3_base,
+    },
 }
 
 
@@ -93,7 +98,8 @@ MULTICALL_ABI = [
 MULTICALL_ADDRESS = (
     "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 )
-MULTICALL_ADDRESS_BY_CHAIN = {Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"}
+MULTICALL_ADDRESS_BY_CHAIN = {
+    Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"}
 
 
 def fetch_events_logs_with_retry(
@@ -116,7 +122,8 @@ def fetch_events_logs_with_retry(
                 time.sleep(delay)
                 continue
             else:
-                msg = f"Error getting events logs for {label}: {e}, {traceback.format_exc()}"
+                msg = f"Error getting events logs for {
+                    label}: {e}, {traceback.format_exc()}"
                 logging.error(msg)
                 slack_message(msg)
                 raise e
