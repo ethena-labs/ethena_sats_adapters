@@ -125,7 +125,7 @@ function isLiquidateEvent(event: any) {
 }
 
 function isEchelonEvent(event: any) {
-  return event.type.includes(`${LENDING_CONTRACT_ADDRESS}::lending::`);
+  return event.type.startsWith(`${LENDING_CONTRACT_ADDRESS}::lending::`);
 }
 
 async function getExchangeRate(version: number) {
