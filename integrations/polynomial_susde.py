@@ -31,25 +31,19 @@ class PolynomialIntegration(Integration):
                 response = response.json()
                 if len(response) > 0 and "address" in response[0]:
                     scw_address = response[0]["address"]
-                    # Get the account NFT balance for this SCW
-                    balance = call_with_retry(
-                        core_account_proxy_contract.functions.balanceOf(scw_address),
-                        block,
-                    )
                     # Loop through the balance and get the account ids
-                    for i in range(balance):
-                        account_id = call_with_retry(
-                            core_account_proxy_contract.functions.tokenOfOwnerByIndex(scw_address, i),
+                    account_id = call_with_retry(
+                            core_account_proxy_contract.functions.tokenOfOwnerByIndex(scw_address, 0),
                             block,
                         )
                         # Get collateral balance for this account id
-                        _, balance, _ = call_with_retry(
+                    _, balance, _ = call_with_retry(
                             core_proxy_contract.functions.getAccountCollateral(
                                 account_id, POLYNOMIAL_USDE_TOKEN_ADDRESS
                             ),
                             block,
                         )
-                        total_balance += balance
+                    total_balance += balance
                         
         except Exception as e:
             print(f"Error fetching data for EOA {user}: {e}")
@@ -78,7 +72,7 @@ class PolynomialIntegration(Integration):
                 try:
                     response = requests.get(api_url)
                     if response.status_code == 200:
-                        owner = response.text.strip().strip('"')  # Remove quotes from response
+                        owner = response.json()["owner"]
                         all_users.add(owner)
                 except Exception as e:
                     print(f"Error fetching data for address {address}: {e}")
@@ -93,4 +87,4 @@ if __name__ == "__main__":
     polynomial = PolynomialIntegration()
     participants = polynomial.get_participants(None)
     print(len(participants))
-    print(polynomial.get_balance(list(participants)[0], 8978929))
+    print(polynomial.get_balance(list(participants)[0], 9180716))
