@@ -69,8 +69,8 @@ class IntegrationID(Enum):
 
     # Thala
     THALA_SUSDE_LP = (
-        "thala_susde_lp",
-        "Thala sUSDe LP",
+        "thala_susde_usdc_lp",
+        "Thala sUSDe/USDC LP",
         Token.SUSDE,
     )
 
