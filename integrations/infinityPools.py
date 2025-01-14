@@ -3,7 +3,9 @@ from typing import Dict, List, Optional, Set
 from eth_typing import ChecksumAddress
 
 from constants.infinityPools import (
-    usdc_sUSDe_15
+    START_BLOCK,
+    usdc_sUSDe,
+    wstETH_sUSDe
 )
 from constants.chains import Chain
 from constants.summary_columns import SummaryColumn
@@ -48,11 +50,11 @@ class InfinityPoolsIntegration(
 
         end_block = max(blocks)
         pool_info_list = get_infinityPools_info_list(
-            {usdc_sUSDe_15},
+            {usdc_sUSDe, wstETH_sUSDe},
             start_block,
             end_block
         )
-        print("pool_info_list", pool_info_list)
+        # print("pool_info_list", pool_info_list)
 
         block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         for block in blocks:
@@ -60,7 +62,7 @@ class InfinityPoolsIntegration(
             for pool_info in pool_info_list:
                 pool_user_balance = get_infinityPool_all_user_balance(
                     pool_info_list[pool_info], block)
-                print(pool_user_balance)
+                # print(pool_user_balance)
                 for user in pool_user_balance:
                     if user not in user_data:
                         user_data[user] = 0
@@ -71,10 +73,10 @@ class InfinityPoolsIntegration(
 
 if __name__ == "__main__":
     example_integration = InfinityPoolsIntegration(
-        IntegrationID.INFINITYPOOLS, 24224743)
+        IntegrationID.INFINITYPOOLS, START_BLOCK)
     print(
         example_integration.get_block_balances(
-            cached_data={}, blocks=[24813472]
+            cached_data={}, blocks=[25037239]
         )
     )
     # Example output:

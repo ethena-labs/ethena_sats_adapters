@@ -11,7 +11,8 @@ from constants.infinityPools import (
     MAX_BLOCKS_IN_ONE_CALL,
     START_BLOCK,
     infinityPools_periphery_contract,
-    usdc_sUSDe_15,
+    usdc_sUSDe,
+    wstETH_sUSDe,
     decode_id,
     sUSDe_address,
     infinityPool_contract
@@ -74,9 +75,9 @@ def get_infinityPools_position_balance(token_id, block):
     (positionType, pool_address, lpNum) = decode_id(token_id)
     infinityPool_contract.address = pool_address
     try:
-        [_, token0, token1, _, _, _, locked_amount0, locked_amount1, avilable_amount0, available_amount1,
-            unclaimed_fees0, unclaimed_fees1, _] = call_with_retry(infinityPool_contract.functions.getLiquidityPosition(lpNum), block)
-        return [Web3.to_checksum_address(token0), Web3.to_checksum_address(token1), locked_amount0 + unclaimed_fees0, locked_amount1 + unclaimed_fees1]
+        [_, token0, token1, _, _, _, locked_amount0, locked_amount1, _, _,
+            _, _, _] = call_with_retry(infinityPool_contract.functions.getLiquidityPosition(lpNum), block)
+        return [Web3.to_checksum_address(token0), Web3.to_checksum_address(token1), locked_amount0, locked_amount1]
     except Exception:
         print(token_id, "not yet created at", block)
         return [None, None, 0, 0]
@@ -100,7 +101,7 @@ def get_infinityPool_all_user_balance(users: Dict[ChecksumAddress, Set[int]],
             for token_id in token_ids:
                 [token0, token1, t0, t1] = get_infinityPools_position_balance(
                     token_id, block)
-                print("amounts", t0, t1)
+                # print("amounts", t0, t1)
                 if token0 is None or token1 is None:
                     continue
                 if token0 == sUSDe_address:
@@ -116,12 +117,12 @@ def get_infinityPool_all_user_balance(users: Dict[ChecksumAddress, Set[int]],
 
 if __name__ == "__main__":
     pool_infos = get_infinityPools_info_list(
-        {usdc_sUSDe_15}, 24224743, 24813471)
+        {usdc_sUSDe}, START_BLOCK, 25037239)
     print(pool_infos)
 
     # print(get_infinityPools_position_balance(
     #     247501292629419575271898969527583021281002773205275782087105512447577948160, 24813472))
 
     user_balance = get_infinityPool_all_user_balance(
-        pool_infos[usdc_sUSDe_15], 24813472)
+        pool_infos[usdc_sUSDe], 25037239)
     print(user_balance)

@@ -9,21 +9,23 @@ from utils.web3_utils import (
 )
 
 
-START_BLOCK = 24224743
+START_BLOCK = 24888600
 # Maximum range of blocks RPC can handle to fetch the events from in one call
 MAX_BLOCKS_IN_ONE_CALL = 20_000
 
 
-usdc_sUSDe_15 = Web3.to_checksum_address(
-    "0x8c14ad2b5365eb93a31b8dd75dfb203a1a40264b")
+usdc_sUSDe = Web3.to_checksum_address(
+    "0x2175A80B99FF2e945CcCE92FD0365f0CB5C5E98D")
+wstETH_sUSDe = Web3.to_checksum_address(
+    "0xC3A51F01bc43b1a41B1a1ccaa64c0578cF40BA1F")
 sUSDe_address = Web3.to_checksum_address(
-    "0x55255F4d6a23208659Ba09589d6ac1bb6A9e9ada"
+    "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2"
 )
 
 infinityPools_factory = Web3.to_checksum_address(
-    "0xE3795b74B53971A418F4B6Ef67dB054Ed482Afef")
+    "0x86342D7bBe93cB640A6c57d4781f04d93a695f08")
 infinityPools_periphery = Web3.to_checksum_address(
-    "0x31d85244058d635ea206f007e51a7f61ccb9d53c")
+    "0xF8FAD01B2902fF57460552C920233682c7c011a7")
 
 
 with open("abi/infinityPool.json") as j:
@@ -41,7 +43,7 @@ infinityPools_factory_contract = w3_base.eth.contract(
 infinityPools_periphery_contract = w3_base.eth.contract(
     address=infinityPools_periphery, abi=infinityPools_periphery_abi)
 infinityPool_contract = w3_base.eth.contract(
-    address=usdc_sUSDe_15, abi=infinityPool_abi)
+    address=usdc_sUSDe, abi=infinityPool_abi)
 
 
 def get_pool_address(token_a, token_b, splits):
@@ -57,5 +59,5 @@ def decode_id(id: int):
 
 
 if __name__ == '__main__':
-    print(get_pool_address(Web3.to_checksum_address('0x55255f4d6a23208659ba09589d6ac1bb6a9e9ada'),
-          Web3.to_checksum_address('0xfcc8e983068f88e8af71b8471135043fedad8460'), 15))
+    print(get_pool_address(Web3.to_checksum_address('0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2'),
+          Web3.to_checksum_address('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'), 17))
