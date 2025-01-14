@@ -2,30 +2,35 @@ import json
 from web3 import Web3
 
 from constants.chains import Chain
-from constants.balancer import AURA_VOTER_PROXY, BALANCER_VAULT
+from constants.balancer import AURA_VOTER_PROXY, BALANCER_V2_VAULT, BALANCER_V3_VAULT
 from utils.web3_utils import W3_BY_CHAIN, fetch_events_logs_with_retry, call_with_retry
 
 
 with open("abi/ERC20_abi.json") as f:
     erc20_abi = json.load(f)
 
-with open("abi/balancer_vault.json") as f:
-    vault_abi = json.load(f)
+with open("abi/balancer_v2_vault.json") as f:
+    vault_v2_abi = json.load(f)
 
 with open("abi/balancer_csp.json") as f:
     composable_abi = json.load(f)
+
+with open("abi/balancer_v3_vault.json") as f:
+    vault_v3_abi = json.load(f)
 
 PAGE_SIZE = 1900
 
 ZERO_ADRESS = "0x0000000000000000000000000000000000000000"
 
 
-def get_vault_pool_token_balance(
-    chain: Chain, pool_id: str, token_address: str, block: int
+def get_vault_v2_pool_token_balance(
+    chain: Chain, pool_id: str, token_address: str, block: int | str
 ) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    vaut_contract = w3.eth.contract(address=BALANCER_VAULT, abi=vault_abi)
+    vaut_contract = w3.eth.contract(
+        address=w3.to_checksum_address(BALANCER_V2_VAULT), abi=vault_v2_abi
+    )
 
     tokens, balances, _ = call_with_retry(
         vaut_contract.functions.getPoolTokens(pool_id),
@@ -39,10 +44,35 @@ def get_vault_pool_token_balance(
         raise ValueError(f"Token {token_address} not found in the Pool {pool_id}")
 
 
-def get_user_balance(chain: Chain, user: str, token_address: str, block: int) -> float:
+def get_vault_v3_pool_token_balance(
+    chain: Chain, pool_address: str, token_address: str, block: int | str
+) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    token_contract = w3.eth.contract(address=token_address, abi=erc20_abi)
+    vaut_contract = w3.eth.contract(
+        address=w3.to_checksum_address(BALANCER_V3_VAULT), abi=vault_v3_abi
+    )
+
+    tokens, _, _, balances = call_with_retry(
+        vaut_contract.functions.getPoolTokenInfo(pool_address),
+        block,
+    )
+
+    try:
+        token_index = tokens.index(token_address)
+        return balances[token_index]
+    except ValueError:
+        raise ValueError(f"Token {token_address} not found in the Pool {pool_address}")
+
+
+def get_user_balance(
+    chain: Chain, user: str, token_address: str, block: int | str
+) -> float:
+    w3 = W3_BY_CHAIN[chain]["w3"]
+
+    token_contract = w3.eth.contract(
+        address=w3.to_checksum_address(token_address), abi=erc20_abi
+    )
 
     user_balance = call_with_retry(
         token_contract.functions.balanceOf(user),
@@ -52,8 +82,8 @@ def get_user_balance(chain: Chain, user: str, token_address: str, block: int) ->
     return user_balance
 
 
-def get_bpt_supply(
-    chain: Chain, bpt_address: str, has_preminted_bpts: bool, block: int
+def get_v2_bpt_supply(
+    chain: Chain, bpt_address: str, has_preminted_bpts: bool, block: int | str
 ) -> float:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
@@ -79,12 +109,29 @@ def get_bpt_supply(
     return bpt_supply
 
 
+def get_token_supply(chain: Chain, token_address: str, block: int | str) -> float:
+    w3 = W3_BY_CHAIN[chain]["w3"]
+
+    token_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(token_address), abi=erc20_abi
+    )
+
+    token_supply = call_with_retry(
+        token_contract.functions.totalSupply(),
+        block,
+    )
+
+    return token_supply
+
+
 def get_potential_token_holders(
     chain: Chain, token_address: str, start_block: int
 ) -> list:
     w3 = W3_BY_CHAIN[chain]["w3"]
 
-    token_contract = w3.eth.contract(address=token_address, abi=erc20_abi)
+    token_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(token_address), abi=erc20_abi
+    )
 
     token_holders = set()
     latest_block = w3.eth.get_block_number()

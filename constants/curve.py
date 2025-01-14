@@ -1,7 +1,7 @@
 from constants.summary_columns import SummaryColumn
 from dataclasses import dataclass
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 
 
 @dataclass

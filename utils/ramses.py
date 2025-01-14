@@ -15,10 +15,10 @@ with open("abi/ramses_pool.json") as f:
 
 
 nfp_manager = w3_arb.eth.contract(
-    address=RAMSES_NFP_MANAGER_ADDRESS, abi=nfp_manager_abi
+    address=w3_arb.to_checksum_address(RAMSES_NFP_MANAGER_ADDRESS),
+    abi=nfp_manager_abi,
 )
 
 pool = w3_arb.eth.contract(
-    address=RAMSES_POOL_ADDRESS, abi=pool_abi
+    address=w3_arb.to_checksum_address(RAMSES_POOL_ADDRESS), abi=pool_abi
 )
-

@@ -1,0 +1,150 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "contract IFluidVaultResolver",
+                "name": "vaultResolver_",
+                "type": "address"
+            },
+            {
+                "internalType": "contract IFluidVaultFactory",
+                "name": "vaultFactory_",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [],
+        "name": "FluidVaultPositionsResolver__AddressZero",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "FACTORY",
+        "outputs": [
+            {
+                "internalType": "contract IFluidVaultFactory",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "VAULT_RESOLVER",
+        "outputs": [
+            {
+                "internalType": "contract IFluidVaultResolver",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            }
+        ],
+        "name": "getAllVaultNftIds",
+        "outputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "nftIds_",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "vault_",
+                "type": "address"
+            }
+        ],
+        "name": "getAllVaultPositions",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "nftId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "supply",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "borrow",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct Structs.UserPosition[]",
+                "name": "positions_",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "nftIds_",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "getPositionsForNftIds",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "nftId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "supply",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "borrow",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct Structs.UserPosition[]",
+                "name": "positions_",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

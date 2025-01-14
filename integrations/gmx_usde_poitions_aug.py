@@ -1,29 +1,36 @@
 import requests
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.chains import Chain
 
-from constants.gmx import GMX_DATA_STORE_CONTRACT_ADDRESS, GMX_WSTETH_USDE_MARKET_BLOCK, GMX_SUBSQUID_ENDPOINT, USDE_TOKEN_ADDRESS
+from constants.gmx import (
+    GMX_DATA_STORE_CONTRACT_ADDRESS,
+    GMX_WSTETH_USDE_MARKET_BLOCK,
+    GMX_SUBSQUID_ENDPOINT,
+    USDE_TOKEN_ADDRESS,
+)
 from utils.gmx import gmx_synthetics_reader_contract
 from constants.summary_columns import SummaryColumn
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import call_with_retry
 
+
 def fetch_data(url, query):
-    response = requests.post(url, json={'query': query})
+    response = requests.post(url, json={"query": query})
     if response.status_code == 200:
         response_json = response.json()
-        if 'data' not in response_json:
+        if "data" not in response_json:
             print(f"Query failed with response: {response_json}")
             return None
-        return response_json['data']
+        return response_json["data"]
     else:
         print(f"Query failed with status code {response.status_code}")
         return None
 
+
 class GMXPositionsIntegration(Integration):
     def __init__(
-            self,
-        ):
+        self,
+    ):
         super().__init__(
             IntegrationID.GMX_USDE_POSITIONS,
             GMX_WSTETH_USDE_MARKET_BLOCK,
@@ -35,8 +42,7 @@ class GMXPositionsIntegration(Integration):
             None,
         )
 
-
-    def get_balance(self, user: str, block: int) -> float:    
+    def get_balance(self, user: str, block: int) -> float:
         accountPositions = call_with_retry(
             gmx_synthetics_reader_contract.functions.getAccountPositions(
                 GMX_DATA_STORE_CONTRACT_ADDRESS,
@@ -58,8 +64,7 @@ class GMXPositionsIntegration(Integration):
 
         return total_collateral_amount
 
-
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -77,17 +82,19 @@ class GMXPositionsIntegration(Integration):
             url=GMX_SUBSQUID_ENDPOINT,
             query=participants_query.format(
                 collateralTokenw=USDE_TOKEN_ADDRESS,
-            )
+            ),
         )
 
-        accounts = [position['account'] for position in participants['positions']]
+        accounts = [position["account"] for position in participants["positions"]]
 
-        return list(set(accounts))
+        return set(accounts)
 
 
 if __name__ == "__main__":
     gmx_integration = GMXPositionsIntegration()
-    # print(gmx_integration.get_participants())
+    print(gmx_integration.get_participants(None))
     print(
-        gmx_integration.get_balance("0xDb59AB7d951f3D9F1d2E764c3A6F7507E11a4e4e", 238320844)
+        gmx_integration.get_balance(
+            "0xDb59AB7d951f3D9F1d2E764c3A6F7507E11a4e4e", 238320844
+        )
     )

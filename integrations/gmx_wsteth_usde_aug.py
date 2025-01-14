@@ -1,6 +1,12 @@
-from constants.gmx import GMX_WSTETH_USDE_MARKET_BLOCK, WSTETH_TOKEN_ADDRESS, GMX_WSTETH_USDE_MARKET_ADDRESS, USDE_TOKEN_ADDRESS, WETH_TOKEN_ADDRESS
+from constants.gmx import (
+    GMX_WSTETH_USDE_MARKET_BLOCK,
+    WSTETH_TOKEN_ADDRESS,
+    GMX_WSTETH_USDE_MARKET_ADDRESS,
+    USDE_TOKEN_ADDRESS,
+    WETH_TOKEN_ADDRESS,
+)
 
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from utils.gmx import GMXLPIntegration
 
 if __name__ == "__main__":
@@ -12,7 +18,7 @@ if __name__ == "__main__":
         WSTETH_TOKEN_ADDRESS,
         USDE_TOKEN_ADDRESS,
     )
-    print(gmx_integration.get_participants())
+    print(gmx_integration.get_participants(None))
     print(
         gmx_integration.get_balance(
             "0x596CDbB0d4b74Cb5dCdf86613d8012E0cD3E522f", 238329658

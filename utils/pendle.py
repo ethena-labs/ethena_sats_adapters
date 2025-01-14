@@ -1,5 +1,6 @@
 import os
 import json
+from typing import Any, Dict
 from dotenv import load_dotenv
 from utils.web3_utils import (
     W3_BY_CHAIN,
@@ -9,6 +10,8 @@ from utils.web3_utils import (
     w3_arb,
 )
 from constants.chains import Chain
+from web3.contract import Contract
+
 
 from constants.pendle import (
     LPT,
@@ -129,7 +132,7 @@ usde_arb_LPT_contract = w3_arb.eth.contract(address=usde_arb_LP, abi=lpt_abi)
 usde_arb_SY_contract = w3_arb.eth.contract(address=usde_arb_SY, abi=erc20_abi)
 usde_arb_YT_contract = w3_arb.eth.contract(address=usde_arb_YT, abi=erc20_abi)
 
-PENDLE_CONTRACT_AND_START_BY_LP_TOKEN = {
+PENDLE_CONTRACT_AND_START_BY_LP_TOKEN: Dict[str, Dict[str, Any]] = {
     SY: {
         "start": PENDLE_USDE_JULY_DEPLOYMENT_BLOCK,
         "contract": sy_contract,
@@ -329,8 +332,10 @@ def get_pendle_participants_v3(token_addresses):
         token_data = PENDLE_CONTRACT_AND_START_BY_LP_TOKEN[token]
         if not token_data:
             continue
-        start = token_data["start"]
-        contract = token_data["contract"]
+        start: int = token_data["start"]
+        if start is None:
+            continue
+        contract: Contract = token_data["contract"]
         chain = token_data["chain"]
         web3_for_token = W3_BY_CHAIN[chain]["w3"]
         page_size = 1900

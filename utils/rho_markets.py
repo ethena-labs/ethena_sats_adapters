@@ -1,8 +1,11 @@
 from utils.web3_utils import call_with_retry
-from constants.rho_markets import RHO_MARKETS_SCROLL_DEPLOYMENT_BLOCK, RHO_MARKETS_SCROLL_RUSDE_ADDRESS
-from models.integration import Integration
+from constants.rho_markets import (
+    RHO_MARKETS_SCROLL_DEPLOYMENT_BLOCK,
+    RHO_MARKETS_SCROLL_RUSDE_ADDRESS,
+)
+from integrations.integration import Integration
 from constants.summary_columns import SummaryColumn
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.chains import Chain
 import json
 import requests
@@ -34,26 +37,21 @@ class RhoMarkets(Integration):
         r_usde_contract = w3_scroll.eth.contract(
             address=RHO_MARKETS_SCROLL_RUSDE_ADDRESS, abi=r_token_abi
         )
-        balance = call_with_retry(
-            r_usde_contract.functions.balanceOf(user),
-            block
-        )
-        
+        balance = call_with_retry(r_usde_contract.functions.balanceOf(user), block)
+
         exchangeRate = call_with_retry(
-            r_usde_contract.functions.exchangeRateStored(),
-            block
+            r_usde_contract.functions.exchangeRateStored(), block
         )
         return balance * exchangeRate / (1e18 * 1e18)
 
-    def get_participants(self) -> list:
-        all_users = set()
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
+        all_users: set[str] = set()
         try:
             users = self.fetch_compound_users("rUSDe")
             for user in users:
-                all_users.add(user['id'])
+                all_users.add(user["id"])
         except Exception as e:
             print(e)
-        all_users = list(all_users)
         self.participants = all_users
         return all_users
 
@@ -76,22 +74,30 @@ class RhoMarkets(Integration):
                     }
                 }
             }
-            """ % (asset_symbol, last_id, asset_symbol)
+            """ % (
+                asset_symbol,
+                last_id,
+                asset_symbol,
+            )
 
-            response = requests.post(url, json={'query': query})
+            response = requests.post(url, json={"query": query})
 
             if response.status_code == 200:
                 data = response.json()
-                accounts = data['data']['accounts']
+                accounts = data["data"]["accounts"]
                 if not accounts:
                     break
                 # 过滤掉0地址
-                filtered_accounts = [account for account in accounts if account['id']
-                                     != '0x0000000000000000000000000000000000000000']
+                filtered_accounts = [
+                    account
+                    for account in accounts
+                    if account["id"] != "0x0000000000000000000000000000000000000000"
+                ]
                 all_accounts.extend(filtered_accounts)
-                last_id = accounts[-1]['id']
+                last_id = accounts[-1]["id"]
             else:
-                raise Exception(f"Query failed with status code {
-                                response.status_code}: {response.text}")
+                raise Exception(
+                    f"Query failed with status code {response.status_code}: {response.text}"
+                )
 
         return all_accounts

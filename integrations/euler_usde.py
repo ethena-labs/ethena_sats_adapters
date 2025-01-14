@@ -1,8 +1,8 @@
 import json
 from constants.chains import Chain
-from constants.integration_ids import IntegrationID
+from integrations.integration_ids import IntegrationID
 from constants.euler import USDE_VAULT_ADDRESS
-from models.integration import Integration
+from integrations.integration import Integration
 from utils.web3_utils import (
     fetch_events_logs_with_retry,
     call_with_retry,
@@ -13,9 +13,7 @@ with open("abi/euler_evault.json") as f:
     evault_abi = json.load(f)
 
 
-class EulerIntegration(
-    Integration
-): 
+class EulerIntegration(Integration):
     def __init__(self):
         super().__init__(
             IntegrationID.EULER_USDE,
@@ -28,21 +26,24 @@ class EulerIntegration(
             None,
         )
 
-        self.vault_contract = w3.eth.contract(address = USDE_VAULT_ADDRESS, abi=evault_abi)
+        self.vault_contract = w3.eth.contract(
+            address=USDE_VAULT_ADDRESS, abi=evault_abi
+        )
 
     def get_balance(self, user: str, block: int) -> float:
         try:
-            etoken_balance = call_with_retry(self.vault_contract.functions.balanceOf(user), block)
+            etoken_balance = call_with_retry(
+                self.vault_contract.functions.balanceOf(user), block
+            )
             asset_balance = call_with_retry(
-                self.vault_contract.functions.convertToAssets(etoken_balance),
-                block
+                self.vault_contract.functions.convertToAssets(etoken_balance), block
             )
         except Exception as ex:
             print("Error getting balance for user %s: %s", user, ex)
 
         return asset_balance
 
-    def get_participants(self) -> list:
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
         if self.participants is not None:
             return self.participants
 
@@ -58,7 +59,7 @@ class EulerIntegration(
                 f"Euler Vault {self.vault_contract}",
                 self.vault_contract.events.Transfer(),
                 start,
-                current_batch_end
+                current_batch_end,
             )
 
             for transfer in transfers:
@@ -76,9 +77,6 @@ class EulerIntegration(
 
 if __name__ == "__main__":
     example_integration = EulerIntegration()
-    print(example_integration.get_participants())
-    print(
-        example_integration.get_balance(
-            list(example_integration.get_participants())[0], 20677865
-        )
-    )
+    participants = example_integration.get_participants(None)
+    print(participants)
+    print(example_integration.get_balance(list(participants)[0], 20677865))
