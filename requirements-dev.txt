@@ -1,0 +1,7 @@
+mypy
+pandas-stubs
+types-requests
+types-PyYAML
+types-tqdm
+types-psycopg2
+types-psutil
