@@ -114,7 +114,7 @@ def get_effective_balance(
 
 all_users_query = """
 {
-  subAccountBalances(where: {asset: "0x375804cdcf0d534fdd2657584a7c4ff5ab14a2bb000000000000000000000000"} first: 1000) {
+  subAccountBalances(where: {asset: "0x375804cdcf0d534fdd2657584a7c4ff5ab14a2bb000000000000000000000000"} first: 10000) {
     subaccount {
       id
       owner {
