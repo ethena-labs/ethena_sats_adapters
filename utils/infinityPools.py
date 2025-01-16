@@ -1,4 +1,3 @@
-import math
 from typing import Dict, Set
 
 from eth_typing import ChecksumAddress
@@ -12,7 +11,6 @@ from constants.infinityPools import (
     START_BLOCK,
     infinityPools_periphery_contract,
     usdc_sUSDe,
-    wstETH_sUSDe,
     decode_id,
     sUSDe_address,
     infinityPool_contract
@@ -72,7 +70,7 @@ def get_infinityPools_info_list(
 
 
 def get_infinityPools_position_balance(token_id, block):
-    (positionType, pool_address, lpNum) = decode_id(token_id)
+    (_, pool_address, lpNum) = decode_id(token_id)
     infinityPool_contract.address = pool_address
     try:
         [_, token0, token1, _, _, _, locked_amount0, locked_amount1, _, _,

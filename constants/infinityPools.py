@@ -51,10 +51,10 @@ def get_pool_address(token_a, token_b, splits):
 
 
 # get position type, pool address and lpOrSwapper number given tokenId
-def decode_id(id: int):
-    enum_value = (id >> 248) & 0xFF
-    pool_address = (id >> 88) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    lp_or_swapper_number = id & ((1 << 88) - 1)
+def decode_id(id_to_decode: int):
+    enum_value = (id_to_decode >> 248) & 0xFF
+    pool_address = (id_to_decode >> 88) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+    lp_or_swapper_number = id_to_decode & ((1 << 88) - 1)
     return enum_value, f"0x{pool_address:040x}", lp_or_swapper_number
 
 

@@ -7,6 +7,9 @@ load_dotenv()
 
 
 def slack_message(message: str):
+    if os.getenv("SLACK_WEBHOOK", "") == "":
+        logging.info("Slack webhook not set, skipping message")
+        return
     response = requests.post(
         os.getenv("SLACK_WEBHOOK", ""),
         json={
