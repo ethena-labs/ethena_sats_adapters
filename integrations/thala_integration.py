@@ -8,7 +8,7 @@ from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     THALA_SUSDE_START_BLOCK,
 )
-from constants.thala import THALASWAP_CONTRACT_ADDRESS, SUSDE_LPT_METADATA, SUSDE_TOKEN_ADDRESS
+from constants.thala import SUSDE_LPT_METADATA
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
