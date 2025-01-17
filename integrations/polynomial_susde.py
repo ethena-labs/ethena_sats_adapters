@@ -32,13 +32,12 @@ class PolynomialIntegration(Integration):
                 core_account_proxy_contract.functions.tokenOfOwnerByIndex(scw_address, 0),
                 block,
             )
-            _, balance, _ = call_with_retry(
+            _, total_balance, _ = call_with_retry(
                 core_proxy_contract.functions.getAccountCollateral(
                     account_id, POLYNOMIAL_USDE_TOKEN_ADDRESS
                 ),
                  block,
             )
-            total_balance += balance
         except Exception as e:
             pass
 
@@ -66,7 +65,6 @@ class PolynomialIntegration(Integration):
             
             start_block += page_size
 
-        # Fetch all owner registered events
         owner_registered_events = fetch_events_logs_with_retry(
             f"Polynomial OwnerRegistered events from {POLYNOMIAL_DEPLOYMENT_BLOCK} to {target_block}",
             owner_register_contract.events.OwnerRegistered(),
@@ -125,7 +123,7 @@ def get_scw_address_from_eoa(eoa_address: str) -> str:
     )
     init_data = '0x' + fn_selector + init_data.hex()
     
-    encoded_index = '0x' + '0' * 60 + hex(8008)[2:]  # Adjust padding to match TypeScript
+    encoded_index = '0x'+hex(8008)[2:].rjust(64,'0')
     
     concat_hex = init_data + encoded_index[2:]
     salt = keccak(hexstr=remove_0x_prefix(concat_hex))
@@ -139,7 +137,6 @@ def get_scw_address_from_eoa(eoa_address: str) -> str:
     )
     
     result_address = '0x' + keccak(create2_input)[12:].hex()
-    
     return result_address
 
 if __name__ == "__main__":
