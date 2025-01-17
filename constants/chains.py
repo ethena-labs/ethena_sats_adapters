@@ -10,5 +10,7 @@ class Chain(Enum):
     SCROLL = "Scroll"
     MODE = "Mode"
     OPTIMISM = "Optimism"
-    Lyra = "Lyra"
     POLYNOMIAL = "Polynomial"
+    LYRA = "Lyra"
+    SWELL = "Swell"
+    SOLANA = "Solana"
