@@ -428,16 +428,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
-<<<<<<< HEAD
     RUMPEL_SENA_LP = (
         "rumpel_kpsats3_sena_lp_held",
         "Rumpel kpSATS-3/sENA LP",
         Token.SENA
     )
-=======
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
->>>>>>> fork/main
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

@@ -10,24 +10,6 @@ import math
 from utils.web3_utils import w3, fetch_events_logs_with_retry, fetch_transaction_receipt_with_retry, call_with_retry
 from constants.rumpel import KPSATS3_SENA_UNIV3_POOL_DEPLOYED_BLOCK, KPSATS3_SENA_UNIV3_POOL_CONTRACT, UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT, UNIV3_NONFUNGUBLE_POSITION_MANAGER_ADDRESS, KPSAT3_ADDRESS, SENA_ADDRESS
 
-def sv_calculate_lp_tokens_v2(tick, tick_lower, tick_upper, price_sqrt, liquidity):
-    sqrtRatioA = math.sqrt(1.0001**tick_lower)
-    sqrtRatioB = math.sqrt(1.0001**tick_upper)
-    amount0 = 0
-    amount1 = 0
-
-    if(tick < tick_lower):
-        amount0 = (liquidity * (sqrtRatioB - sqrtRatioA)) / (sqrtRatioA * sqrtRatioB)
-    else:
-        if(tick >= tick_upper):
-            amount1 = (liquidity * (sqrtRatioB - sqrtRatioA))
-        else:
-            if(tick >= tick_lower and tick < tick_upper):
-                amount0 = (liquidity * (sqrtRatioB - price_sqrt)) / (price_sqrt * sqrtRatioB)
-                amount1 = (liquidity * (price_sqrt - sqrtRatioA))
-
-    return [amount0 / 10 **18, amount1 / 10 **18]
-
 def calculate_lp_tokens(tick, tick_lower, tick_upper, sqrt_price, liquidity):
     if liquidity == 0:
         return [0, 0]
