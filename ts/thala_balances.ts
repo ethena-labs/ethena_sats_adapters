@@ -1,12 +1,5 @@
 import * as dotenv from "dotenv";
-import {
-  Aptos,
-  AptosConfig,
-  Network,
-  WriteSetChangeWriteResource,
-  isUserTransactionResponse,
-  MoveResource,
-} from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 
 dotenv.config();
 
@@ -15,113 +8,35 @@ const config = new AptosConfig({ network: Network.MAINNET });
 const client = new Aptos(config);
 
 const args = process.argv.slice(2);
-const SUSDE_LPT_METADATA = args[0];
-const decimals = Number(args[1]);
-const block = Number(args[2]);
-const user_balances: Record<string, number> = new Proxy(
-  args[3] ? JSON.parse(args[3]) : {},
-  {
-    get: (target, prop) => target[prop] || 0,
-  }
-);
-
-type FungibleStoreResource = WriteSetChangeWriteResource & {
-  data: MoveResource<FungibleStoreData>;
-};
-
-type ObjectCoreResource = WriteSetChangeWriteResource & {
-  data: MoveResource<ObjectCoreData>;
-};
-
-type FungibleStoreData = {
-  balance: string;
-  metadata: {
-    inner: string;
-  };
-};
-
-type ObjectCoreData = {
-  owner: string;
-};
+const THALA_V1_FARMING_ADDRESS = args[0];
+const SUSDE_LPT_PID = args[1];
+const decimals = Number(args[2]);
+const block = Number(args[3]);
+const user_addresses: Array<string> = JSON.parse(args[4]);
 
 async function getStrategy() {
-  const block_data = await client.getBlockByHeight({
-    blockHeight: block,
-    options: {
-      withTransactions: true,
-    },
-  });
-
-  if (!block_data) {
-    throw new Error(`Block ${block} not found`);
-  }
-
-  if (!block_data.transactions) {
-    throw new Error(`No transactions found in Block ${block}`);
-  }
-
-  const user_transactions = block_data.transactions.filter(
-    isUserTransactionResponse
-  );
-
-  for (const transaction of user_transactions) {
-    // First, collect all ObjectCore and LPT changes
-    const objectCoreChanges = new Map<string, string>();
-    const lptChanges: Array<{ store: string; balance: string }> = [];
-
-    // Collect all relevant changes
-    for (const change of transaction.changes as WriteSetChangeWriteResource[]) {
-      if (isObjectCoreChange(change)) {
-        objectCoreChanges.set(change.address, change.data.data.owner);
-      } else if (isLPTFungibleStoreChange(change)) {
-        lptChanges.push({
-          store: change.address,
-          balance: change.data.data.balance,
+    // iterate over all users and get their susde balance
+    const user_balances: Record<string, number> = {};
+    for (const address of user_addresses) {
+        const [stake_amount, _boosted_stake_amount, _boost_multiplier] = await client.view<string[]>({
+            payload: {
+                function: `${THALA_V1_FARMING_ADDRESS}::farming::stake_amount`,
+                functionArguments: [address, Number(SUSDE_LPT_PID)],
+            },
+            options: { ledgerVersion: block },
         });
-      }
-    }
 
-    // Process LPT changes after we have all the data
-    for (const { store, balance } of lptChanges) {
-      const userAddress = objectCoreChanges.get(store);
-      if (userAddress) {
-        user_balances[userAddress] = scaleDownByDecimals(
-          Number(balance),
-          decimals
+        user_balances[address] = scaleDownByDecimals(
+            Number(stake_amount),
+            decimals
         );
-      }
     }
-  }
 
-  console.log(
-    JSON.stringify({
-      balances: user_balances,
-    })
-  );
+    console.log(JSON.stringify(user_balances));
 }
 
 function scaleDownByDecimals(value: number, decimals: number) {
-  return value / 10 ** decimals;
-}
-
-function isLPTFungibleStoreChange(
-  change: WriteSetChangeWriteResource
-): change is FungibleStoreResource {
-  return (
-    change.type === "write_resource" &&
-    change.data.type === "0x1::fungible_asset::FungibleStore" &&
-    (change as FungibleStoreResource).data.data.metadata.inner ===
-      SUSDE_LPT_METADATA
-  );
-}
-
-function isObjectCoreChange(
-  change: WriteSetChangeWriteResource
-): change is ObjectCoreResource {
-  return (
-    change.type === "write_resource" &&
-    change.data.type === "0x1::object::ObjectCore"
-  );
+    return value / 10 ** decimals;
 }
 
 const strategy = getStrategy().catch(console.error);
