@@ -441,6 +441,13 @@ class IntegrationID(Enum):
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
 
+    # SIZE
+    SIZE_ETHEREUM_SUSDE = (
+        "size_ethereum_susde",
+        "Size Ethereum sUSDe",
+        Token.SUSDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
