@@ -13,4 +13,5 @@ class Chain(Enum):
     LYRA = "Lyra"
     SWELL = "Swell"
     SOLANA = "Solana"
+    TON = "TON"
     BASE = "Base"
