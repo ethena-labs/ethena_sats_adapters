@@ -1,11 +1,5 @@
 from typing import List
-from constants.example_integrations import (
-    ACTIVE_ENA_START_BLOCK_EXAMPLE,
-    BEEFY_ARBITRUM_START_BLOCK_EXAMPLE,
-    KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
-    RATEX_EXAMPLE_USDE_START_BLOCK,
-)
-from constants.stonfi import STONFI_USDE_START_BLOCK
+from web3 import Web3
 from integrations.beefy_cached_balance_example_integration import (
     BeefyCachedBalanceIntegration,
 )
@@ -17,17 +11,23 @@ from integrations.ratex_l2_delegation_example_integration import (
     RatexL2DelegationExampleIntegration,
 )
 from integrations.stonfi_integration import StonFiIntegration
-from utils import pendle
-from web3 import Web3
-
-from constants.chains import Chain
-from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
-from constants.summary_columns import SummaryColumn
 from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 from integrations.pendle_lpt_integration import PendleLPTIntegration
 from integrations.pendle_yt_integration import PendleYTIntegration
 from integrations.template import ProtocolNameIntegration
+from utils import pendle
+
+from constants.example_integrations import (
+    ACTIVE_ENA_START_BLOCK_EXAMPLE,
+    BEEFY_ARBITRUM_START_BLOCK_EXAMPLE,
+    KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
+    RATEX_EXAMPLE_USDE_START_BLOCK,
+)
+from constants.stonfi import STONFI_USDE_START_BLOCK
+from constants.chains import Chain
+from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
+from constants.summary_columns import SummaryColumn
 
 # TODO: Add your integration here
 INTEGRATIONS: List[Integration] = [
@@ -39,7 +39,7 @@ INTEGRATIONS: List[Integration] = [
             SummaryColumn.STONFI_USDE_PTS,
         ],
         chain=Chain.TON,
-        reward_multiplier=1,
+        reward_multiplier=30,
     ),
     # Template integration
     ProtocolNameIntegration(
