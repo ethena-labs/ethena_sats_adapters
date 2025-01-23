@@ -68,7 +68,7 @@ class StonFiIntegration(L2DelegationIntegration):
 
     def get_participants_data(self, block: int) -> Dict[str, float]:
         # block timestamp format "2025-01-16T01:00:00"
-        target_date = get_block_date(block, self.chain, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
+        target_date = get_block_date(block, Chain.ETHEREUM, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
 
         logging.info(
             f"Fetching participants data for STON.fi L2 delegation at block {block} timestamp {target_date}..."
@@ -96,6 +96,7 @@ class StonFiIntegration(L2DelegationIntegration):
                     wallet_address = holder["wallet_address"]
                     block_data[wallet_address] = int(holder["total_amount"]) / token_decimals_base
         except Exception as e:
+            # pylint: disable=line-too-long
             err_msg = f"Error getting participants data for STON.fi L2 delegation at block {block}: {e}"
             logging.error(err_msg)
             slack_message(err_msg)
