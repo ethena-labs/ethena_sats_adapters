@@ -34,6 +34,8 @@ POLYNOMIAL_NODE_URL = os.getenv("POLYNOMIAL_NODE_URL")
 w3_polynomial = Web3(Web3.HTTPProvider(POLYNOMIAL_NODE_URL))
 SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
+BASE_NODE_URL = os.getenv("BASE_NODE_URL")
+w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -68,6 +70,9 @@ W3_BY_CHAIN = {
     },
     Chain.SOLANA: {
         "w3": w3,
+    },
+    Chain.BASE: {
+        "w3": w3_base,
     },
 }
 

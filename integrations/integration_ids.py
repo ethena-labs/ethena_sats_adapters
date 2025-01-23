@@ -408,6 +408,10 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Zerolend
+    ZEROLEND_SUSDE = ("zerolend_susde_deposit","Zerolend sUSDe",Token.SUSDE)
+    ZEROLEND_USDE = ("zerolend_usde_deposit", "Zerolend USDe", Token.USDE)
+
     KAMINO_SUSDE_COLLATERAL_EXAMPLE = (
         "kamino_susde_collateral_example",
         "Kamino sUSDe Collateral Example",
@@ -433,6 +437,12 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # InfinityPools
+    INFINITYPOOLS = (
+        "infinityPools",
+        "InfinityPools",
+        Token.SUSDE,
+    )
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
 
