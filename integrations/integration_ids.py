@@ -432,6 +432,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Rumpel
+    RUMPEL_SENA_LP = (
+        "rumpel_kpsats3_sena_lp_held",
+        "Rumpel kpSATS-3/sENA LP",
+        Token.SENA
+    )
+
     # InfinityPools
     INFINITYPOOLS = (
         "infinityPools",
