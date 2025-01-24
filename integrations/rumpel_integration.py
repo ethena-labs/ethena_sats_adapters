@@ -116,8 +116,6 @@ class RumpelIntegration(
 
                 balances = calculate_lp_tokens(pool_tick, lower_tick, upper_tick, pool_price_sqrt_x96 / (2**96), liquidity)
 
-                print(f"{owner} {balances[0]} {balances[1]} {lp_position}")
-
                 if users.get(end, {}).get(owner) is not None:
                     users[end][owner] += balances[1]
                 else:
