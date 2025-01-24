@@ -428,6 +428,11 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    RUMPEL_SENA_LP = (
+        "rumpel_kpsats3_sena_lp_held",
+        "Rumpel kpSATS-3/sENA LP",
+        Token.SENA
+    )
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
 

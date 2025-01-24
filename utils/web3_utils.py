@@ -203,3 +203,18 @@ def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
     )
     timestamp_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H")
     return timestamp_date
+
+def fetch_transaction_receipt_with_retry(chain: Chain, transaction_hash, retries=3, delay=2):
+    wb3 = W3_BY_CHAIN[chain]["w3"]
+    for attempt in range(retries):
+        try:
+            return wb3.eth.get_transaction_receipt(transaction_hash);
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(delay)
+                continue
+            else:
+                msg = f"Error fetching transaction: {e}, {traceback.format_exc()}"
+                logging.error(msg)
+                slack_message(msg)
+                raise e

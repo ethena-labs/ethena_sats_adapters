@@ -1,0 +1,26 @@
+import json
+from web3 import Web3
+from utils.web3_utils import w3
+
+KPSAT3_ADDRESS = Web3.to_checksum_address("0x263b0f5e179c1d72B884C43105C620d2112dF2a0")
+SENA_ADDRESS = Web3.to_checksum_address("0x8bE3460A480c80728a8C4D7a5D5303c85ba7B3b9")
+
+KPSATS3_SENA_UNIV3_POOL_DEPLOYED_BLOCK = 21383217;
+KPSATS3_SENA_UNIV3_POOL_ADDRESS = Web3.to_checksum_address("0x5D29647b684Ce835F442915cC3C8e99aAb2A26C6")
+UNIV3_NONFUNGUBLE_POSITION_MANAGER_ADDRESS = Web3.to_checksum_address("0xC36442b4a4522E871399CD717aBDD847Ab11FE88")
+
+with open("abi/univ3_nonfungible_position_manager.json") as f:
+    UNIV3_NONFUNGIBLE_POSITION_MANAGER_ABI = json.load(f)
+    
+UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT = w3.eth.contract(
+    address=UNIV3_NONFUNGUBLE_POSITION_MANAGER_ADDRESS,
+    abi=UNIV3_NONFUNGIBLE_POSITION_MANAGER_ABI,
+)
+
+with open("abi/univ3_pool.json") as f:
+    UNIV3_POOL_ABI = json.load(f)
+
+KPSATS3_SENA_UNIV3_POOL_CONTRACT = w3.eth.contract(
+    address=KPSATS3_SENA_UNIV3_POOL_ADDRESS,
+    abi=UNIV3_POOL_ABI,
+)
