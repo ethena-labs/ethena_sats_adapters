@@ -17,6 +17,7 @@ class SummaryColumn(Enum):
     )
 
     AMBIENT_SCROLL_SHARDS = ("ambient_scroll_shards", SummaryColumnType.ETHENA_PTS)
+    AMBIENT_SWELL_SHARDS = ("ambient_swell_shards", SummaryColumnType.ETHENA_PTS)
 
     NURI_SHARDS = ("nuri_shards", SummaryColumnType.ETHENA_PTS)
     LENDLE_MANTLE_SHARDS = ("lendle_mantle_shards", SummaryColumnType.ETHENA_PTS)
@@ -38,6 +39,17 @@ class SummaryColumn(Enum):
         "beefy_cached_balance_example",
         SummaryColumnType.ETHENA_PTS,
     )
+
+    TEMPEST_SWELL_SHARDS = ("tempest_swell_shards", SummaryColumnType.ETHENA_PTS)
+
+    KAMINO_DELEGATED_PTS_EXAMPLE = (
+        "kamino_delegated_pts_example",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
+    RATEX_EXAMPLE_PTS = ("ratex_example_pts", SummaryColumnType.ETHENA_PTS)
+
+    VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name

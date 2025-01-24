@@ -223,6 +223,7 @@ class IntegrationID(Enum):
 
     # Lendle
     LENDLE_USDE_LPT = ("lendle_usde_lpt_bal", "Lendle Mantle USDe LPT", Token.USDE)
+    LENDLE_SUSDE_LPT = ("lendle_susde_lpt_bal", "Lendle Mantle sUSDe LPT", Token.SUSDE)
 
     # Lyra
     LYRA_SUSDE_BULL_MAINNET = (
@@ -245,8 +246,9 @@ class IntegrationID(Enum):
     VELODROME_MODE_SUSDE = ("velodrome_mode_susde", "Velodrome Mode sUSDe", Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ("ambient_usde_scroll_lp_bal", "Ambient Scroll LP", Token.USDE)
+    AMBIENT_SWELL_LP = ("ambient_usde_swell_lp_bal", "Ambient Swell LP", Token.USDE)
 
-    # Balancer
+    # Balancer V2
     BALANCER_ARBITRUM_GHO_USDE = (
         "balancer_arbitrum_gho_usde",
         "Balancer Arbitrum GHO/USDe",
@@ -305,6 +307,13 @@ class IntegrationID(Enum):
     BALANCER_FRAXTAL_FRAX_USDE_DAI_USDT_USDC = (
         "balancer_fraxtal_frax_usde_dai_usdt_usdc",
         "Balancer Fraxtal FRAX/USDe/DAI/USDT/USDC",
+        Token.USDE,
+    )
+
+    # Balancer V3
+    BALANCER_V3_ETHEREUM_USDE_USDT = (
+        "balancer_v3_ethereum_usde_usdt",
+        "Balancer V3 Ethereum USDe/USDT",
         Token.USDE,
     )
 
@@ -393,12 +402,47 @@ class IntegrationID(Enum):
         "Beefy Cached Balance Example",
         Token.USDE,
     )
+
+    # Zerolend
+    ZEROLEND_SUSDE = ("zerolend_susde_deposit","Zerolend sUSDe",Token.SUSDE)
+    ZEROLEND_USDE = ("zerolend_usde_deposit", "Zerolend USDe", Token.USDE)
+
+    KAMINO_SUSDE_COLLATERAL_EXAMPLE = (
+        "kamino_susde_collateral_example",
+        "Kamino sUSDe Collateral Example",
+        Token.SUSDE,
+    )
+
+    RATEX_USDE_EXAMPLE = ("ratex_usde_example", "Ratex USDe Example", Token.USDE)
+
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
-    # Compound USDe
-    COMPOUND_USDE = ("compound_usde", "Compound USDe", Token.USDE)
+    # Tempest Finance
+    TEMPEST_SWELL_USDE = (
+        "tempest_swell_usde_held",
+        "Tempest Swell USDe",
+        Token.USDE,
+    )
 
+    # agni
+    AGNI = (
+        "agni",
+        "Agni",
+        Token.USDE,
+    )
+
+    # InfinityPools
+    INFINITYPOOLS = (
+        "infinityPools",
+        "InfinityPools",
+        Token.SUSDE,
+    )
+    # Venus
+    VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
+    
+     # Compound USDe
+    COMPOUND_USDE = ("compound_usde", "Compound USDe", Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
