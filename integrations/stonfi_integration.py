@@ -14,14 +14,11 @@ from utils.slack import slack_message
 
 STONFI_ENDPOINT = "https://api.ston.fi"
 
+STONFI_LP_TOKEN_DECIMALS = 9
+
 TOKEN_SYMBOL_ADDRESS_MAP = {
     Token.USDE: "EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO",  # FIXME: replace with real USDe address
 }
-
-TOKEN_DECIMALS_MAP = {
-    Token.USDE: 9,  # FIXME: replace with real USDe decimals
-}
-
 
 class StonFiIntegration(L2DelegationIntegration):
     def __init__(
@@ -75,8 +72,7 @@ class StonFiIntegration(L2DelegationIntegration):
         )
 
         token_address = TOKEN_SYMBOL_ADDRESS_MAP[self.get_token_symbol()]
-        token_decimals = TOKEN_DECIMALS_MAP[self.get_token_symbol()]
-        token_decimals_base = 10 ** token_decimals
+        lp_token_decimals_base = 10 ** STONFI_LP_TOKEN_DECIMALS
 
         block_data: Dict[str, float] = {}
         try:
@@ -91,10 +87,20 @@ class StonFiIntegration(L2DelegationIntegration):
             )
             payload = res.json()
 
+            pools_data = payload["pools"]
+
             if "holders" in payload and len(payload["holders"]) > 0:
                 for holder in payload["holders"]:
                     wallet_address = holder["wallet_address"]
-                    block_data[wallet_address] = int(holder["total_amount"]) / token_decimals_base
+
+                    total_amount_usd = 0
+                    for pool in holder["pools"]:
+                        pool_data = pools_data[pool["pool_address"]]
+                        pool_lp_token_amount = int(pool.get("lp_amount", "0")) + int(pool.get("staked_lp_amount", "0"))
+                        total_amount_usd += pool_data["lp_price_usd"] * pool_lp_token_amount / lp_token_decimals_base
+
+                    block_data[wallet_address] = total_amount_usd
+
         except Exception as e:
             # pylint: disable=line-too-long
             err_msg = f"Error getting participants data for STON.fi L2 delegation at block {block}: {e}"
