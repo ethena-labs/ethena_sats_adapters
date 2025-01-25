@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import json
+import requests
 
 from typing import Dict, List
 from dotenv import load_dotenv
@@ -8,7 +9,7 @@ from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     THALA_SUSDE_START_BLOCK,
 )
-from constants.thala import SUSDE_LPT_METADATA
+from constants.thala import ETHENA_ADDRESS_API_URL, SUSDE_LPT_COIN, SUSDE_LPT_PID, THALA_FARMING_V1_ADDRESS
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
@@ -46,26 +47,50 @@ class ThalaAptosIntegration(L2DelegationIntegration):
 
         # Populate block data from smallest to largest
         for block in sorted_blocks:
-            # Check block_data first, then cached_data for previous block balances
-            prev_block_user_balances = block_data.get(block - 1, cached_data.get(block - 1, {}))
-            result = self.get_participants_data(block, prev_block_user_balances)
+            user_addresses = self.get_participants(block)
 
-            # Store the balances
-            block_data[block] = result['balances']
+            result = self.get_participants_data(block, user_addresses)
+
+            # Store the balances and cache the exchange rate
+            if result:
+                block_data[block] = result
 
         return block_data
 
-    def get_participants_data(self, block, prev_block_user_balances=None):
-        print("Getting participants data for block", block)
+    def get_participants(self, block: int) -> List[str]:
+        try:
+            response = requests.get(
+                f"{ETHENA_ADDRESS_API_URL}?block={block}",
+                timeout=10
+            )
+            response.raise_for_status()
+
+            data = response.json()['data']
+            if not isinstance(data, list):
+                logging.warning(f"Unexpected response format from API: {data}")
+                return []
+
+            return [addr for addr in data if isinstance(addr, str)]
+
+        except requests.RequestException as e:
+            logging.error(f"Request failed for block {block}: {str(e)}")
+            return []
+        except Exception as e:
+            logging.error(f"Error processing participants for block {block}: {str(e)}")
+            return []
+
+    def get_participants_data(self, block, user_addresses=[]):
+        print("Getting participants data")
         try:
             response = subprocess.run(
                 [
                     "ts-node",
                     self.thala_ts_location,
-                    SUSDE_LPT_METADATA,
+                    THALA_FARMING_V1_ADDRESS,
+                    str(SUSDE_LPT_PID),
                     str(self.decimals),
                     str(block),
-                    json.dumps(prev_block_user_balances or {}),
+                    json.dumps(user_addresses),
                 ],
                 capture_output=True,
                 text=True,
@@ -73,8 +98,8 @@ class ThalaAptosIntegration(L2DelegationIntegration):
             )
             
             # Debug output
-            print("TypeScript stdout:", response.stdout)
-            print("TypeScript stderr:", response.stderr)
+            # print("TypeScript stdout:", response.stdout)
+            # print("TypeScript stderr:", response.stderr)
             
             try:
                 result = json.loads(response.stdout)
@@ -97,14 +122,14 @@ if __name__ == "__main__":
     example_integration = ThalaAptosIntegration(
         integration_id=IntID.THALA_SUSDE_LP,
         start_block=THALA_SUSDE_START_BLOCK,
-        token_address=SUSDE_LPT_METADATA,
+        token_address=SUSDE_LPT_COIN,
         decimals=8,
         chain=Chain.APTOS,
         reward_multiplier=5,
     )
 
     example_integration_output = example_integration.get_l2_block_balances(
-        cached_data={}, blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 300))
+        cached_data={}, blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 1))
     )
 
     print("=" * 120)
