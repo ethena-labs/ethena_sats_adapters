@@ -12,7 +12,7 @@ const LENDING_CONTRACT_ADDRESS = args[0];
 const market_address = args[1];
 const decimals = Number(args[2]);
 const block = Number(args[3]);
-const user_addresses: Array<string> = JSON.parse(args[4]);
+const user_addresses: string[] = JSON.parse(process.argv[6]);
 
 async function getStrategy() {
   // iterate over all users and get their susde balance

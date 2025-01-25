@@ -47,20 +47,20 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         block_data: Dict[int, Dict[str, float]] = {}
         sorted_blocks = sorted(blocks)
 
-
         # Populate block data from smallest to largest
         for block in sorted_blocks:
             user_addresses = self.get_participants(block)
             result = self.get_participants_data(block, user_addresses)
 
             # Store the balances and cache the exchange rate
-            block_data[block] = result['balances']
+            block_data[block] = result
 
         return block_data
 
     def get_participants_data(self, block, user_addresses=[]):
         print("Getting participants data for block", block)
         try:
+            addresses_list = [addr.strip('"') for addr in user_addresses]
             response = subprocess.run(
                 [
                     "ts-node",
@@ -69,7 +69,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                     self.market_address,
                     str(self.decimals),
                     str(block),
-                    json.dumps(user_addresses),
+                    json.dumps(addresses_list),
                 ],
                 capture_output=True,
                 text=True,
@@ -104,7 +104,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             )
             response.raise_for_status()
             
-            data = response.json()
+            data = response.json()['data']
             if not isinstance(data, list):
                 logging.warning(f"Unexpected response format from API: {data}")
                 return []
