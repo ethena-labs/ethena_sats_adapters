@@ -1,14 +1,15 @@
 import logging
 import subprocess
 import json
+import requests
 
-from typing import Dict, List
+from typing import Dict, List, Set
 from dotenv import load_dotenv
 from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     ECHELON_SUSDE_COLLATERAL_START_BLOCK,
 )
-from constants.echelon import LENDING_CONTRACT_ADDRESS, SUSDE_MARKET_ADDRESS, SUSDE_TOKEN_ADDRESS
+from constants.echelon import LENDING_CONTRACT_ADDRESS, SUSDE_MARKET_ADDRESS, SUSDE_TOKEN_ADDRESS, ETHENA_ADDRESS_API_URL
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
@@ -37,7 +38,6 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         self.market_address = market_address
         self.decimals = str(decimals)
         self.echelon_ts_location = "ts/echelon_balances.ts"
-        self.exchange_rate_cache: float = 0
 
     def get_l2_block_balances(
         self, cached_data: Dict[int, Dict[str, float]], blocks: List[int]
@@ -49,17 +49,15 @@ class EchelonAptosIntegration(L2DelegationIntegration):
 
         # Populate block data from smallest to largest
         for block in sorted_blocks:
-            # Check block_data first, then cached_data for previous block balances
-            prev_block_user_balances = block_data.get(block - 1, cached_data.get(block - 1, {}))
-            result = self.get_participants_data(block, prev_block_user_balances)
+            user_addresses = self.get_participants(block)
+            result = self.get_participants_data(block, user_addresses[0:20])
 
             # Store the balances and cache the exchange rate
-            block_data[block] = result['balances']
-            self.exchange_rate_cache = result['exchange_rate']
+            block_data[block] = result
 
         return block_data
 
-    def get_participants_data(self, block, prev_block_user_balances=None):
+    def get_participants_data(self, block, user_addresses=[]):
         print("Getting participants data for block", block)
         try:
             response = subprocess.run(
@@ -70,8 +68,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                     self.market_address,
                     str(self.decimals),
                     str(block),
-                    json.dumps(prev_block_user_balances or {}),
-                    str(self.exchange_rate_cache)
+                    json.dumps(user_addresses),
                 ],
                 capture_output=True,
                 text=True,
@@ -98,6 +95,27 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             print(f"Unexpected error: {e}")
             raise
 
+    def get_participants(self, block: int) -> List[str]:
+        try:
+            response = requests.get(
+                f"{ETHENA_ADDRESS_API_URL}?block={block}",
+                timeout=10
+            )
+            response.raise_for_status()
+            
+            data = response.json()['data']
+            if not isinstance(data, list):
+                logging.warning(f"Unexpected response format from API: {data}")
+                return []
+                
+            return [addr for addr in data if isinstance(addr, str)]
+            
+        except requests.RequestException as e:
+            logging.error(f"Request failed for block {block}: {str(e)}")
+            return []
+        except Exception as e:
+            logging.error(f"Error processing participants for block {block}: {str(e)}")
+            return []
 
 if __name__ == "__main__":
     example_integration = EchelonAptosIntegration(

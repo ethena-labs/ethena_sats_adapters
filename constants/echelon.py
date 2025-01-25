@@ -3,3 +3,5 @@ LENDING_CONTRACT_ADDRESS = "0xc6bc659f1649553c1a3fa05d9727433dc03843baac29473c81
 SUSDE_MARKET_ADDRESS = "0xac00e90cdadec06d81e0d5ce7a3e93d63d563e982dea0ca15bad2b067f42d2be" # TODO: USDT market Address for now
 
 SUSDE_TOKEN_ADDRESS = "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b" # TODO: USDT Address for now
+
+ETHENA_ADDRESS_API_URL = "https://app.echelon.market/api/ethena-addresses"
