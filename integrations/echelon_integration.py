@@ -50,7 +50,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         # Populate block data from smallest to largest
         for block in sorted_blocks:
             user_addresses = self.get_participants(block)
-            result = self.get_participants_data(block, user_addresses)
+            result = self.get_participants_data(block, user_addresses[0:20])
 
             # Store the balances and cache the exchange rate
             block_data[block] = result
@@ -60,7 +60,6 @@ class EchelonAptosIntegration(L2DelegationIntegration):
     def get_participants_data(self, block, user_addresses=[]):
         print("Getting participants data for block", block)
         try:
-            addresses_list = [addr.strip('"') for addr in user_addresses]
             response = subprocess.run(
                 [
                     "ts-node",
@@ -69,7 +68,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                     self.market_address,
                     str(self.decimals),
                     str(block),
-                    json.dumps(addresses_list),
+                    json.dumps(user_addresses),
                 ],
                 capture_output=True,
                 text=True,
