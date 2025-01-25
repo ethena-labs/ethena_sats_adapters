@@ -50,9 +50,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         # Populate block data from smallest to largest
         for block in sorted_blocks:
             user_addresses = self.get_participants(block)
-            result = self.get_participants_data(block, user_addresses[0:20])
+            result = self.get_participants_data(block, user_addresses)
 
-            # Store the balances and cache the exchange rate
             block_data[block] = result
 
         return block_data
@@ -81,7 +80,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             
             try:
                 result = json.loads(response.stdout)
-                return result  # Now returns dict with both balances and exchange rate
+                return result 
             except json.JSONDecodeError as e:
                 print(f"JSON Decode Error: {e}")
                 print(f"Raw output: {response.stdout}")
