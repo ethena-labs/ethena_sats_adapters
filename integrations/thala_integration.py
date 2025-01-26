@@ -1,20 +1,26 @@
 import logging
 import subprocess
 import json
+from typing import Dict, List, Optional
 import requests
 
-from typing import Dict, List
 from dotenv import load_dotenv
 from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     THALA_SUSDE_START_BLOCK,
 )
-from constants.thala import ETHENA_ADDRESS_API_URL, SUSDE_LPT_COIN, SUSDE_LPT_PID, THALA_FARMING_V1_ADDRESS
+from constants.thala import (
+    ETHENA_ADDRESS_API_URL,
+    SUSDE_LPT_COIN,
+    SUSDE_LPT_PID,
+    THALA_FARMING_V1_ADDRESS,
+)
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
 
 load_dotenv()
+
 
 class ThalaAptosIntegration(L2DelegationIntegration):
     def __init__(
@@ -47,9 +53,9 @@ class ThalaAptosIntegration(L2DelegationIntegration):
 
         # Populate block data from smallest to largest
         for block in sorted_blocks:
-            user_addresses = self.get_participants(block)
+            user_addresses = self.get_thala_block_participants(block)
 
-            result = self.get_participants_data(block, user_addresses)
+            result = self.get_thala_block_data(block, user_addresses)
 
             # Store the balances and cache the exchange rate
             if result:
@@ -57,15 +63,14 @@ class ThalaAptosIntegration(L2DelegationIntegration):
 
         return block_data
 
-    def get_participants(self, block: int) -> List[str]:
+    def get_thala_block_participants(self, block: int) -> List[str]:
         try:
             response = requests.get(
-                f"{ETHENA_ADDRESS_API_URL}?block={block}",
-                timeout=10
+                f"{ETHENA_ADDRESS_API_URL}?block={block}", timeout=10
             )
             response.raise_for_status()
 
-            data = response.json()['data']
+            data = response.json()["data"]
             if not isinstance(data, list):
                 logging.warning(f"Unexpected response format from API: {data}")
                 return []
@@ -79,8 +84,12 @@ class ThalaAptosIntegration(L2DelegationIntegration):
             logging.error(f"Error processing participants for block {block}: {str(e)}")
             return []
 
-    def get_participants_data(self, block, user_addresses=[]):
+    def get_thala_block_data(
+        self, block: int, user_addresses: Optional[List[str]] = None
+    ):
         print("Getting participants data")
+        if not user_addresses:
+            user_addresses = []
         try:
             response = subprocess.run(
                 [
@@ -94,13 +103,9 @@ class ThalaAptosIntegration(L2DelegationIntegration):
                 ],
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
             )
-            
-            # Debug output
-            # print("TypeScript stdout:", response.stdout)
-            # print("TypeScript stderr:", response.stderr)
-            
+
             try:
                 result = json.loads(response.stdout)
                 return result
@@ -108,7 +113,7 @@ class ThalaAptosIntegration(L2DelegationIntegration):
                 print(f"JSON Decode Error: {e}")
                 print(f"Raw output: {response.stdout}")
                 raise
-                
+
         except subprocess.CalledProcessError as e:
             print(f"Process error: {e}")
             print(f"stderr: {e.stderr}")
@@ -129,7 +134,8 @@ if __name__ == "__main__":
     )
 
     example_integration_output = example_integration.get_l2_block_balances(
-        cached_data={}, blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 1))
+        cached_data={},
+        blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 1)),
     )
 
     print("=" * 120)
