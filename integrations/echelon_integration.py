@@ -1,20 +1,26 @@
 import logging
 import subprocess
 import json
+from typing import Dict, List, Optional
 import requests
 
-from typing import Dict, List, Set
 from dotenv import load_dotenv
 from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     ECHELON_SUSDE_COLLATERAL_START_BLOCK,
 )
-from constants.echelon import LENDING_CONTRACT_ADDRESS, SUSDE_MARKET_ADDRESS, SUSDE_TOKEN_ADDRESS, ETHENA_ADDRESS_API_URL
+from constants.echelon import (
+    LENDING_CONTRACT_ADDRESS,
+    SUSDE_MARKET_ADDRESS,
+    SUSDE_TOKEN_ADDRESS,
+    ETHENA_ADDRESS_API_URL,
+)
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
 
 load_dotenv()
+
 
 class EchelonAptosIntegration(L2DelegationIntegration):
     def __init__(
@@ -49,15 +55,21 @@ class EchelonAptosIntegration(L2DelegationIntegration):
 
         # Populate block data from smallest to largest
         for block in sorted_blocks:
-            user_addresses = self.get_participants(block)
-            result = self.get_participants_data(block, user_addresses)
-
+            logging.info(f"Getting Echelon participants for block {block}")
+            user_addresses = self.get_participants_for_block(block)
+            logging.info(f"Echelon participants for block {block}: {user_addresses}")
+            result = self.get_balances_for_block(block, user_addresses)
+            logging.info(f"Echelon balances for block {block}: {result}")
             block_data[block] = result
 
         return block_data
 
-    def get_participants_data(self, block, user_addresses=[]):
+    def get_balances_for_block(
+        self, block: int, user_addresses: Optional[List[str]] = None
+    ):
         print("Getting participants data for block", block)
+        if not user_addresses:
+            user_addresses = []
         try:
             response = subprocess.run(
                 [
@@ -71,21 +83,21 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                 ],
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
             )
-            
+
             # Debug output
             print("TypeScript stdout:", response.stdout)
             print("TypeScript stderr:", response.stderr)
-            
+
             try:
                 result = json.loads(response.stdout)
-                return result 
+                return result
             except json.JSONDecodeError as e:
                 print(f"JSON Decode Error: {e}")
                 print(f"Raw output: {response.stdout}")
                 raise
-                
+
         except subprocess.CalledProcessError as e:
             print(f"Process error: {e}")
             print(f"stderr: {e.stderr}")
@@ -94,27 +106,27 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             print(f"Unexpected error: {e}")
             raise
 
-    def get_participants(self, block: int) -> List[str]:
+    def get_participants_for_block(self, block: int) -> List[str]:
         try:
             response = requests.get(
-                f"{ETHENA_ADDRESS_API_URL}?block={block}",
-                timeout=10
+                f"{ETHENA_ADDRESS_API_URL}?block={block}", timeout=10
             )
             response.raise_for_status()
-            
-            data = response.json()['data']
+
+            data = response.json()["data"]
             if not isinstance(data, list):
                 logging.warning(f"Unexpected response format from API: {data}")
                 return []
-                
+
             return [addr for addr in data if isinstance(addr, str)]
-            
+
         except requests.RequestException as e:
             logging.error(f"Request failed for block {block}: {str(e)}")
             return []
         except Exception as e:
             logging.error(f"Error processing participants for block {block}: {str(e)}")
             return []
+
 
 if __name__ == "__main__":
     example_integration = EchelonAptosIntegration(
@@ -128,7 +140,13 @@ if __name__ == "__main__":
     )
 
     example_integration_output = example_integration.get_l2_block_balances(
-        cached_data={}, blocks=list(range(ECHELON_SUSDE_COLLATERAL_START_BLOCK, ECHELON_SUSDE_COLLATERAL_START_BLOCK + 300))
+        cached_data={},
+        blocks=list(
+            range(
+                ECHELON_SUSDE_COLLATERAL_START_BLOCK,
+                ECHELON_SUSDE_COLLATERAL_START_BLOCK + 300,
+            )
+        ),
     )
 
     print("=" * 120)
