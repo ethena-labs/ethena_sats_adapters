@@ -395,6 +395,12 @@ class IntegrationID(Enum):
     # Fluid
     FLUID = ("Fluid_susde", "Fluid sUSDe", Token.SUSDE)
 
+    # Cork
+    CORK_USDE_CT = ("cork_usde_ct", "Cork USDe CT", Token.USDE)
+    CORK_USDE_LPT = ("cork_usde_lpt", "Cork USDe LPT", Token.USDE)
+    CORK_SUSDE_CT = ("cork_susde_ct", "Cork SUSDe CT", Token.SUSDE)
+    CORK_SUSDE_LPT = ("cork_susde_lpt", "Cork SUSDe LPT", Token.SUSDE)
+
     # Claimed ENA
     CLAIMED_ENA_EXAMPLE = ("claimed_ena_example", "Claimed ENA Example", Token.ENA)
     BEEFY_CACHED_BALANCE_EXAMPLE = (
