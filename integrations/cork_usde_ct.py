@@ -28,7 +28,7 @@ ShareTokenAddress = NewType("ShareTokenAddress", ChecksumAddress)
 TermId = NewType("TermId", int)
 
 @dataclass
-class VaultBalance(NamedTuple):
+class VaultBalance:
     total_assets: int
     total_supply: int
     shares_by_account: Dict[ChecksumAddress, int] = {}
@@ -300,7 +300,7 @@ class CorkIntegration(
                         term.shares_by_account.setdefault(recipient, 0)
                         term.shares_by_account[recipient] += value
                     elif sender == ZERO_ADDRESS:
-                        # token was minted, update total supply
+                        # token was burned, update total supply
                         term.total_supply -= value
         return term_balances
 
@@ -395,7 +395,7 @@ class CorkIntegration(
 if __name__ == "__main__":
     # simple tests for the integration
     cork_integration = CorkIntegration(
-        integration_id=IntegrationID.CORK_USDE_CT,
+        integration_id=IntegrationID.CORK_USDE,
         start_block=PSM_USDE_START_BLOCK_BY_CHAIN[Chain.SEPOLIA],
         summary_cols=[SummaryColumn.CORK_PSM_PTS],
         chain=Chain.SEPOLIA,
