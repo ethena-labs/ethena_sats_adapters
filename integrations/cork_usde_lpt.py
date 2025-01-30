@@ -29,12 +29,12 @@ from utils.web3_utils import fetch_events_logs_with_retry, multicall, W3_BY_CHAI
 ########################################################################
 # Terminologies
 ########################################################################
-# Cork Markets (PSM - Peg Stability Market):
+# Cork PSM (PSM - Peg Stability Model/Module):
 #   - Fixed-term PSMs with pools for peg stability between a pair of assets
-# Cork AMM (AMM):
+# Cork AMM (AMM - Automated Market Maker):
 #   - Fixed-term AMMs with pools to enable swaps between the tokens of each Cork Market
-# Cork Vaults (LV):
-#   - Long-term Vaults that deploy liquidity into Cork Markets and Cork AMMs
+# Cork Vaults (LV - Liquidity Vault):
+#   - Long-term Vaults that deploy liquidity into Cork PSM pools and Cork AMM pools
 
 # Typings
 TermId = NewType("TermId", int)
@@ -504,7 +504,7 @@ class CorkIntegration(
                     )
                     for term_config in pair_config.terms.values()
                 ]
-                multicall_results = multicall(self.w3, amm_calls, to_block)
+                multicall_results = multicall(self.w3, amm_calls, block)
 
                 # The results contain the following:
                 #   - The `result[0]` is the total balance of the asset token in the AMM pool
