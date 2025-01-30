@@ -20,13 +20,31 @@ with open("abi/ERC20_abi.json") as f:
     ERC20_ABI = json.load(f)
 with open("abi/cork_module_core.json") as f:
     MODULE_CORE_ABI = json.load(f)
+with open("abi/ICorkHook.json") as f:
+    ICORK_HOOK_ABI = json.load(f)
 
 PSM_ADDRESS_BY_CHAIN = {
-    Chain.ETHEREUM: Web3.to_checksum_address("0x57e114B691Db790C35207b2e685D4A43181e6061"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0xF6a5b7319DfBc84EB94872478be98462aA9Aab99"),
     Chain.SEPOLIA: Web3.to_checksum_address("0xF6a5b7319DfBc84EB94872478be98462aA9Aab99"),
 }
 
 LV_ADDRESS_BY_CHAIN = PSM_ADDRESS_BY_CHAIN
+
+AMM_ADDRESS_BY_CHAIN = {
+    Chain.ETHEREUM: Web3.to_checksum_address("0xf190c07670Db093962814393daCbF833CE02ea88"),
+    Chain.SEPOLIA: Web3.to_checksum_address("0xf190c07670Db093962814393daCbF833CE02ea88"),
+}
+
+AMM_CONTRACT_BY_CHAIN = {
+    Chain.ETHEREUM: w3.eth.contract(
+        address=AMM_ADDRESS_BY_CHAIN[Chain.ETHEREUM],
+        abi=ICORK_HOOK_ABI,
+    ),
+    Chain.SEPOLIA: w3_sepolia.eth.contract(
+        address=AMM_ADDRESS_BY_CHAIN[Chain.SEPOLIA],
+        abi=ICORK_HOOK_ABI,
+    ),
+}
 
 PSM_CONTRACT_BY_CHAIN = {
     Chain.ETHEREUM: w3.eth.contract(
