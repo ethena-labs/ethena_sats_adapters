@@ -509,8 +509,8 @@ class CorkIntegration(
             )
 
             # loop through the sorted blocks and find the closest previous block
-            prev_block = self.start_block
-            start = prev_block
+            prev_block = self.start_block - 1
+            start = prev_block + 1
             account_bals: Dict[ChecksumAddress, Decimal | float] = {}
 
             for existing_block in sorted_existing_blocks:

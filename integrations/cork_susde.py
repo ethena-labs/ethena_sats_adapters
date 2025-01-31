@@ -10,10 +10,10 @@ from eth_typing import ChecksumAddress
 from constants.chains import Chain
 from constants.summary_columns import SummaryColumn
 from constants.cork import (
-    AMM_ADDRESS_BY_CHAIN,
+    # AMM_ADDRESS_BY_CHAIN,
     AMM_CONTRACT_BY_CHAIN,
-    USDE_TOKEN_ADDRESS_BY_CHAIN,
-    PSM_USDE_START_BLOCK_BY_CHAIN,
+    SUSDE_TOKEN_ADDRESS_BY_CHAIN,
+    PSM_SUSDE_START_BLOCK_BY_CHAIN,
     PSM_CONTRACT_BY_CHAIN,
     LV_ADDRESS_BY_CHAIN,
     PAGINATION_SIZE,
@@ -43,19 +43,6 @@ LpTokenAddress = NewType("LpTokenAddress", ChecksumAddress)
 QuoteTokenAddress = NewType("QuoteTokenAddress", ChecksumAddress)
 VaultShareTokenAddress = NewType("VaultShareTokenAddress", ChecksumAddress)
 
-@dataclass
-class PooledBalance:
-    '''
-    PooledBalance is a class that represents the balances of a pool or ERC4626 vault.
-        It contains the following attributes:
-        - total_assets: the total amount of the assets in the pool
-        - total_supply: the total supply of the shares
-        - shares_by_account: a dictionary that maps each account address to its share of the pool
-    '''
-    total_assets: int
-    total_supply: int
-    shares_by_account: Dict[ChecksumAddress, int | Decimal] = {}
-
 class TermConfig(NamedTuple):
     share_token_addr: PsmShareTokenAddress
     lp_token_addr: LpTokenAddress
@@ -65,8 +52,26 @@ class PairConfig(NamedTuple):
     eligible_asset: TokenType
     amm_quote_token_addr: QuoteTokenAddress
     vault_share_token_addr: VaultShareTokenAddress
+    vault_addr: ChecksumAddress
     start_block: int
     terms: Dict[TermId, TermConfig] = {}
+
+@dataclass
+class PooledBalance:
+    '''
+    PooledBalance is a class that represents the balances of a pool or ERC4626 vault.
+        It contains the following attributes:
+        - total_assets: the total amount of the eligible asset in the pool
+        - total_assets_by_token: a dictionary of the total amount of the other assets in the pool
+        - total_supply: the total supply of the shares
+        - shares_by_account: a dictionary that maps each account address to its share of the pool
+    '''
+    pair_config: PairConfig
+    term_config: Optional[TermConfig] = None
+    total_assets: int = 0
+    # total_assets_by_token: Dict[ChecksumAddress, int | Decimal] = {}
+    total_supply: int = 0
+    shares_by_account: Dict[ChecksumAddress, int] = {}
 
 
 class CorkIntegration(
@@ -99,7 +104,7 @@ class CorkIntegration(
         )
 
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
-        self.eligible_token_addr = USDE_TOKEN_ADDRESS_BY_CHAIN[self.chain]
+        self.eligible_token_addr = SUSDE_TOKEN_ADDRESS_BY_CHAIN[self.chain]
 
         self.pair_config_by_id: Dict[bytes, PairConfig] = None
         self.psm_contract = PSM_CONTRACT_BY_CHAIN[self.chain]
@@ -107,6 +112,8 @@ class CorkIntegration(
 
         self.amm_contract = AMM_CONTRACT_BY_CHAIN[self.chain]
         self.amm_balances_by_lp_token: Dict[LpTokenAddress, PooledBalance] = None
+
+        self.vault_balances_by_vault_share_token: Dict[VaultShareTokenAddress, PooledBalance] = None
 
 
     def fetch_pair_config(
@@ -150,6 +157,7 @@ class CorkIntegration(
                 eligible_asset=TokenType.PA,
                 amm_quote_token_addr=Web3.to_checksum_address(event["args"]["ra"]),
                 vault_share_token_addr=Web3.to_checksum_address(event["args"]["lv"]),
+                vault_addr=LV_ADDRESS_BY_CHAIN[self.chain],
                 start_block=event["blockNumber"],
             )
             for event in new_pair_events_with_eligible_pa
@@ -159,6 +167,7 @@ class CorkIntegration(
                 eligible_asset=TokenType.RA,
                 amm_quote_token_addr=Web3.to_checksum_address(event["args"]["ra"]),
                 vault_share_token_addr=Web3.to_checksum_address(event["args"]["lv"]),
+                vault_addr=LV_ADDRESS_BY_CHAIN[self.chain],
                 start_block=event["blockNumber"],
             )
             for event in new_pair_events_with_eligible_ra
@@ -319,7 +328,7 @@ class CorkIntegration(
 
                 # Get pooled balances of each PSM
                 share_token_addr = term_config.share_token_addr
-                pool_balances.setdefault(share_token_addr, PooledBalance(0, 0))
+                pool_balances.setdefault(share_token_addr, PooledBalance(pair_config, term_config))
                 pool = pool_balances[share_token_addr]
 
                 # Update asset balance of PSM pool
@@ -375,7 +384,7 @@ class CorkIntegration(
 
                 # Get pooled balances of each AMM pair
                 lp_token_addr = term_config.lp_token_addr
-                pool_balances.setdefault(lp_token_addr, PooledBalance(0, 0))
+                pool_balances.setdefault(lp_token_addr, PooledBalance(pair_config, term_config))
                 pool = pool_balances[lp_token_addr]
 
                 # For each token, accumulate all balance changes from Transfer events...
@@ -411,6 +420,56 @@ class CorkIntegration(
                     elif sender == ZERO_ADDRESS:
                         # token was burned, update total supply
                         pool.total_supply -= value
+        return pool_balances
+
+
+    def update_vault_pool_balances(
+        self,
+        pool_balances: Dict[VaultShareTokenAddress, PooledBalance],
+        from_block: int = 0,
+        to_block: int | str = "latest"
+    ) -> Dict[VaultShareTokenAddress, PooledBalance]:
+        # For each pair...
+        for _pair_id, pair_config in self.pair_config_by_id.items():
+            start_block = max(from_block, pair_config.start_block)
+
+            vault_share_token_addr = pair_config.vault_share_token_addr
+            pool_balances.setdefault(vault_share_token_addr, PooledBalance(pair_config))
+            pool = pool_balances[pool_balances]
+
+            # For each token, accumulate all balance changes from Transfer events...
+            token_contract = self.w3.eth.contract(
+                address=vault_share_token_addr,
+                abi=ERC20_ABI,
+            )
+
+            # event Transfer(address indexed from, address indexed to, uint256 value)
+            token_transfers = fetch_events_logs_with_retry(
+                "Token transfers of Vault LV token",
+                token_contract.events.Transfer(),
+                start_block,
+                to_block,
+            )
+
+            # Update token balance of accounts involved in transfer
+            for transfer in token_transfers:
+                value = int(transfer["args"]["value"])
+
+                sender = Web3.to_checksum_address(transfer["args"]["from"])
+                if sender not in self.excluded_addresses:
+                    pool.shares_by_account.setdefault(sender, 0)
+                    pool.shares_by_account[sender] -= value
+                elif sender == ZERO_ADDRESS:
+                    # token was minted, update total supply
+                    pool.total_supply += value
+
+                recipient = Web3.to_checksum_address(transfer["args"]["to"])
+                if recipient not in self.excluded_addresses:
+                    pool.shares_by_account.setdefault(recipient, 0)
+                    pool.shares_by_account[recipient] += value
+                elif sender == ZERO_ADDRESS:
+                    # token was burned, update total supply
+                    pool.total_supply -= value
         return pool_balances
 
 
@@ -450,8 +509,8 @@ class CorkIntegration(
             )
 
             # loop through the sorted blocks and find the closest previous block
-            prev_block = self.start_block
-            start = prev_block
+            prev_block = self.start_block - 1
+            start = prev_block + 1
             account_bals: Dict[ChecksumAddress, Decimal | float] = {}
 
             for existing_block in sorted_existing_blocks:
@@ -475,6 +534,11 @@ class CorkIntegration(
                 self.amm_balances_by_lp_token = self.update_amm_pool_balances(
                     {}, to_block=prev_block)
 
+            # Fetch Vault term balances at prev_block if not already done
+            if self.vault_balances_by_vault_share_token is None:
+                self.vault_balances_by_vault_share_token = self.update_vault_pool_balances(
+                    {}, to_block=prev_block)
+
             # parse events since and update bals
             while start <= block:
                 to_block = min(start + PAGINATION_SIZE, block)
@@ -483,11 +547,18 @@ class CorkIntegration(
                 # Add new pairs to config
                 self.pair_config_by_id |= self.fetch_pair_config(start, to_block)
 
-                # Update Peg Stability term balances
+                # Update PSM Pool term balances
                 self.update_psm_pool_balances(self.psm_balances_by_share_token, start, to_block)
 
-                # Update AMM Liquidity Pool term balances
+                # Update AMM Pool term balances
                 self.update_amm_pool_balances(self.amm_balances_by_lp_token, start, to_block)
+
+                # Update Vault Liquidity Pool term balances
+                self.update_vault_pool_balances(
+                    self.vault_balances_by_vault_share_token,
+                    start,
+                    to_block
+                )
 
                 start = to_block + 1
                 # continue pagination
@@ -511,47 +582,85 @@ class CorkIntegration(
                 #   - The `result[1]` is the total balance of the share token in the AMM pool
                 for term_config, result in zip(pair_config.terms.values(), multicall_results):
                     amm_pool = self.amm_balances_by_lp_token[term_config.lp_token_addr]
-                    psm_pool = self.psm_balances_by_share_token[term_config.share_token_addr]
-                    total_shares = result[1]
+                    # amm_pool.total_assets_by_token[term_config.share_token_addr] = result[1]
 
                     # Update the total asset balance of each AMM pool
                     if pair_config.amm_quote_token_addr == self.eligible_token_addr:
                         amm_pool.total_assets = result[0]
 
-                    account_lp_token_bals = amm_pool.shares_by_account
-                    account_share_token_bals = psm_pool.shares_by_account
-
-                    # Attribute PSM share token balances to their respective LP token holders
-                    for account_addr, account_shares in account_lp_token_bals.items():
-                        account_share_token_bals.setdefault(account_addr, Decimal(0))
-                        bal = Decimal(account_share_token_bals[account_addr])
-                        account_share_token_bals[account_addr] = bal + (
-                            Decimal(total_shares)
-                            * Decimal(account_shares)
-                            / Decimal(amm_pool.total_supply)
-                        )
-
             # Attribute Ethena asset balances on AMM pools to their respective LP token holders
             for amm_pool in self.amm_balances_by_lp_token.values():
-                for account_addr, account_shares in psm_pool.shares_by_account.items():
-                    account_bals.setdefault(account_addr, Decimal(0))
-                    bal = Decimal(account_bals[account_addr])
-                    account_bals[account_addr] = bal + (
+                for account_addr, account_shares in amm_pool.shares_by_account.items():
+                    amount = (
                         Decimal(amm_pool.total_assets)
                         * Decimal(account_shares)
                         / Decimal(amm_pool.total_supply)
                     )
+                    # If the account_addr is the vault_addr, then we need to attribute the
+                    # Ethena asset balances to the respective LV token holders
+                    if account_addr == amm_pool.pair_config.vault_addr:
+                        vault_share_token_addr = amm_pool.pair_config.vault_share_token_addr
+                        vault = self.vault_balances_by_vault_share_token[vault_share_token_addr]
+                        for account_addr, account_shares in vault.shares_by_account.items():
+                            account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(account_bals[account_addr]) + (
+                                amount
+                                * Decimal(account_shares)
+                                / Decimal(vault.total_supply)
+                            )
+                    else:
+                        account_bals.setdefault(account_addr, Decimal(0))
+                        account_bals[account_addr] = Decimal(account_bals[account_addr]) + amount
+
+                    # # Attribute PSM share token balances to their respective LP token holders
+                    # if amm_pool.term_config is not None:
+                    #     share_token_addr = amm_pool.term_config.share_token_addr
+                    #     psm_pool = self.psm_balances_by_share_token[share_token_addr]
+                    #     account_share_token_bals = psm_pool.shares_by_account
+                    #     share_amount = (
+                    #         Decimal(amm_pool.total_assets_by_token[share_token_addr])
+                    #         * Decimal(account_shares)
+                    #         / Decimal(amm_pool.total_supply)
+                    #     )
+                    #     account_share_token_bals.setdefault(account_addr, Decimal(0))
+                    #     bal = Decimal(account_share_token_bals[account_addr])
+                    #     account_share_token_bals[account_addr] = bal + share_amount
 
             # Attribute Ethena asset balances on PSM pools to their respective CT token holders
             for psm_pool in self.psm_balances_by_share_token.values():
                 for account_addr, account_shares in psm_pool.shares_by_account.items():
-                    account_bals.setdefault(account_addr, Decimal(0))
-                    bal = Decimal(account_bals[account_addr])
-                    account_bals[account_addr] = bal + (
+                    amount = (
                         Decimal(psm_pool.total_assets)
                         * Decimal(account_shares)
                         / Decimal(psm_pool.total_supply)
                     )
+                    # If the account_addr is the vault_addr, then we need to attribute the
+                    # Ethena asset balances to the respective LV token holders
+                    if account_addr == psm_pool.pair_config.vault_addr:
+                        vault_share_token_addr = psm_pool.pair_config.vault_share_token_addr
+                        vault = self.vault_balances_by_vault_share_token[vault_share_token_addr]
+                        for account_addr, account_shares in vault.shares_by_account.items():
+                            account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(account_bals[account_addr]) + (
+                                amount
+                                * Decimal(account_shares)
+                                / Decimal(vault.total_supply)
+                            )
+                    # If the account_addr is the amm_contract, then we need to attribute the
+                    # Ethena asset balances to the respective LP token holders
+                    elif account_addr == self.amm_contract.address:
+                        lp_token_addr = psm_pool.term_config.lp_token_addr
+                        amm_pool = self.amm_balances_by_lp_token[lp_token_addr]
+                        for account_addr, account_shares in amm_pool.shares_by_account.items():
+                            account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(account_bals[account_addr]) + (
+                                amount
+                                * Decimal(account_shares)
+                                / Decimal(amm_pool.total_supply)
+                            )
+                    else:
+                        account_bals.setdefault(account_addr, Decimal(0))
+                        account_bals[account_addr] = Decimal(account_bals[account_addr]) + amount
 
             # Round off to 4 decimals
             for account_addr, account_bal in account_bals.items():
@@ -565,15 +674,14 @@ class CorkIntegration(
 if __name__ == "__main__":
     # simple tests for the integration
     cork_integration = CorkIntegration(
-        integration_id=IntegrationID.CORK_USDE,
-        start_block=PSM_USDE_START_BLOCK_BY_CHAIN[Chain.SEPOLIA],
+        integration_id=IntegrationID.CORK_SUSDE,
+        start_block=PSM_SUSDE_START_BLOCK_BY_CHAIN[Chain.SEPOLIA],
         summary_cols=[SummaryColumn.CORK_PSM_PTS],
         chain=Chain.SEPOLIA,
         reward_multiplier=50,
         excluded_addresses={
             Web3.to_checksum_address("0x0000000000000000000000000000000000000000"),
-            AMM_ADDRESS_BY_CHAIN[Chain.SEPOLIA], # exclude Cork AMMs from being counted
-            LV_ADDRESS_BY_CHAIN[Chain.SEPOLIA], # exclude Cork Vaults from being counted
+            # AMM_ADDRESS_BY_CHAIN[Chain.SEPOLIA], # exclude Cork AMMs from being counted
         },
     )
 
