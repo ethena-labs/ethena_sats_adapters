@@ -5,12 +5,12 @@ from utils.web3_utils import call_with_retry, W3_BY_CHAIN
 from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract
 from constants.fluid import sUSDe
 
-
+# covers all Fluid normal col SUSDE vaults.
 class FluidIntegration(Integration):
 
     def __init__(self):
         super().__init__(
-            IntegrationID.FLUID,
+            IntegrationID.FLUID_SUSDE,
             21016131,
             Chain.ETHEREUM,
             [],
@@ -28,7 +28,7 @@ class FluidIntegration(Integration):
                 vaultResolver_contract.functions.positionsByUser(user), block
             )
             for i in range(len(userPositions)):
-                if vaultEntireDatas[i][3][8][0] == sUSDe:
+                if (vaultEntireDatas[i][3][8][0] == sUSDe) and not (vaultEntireDatas[i][1]): # not smart col types
                     balance += userPositions[i][9]
             return balance / 1e18
         except Exception as e:
@@ -80,13 +80,10 @@ class FluidIntegration(Integration):
         )
         relevantVaults = []
         for vaultAddress in vaults:
-            supplyTokenOfVault = (
-                call_with_retry(
-                    vaultResolver_contract.functions.getVaultEntireData(vaultAddress),
-                    block,
-                )
-            )[3][8][0]
-            if supplyTokenOfVault == sUSDe:
+            vaultData = call_with_retry(
+                vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block
+            )
+            if (vaultData[3][8][0] == sUSDe) and not (vaultData[1]): # not smart col types
                 relevantVaults.append(vaultAddress)
         self.blocknumber_to_susdeVaults[block] = relevantVaults
         return relevantVaults
@@ -95,7 +92,7 @@ class FluidIntegration(Integration):
 if __name__ == "__main__":
     example_integration = FluidIntegration()
     print("getting relevant vaults")
-    print(example_integration.get_relevant_vaults(21088189))
+    print(example_integration.get_relevant_vaults(21745303))
 
     print("\n\n\ngetting participants")
     print(example_integration.get_participants(None))
