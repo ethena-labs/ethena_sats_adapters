@@ -2,13 +2,14 @@ import logging
 import os
 import time
 import traceback
+from typing import Iterable
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
 from datetime import datetime
 
 from web3 import Web3
-from web3.types import BlockIdentifier
+from web3.types import BlockIdentifier, EventData
 
 from utils.slack import slack_message
 from constants.chains import Chain
@@ -34,6 +35,8 @@ SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
 BASE_NODE_URL = os.getenv("BASE_NODE_URL")
 w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
+SEPOLIA_NODE_URL = os.getenv("SEPOLIA_NODE_URL")
+w3_sepolia = Web3(Web3.HTTPProvider(SEPOLIA_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -68,6 +71,9 @@ W3_BY_CHAIN = {
     },
     Chain.BASE: {
         "w3": w3_base,
+    },
+    Chain.SEPOLIA: {
+        "w3": w3_sepolia,
     },
 }
 
@@ -109,13 +115,13 @@ def fetch_events_logs_with_retry(
     retries: int = 3,
     delay: int = 2,
     filter: dict | None = None,
-) -> dict:
+) -> Iterable[EventData]:
     for attempt in range(retries):
         try:
             if filter is None:
                 return contract_event.get_logs(fromBlock=from_block, toBlock=to_block)
             else:
-                return contract_event.get_logs(filter)
+                return contract_event.get_logs(argument_filters=filter, fromBlock=from_block, toBlock=to_block)
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(delay)
