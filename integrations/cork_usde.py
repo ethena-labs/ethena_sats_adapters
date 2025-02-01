@@ -45,7 +45,8 @@ VaultShareTokenAddress = NewType("VaultShareTokenAddress", ChecksumAddress)
 
 class TermConfig(NamedTuple):
     share_token_addr: PsmShareTokenAddress
-    lp_token_addr: LpTokenAddress
+    amm_lp_token_addr: LpTokenAddress
+    amm_pool_addr: ChecksumAddress
     start_block: int
 
 class PairConfig(NamedTuple):
@@ -224,7 +225,8 @@ class CorkIntegration(
                 # the `lp_token_addr` is also unique and only valid for each term (or issuance)
                 term_config = TermConfig(
                     share_token_addr=Web3.to_checksum_address(event["args"]["ct"]),
-                    lp_token_addr=Web3.to_checksum_address(event["args"]["lpt"]),
+                    amm_lp_token_addr=Web3.to_checksum_address(event["args"]["lpt"]),
+                    amm_pool_addr=self.amm_contract.address,
                     start_block=event["blockNumber"],
                 )
 
@@ -383,7 +385,7 @@ class CorkIntegration(
                 start_block = max(from_block, term_config.start_block)
 
                 # Get pooled balances of each AMM pair
-                lp_token_addr = term_config.lp_token_addr
+                lp_token_addr = term_config.amm_lp_token_addr
                 pool_balances.setdefault(lp_token_addr, PooledBalance(pair_config, term_config))
                 pool = pool_balances[lp_token_addr]
 
@@ -564,29 +566,39 @@ class CorkIntegration(
                 # continue pagination
 
             # finished pagination loop, block height reached...
-            for _pair_id, pair_config in self.pair_config_by_id.items():
-                # Fetch the reserve asset balances of each AMM pool
-                amm_contract_function = self.amm_contract.functions.getReserves
-                amm_calls = [
-                    (
-                        self.amm_contract,
-                        amm_contract_function.fn_name,
-                        [pair_config.amm_quote_token_addr, term_config.share_token_addr],
-                    )
-                    for term_config in pair_config.terms.values()
-                ]
-                multicall_results = multicall(self.w3, amm_calls, block)
+            # Filter out non-eligible AMM pools
+            eligible_amm_balances = {
+                lp_token_addr: amm_pool
+                for lp_token_addr, amm_pool in self.amm_balances_by_lp_token.items()
+                if amm_pool.pair_config.amm_quote_token_addr == self.eligible_token_addr
+            }
 
-                # The results contain the following:
-                #   - The `result[0]` is the total balance of the asset token in the AMM pool
-                #   - The `result[1]` is the total balance of the share token in the AMM pool
-                for term_config, result in zip(pair_config.terms.values(), multicall_results):
-                    amm_pool = self.amm_balances_by_lp_token[term_config.lp_token_addr]
-                    # amm_pool.total_assets_by_token[term_config.share_token_addr] = result[1]
+            # Fetch the reserve asset balances of each eligible AMM pool
+            # Note: We cannot assume that all LP token holders have withdrawn
+            # remaining reserves after end of epoch/term.
+            amm_contract_function = self.amm_contract.functions.getReserves
+            amm_calls = [
+                (
+                    self.amm_contract,
+                    amm_contract_function.fn_name,
+                    [
+                        amm_pool.pair_config.amm_quote_token_addr,
+                        amm_pool.term_config.share_token_addr
+                    ],
+                )
+                for amm_pool in eligible_amm_balances.values()
+            ]
+            multicall_results = multicall(self.w3, amm_calls, block)
 
-                    # Update the total asset balance of each AMM pool
-                    if pair_config.amm_quote_token_addr == self.eligible_token_addr:
-                        amm_pool.total_assets = result[0]
+            # The results contain the following:
+            #   - The `result[0]` is the total balance of the asset token in the AMM pool
+            #   - The `result[1]` is the total balance of the share token in the AMM pool
+            for amm_pool, result in zip(eligible_amm_balances.values(), multicall_results):
+                # Update the total asset balance of each AMM pool
+                amm_pool.total_assets = result[0]
+
+                # Update the total shares of PSM pool of each AMM pool
+                # amm_pool.total_assets_by_token[amm_pool.term_config.share_token_addr] = result[1]
 
             # Attribute Ethena asset balances on AMM pools to their respective LP token holders
             for amm_pool in self.amm_balances_by_lp_token.values():
@@ -648,8 +660,8 @@ class CorkIntegration(
                             )
                     # If the account_addr is the amm_contract, then we need to attribute the
                     # Ethena asset balances to the respective LP token holders
-                    elif account_addr == self.amm_contract.address:
-                        lp_token_addr = psm_pool.term_config.lp_token_addr
+                    elif account_addr == psm_pool.term_config.amm_pool_addr:
+                        lp_token_addr = psm_pool.term_config.amm_lp_token_addr
                         amm_pool = self.amm_balances_by_lp_token[lp_token_addr]
                         for account_addr, account_shares in amm_pool.shares_by_account.items():
                             account_bals.setdefault(account_addr, Decimal(0))
