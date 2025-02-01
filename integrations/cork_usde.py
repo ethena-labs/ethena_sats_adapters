@@ -117,8 +117,9 @@ class CorkIntegration(
         self.vault_balances_by_vault_share_token: Dict[VaultShareTokenAddress, PooledBalance] = None
 
 
-    def fetch_pair_config(
+    def update_pair_config(
         self,
+        pair_config_by_id: Dict[bytes, PairConfig],
         from_block: int = 0,
         to_block: int | str = "latest"
     ) -> Dict[bytes, PairConfig]:
@@ -153,7 +154,7 @@ class CorkIntegration(
         # )
 
         # Set new pairs to config
-        pair_config_by_id = {
+        pair_config_by_id.update({
             event["args"]["id"]: PairConfig(
                 eligible_asset=TokenType.PA,
                 amm_quote_token_addr=Web3.to_checksum_address(event["args"]["ra"]),
@@ -173,7 +174,7 @@ class CorkIntegration(
             )
             for event in new_pair_events_with_eligible_ra
             # if event["args"]["ra"] == self.eligible_token_addr
-        }
+        })
 
         # For each pair, update term config...
         for pair_id, pair_config in pair_config_by_id.items():
@@ -524,7 +525,7 @@ class CorkIntegration(
 
             # Fetch pair config at prev_block if not already done
             if self.pair_config_by_id is None:
-                self.pair_config_by_id = self.fetch_pair_config(to_block=prev_block)
+                self.pair_config_by_id = self.update_pair_config({}, to_block=prev_block)
 
             # Fetch Peg Stability term balances at prev_block if not already done
             if self.psm_balances_by_share_token is None:
@@ -547,7 +548,7 @@ class CorkIntegration(
                 # print(f"Fetching events from {start} to {to_block}")
 
                 # Add new pairs to config
-                self.pair_config_by_id |= self.fetch_pair_config(start, to_block)
+                self.update_pair_config(self.pair_config_by_id, start, to_block)
 
                 # Update PSM Pool term balances
                 self.update_psm_pool_balances(self.psm_balances_by_share_token, start, to_block)
