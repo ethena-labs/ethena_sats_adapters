@@ -1,7 +1,7 @@
 import logging
 from copy import deepcopy
 from decimal import Decimal
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Dict, List, NewType, Optional, Set, NamedTuple
 
 from web3 import Web3
@@ -55,7 +55,7 @@ class PairConfig(NamedTuple):
     vault_share_token_addr: VaultShareTokenAddress
     vault_addr: ChecksumAddress
     start_block: int
-    terms: Dict[TermId, TermConfig] = {}
+    terms: Dict[TermId, TermConfig]
 
 @dataclass
 class PooledBalance:
@@ -72,7 +72,7 @@ class PooledBalance:
     total_assets: int = 0
     # total_assets_by_token: Dict[ChecksumAddress, int | Decimal] = {}
     total_supply: int = 0
-    shares_by_account: Dict[ChecksumAddress, int] = {}
+    shares_by_account: Dict[ChecksumAddress, int] = field(default_factory=dict)
 
 
 class CorkIntegration(
@@ -161,6 +161,7 @@ class CorkIntegration(
                 vault_share_token_addr=Web3.to_checksum_address(event["args"]["lv"]),
                 vault_addr=LV_ADDRESS_BY_CHAIN[self.chain],
                 start_block=event["blockNumber"],
+                terms={},
             )
             for event in new_pair_events_with_eligible_pa
             # if event["args"]["pa"] == self.eligible_token_addr
@@ -171,6 +172,7 @@ class CorkIntegration(
                 vault_share_token_addr=Web3.to_checksum_address(event["args"]["lv"]),
                 vault_addr=LV_ADDRESS_BY_CHAIN[self.chain],
                 start_block=event["blockNumber"],
+                terms={},
             )
             for event in new_pair_events_with_eligible_ra
             # if event["args"]["ra"] == self.eligible_token_addr

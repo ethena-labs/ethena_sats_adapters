@@ -1,4 +1,5 @@
 import json
+import pathlib
 from enum import Enum
 from collections import defaultdict
 from web3 import Web3
@@ -16,11 +17,12 @@ PAGINATION_SIZE = 2000
 
 ZERO_ADDRESS = Web3.to_checksum_address("0x0000000000000000000000000000000000000000")
 
-with open("abi/ERC20_abi.json") as f:
+ABI_PATH = pathlib.Path(__file__).parent.parent / "abi"
+with open(ABI_PATH / "ERC20_abi.json") as f:
     ERC20_ABI = json.load(f)
-with open("abi/cork_module_core.json") as f:
+with open(ABI_PATH / "cork_module_core.json") as f:
     MODULE_CORE_ABI = json.load(f)
-with open("abi/ICorkHook.json") as f:
+with open(ABI_PATH / "ICorkHook.json") as f:
     ICORK_HOOK_ABI = json.load(f)
 
 PSM_ADDRESS_BY_CHAIN = {
