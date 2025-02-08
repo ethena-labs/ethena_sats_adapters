@@ -14,3 +14,4 @@ class Chain(Enum):
     SWELL = "Swell"
     SOLANA = "Solana"
     BASE = "Base"
+    BERACHAIN = "Berachain"

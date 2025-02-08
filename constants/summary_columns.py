@@ -51,6 +51,9 @@ class SummaryColumn(Enum):
 
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
+    DOLOMITE_BERACHAIN_USDE_PTS = ("dolomite_berachain_usde_pts", SummaryColumnType.ETHENA_PTS)
+    DOLOMITE_BERACHAIN_SUSDE_PTS = ("dolomite_berachain_susde_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

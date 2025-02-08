@@ -34,6 +34,8 @@ SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
 BASE_NODE_URL = os.getenv("BASE_NODE_URL")
 w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
+BERACHAIN_NODE_URL = os.getenv("BERACHAIN_NODE_URL")
+w3_berachain = Web3(Web3.HTTPProvider(BERACHAIN_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -68,6 +70,9 @@ W3_BY_CHAIN = {
     },
     Chain.BASE: {
         "w3": w3_base,
+    },
+    Chain.BERACHAIN: {
+        "w3": w3_berachain,
     },
 }
 
