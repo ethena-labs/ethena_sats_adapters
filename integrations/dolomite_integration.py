@@ -14,9 +14,15 @@ CHAIN_TO_NETWORK_MAP = {
     Chain.BERACHAIN: '80094',
 }
 
-CHAIN_TO_USDE_MARKET_ID_MAP = {
-    Chain.ARBITRUM: 54,
-    Chain.BERACHAIN: 14,
+CHAIN_TO_INTEGRATION_TO_MARKET_ID_MAP: dict[Chain, dict[IntegrationID, int | None]] = {
+    Chain.ARBITRUM: {
+        IntegrationID.DOLOMITE_USDE: 54,
+        IntegrationID.DOLOMITE_SUSDE: None,
+    },
+    Chain.BERACHAIN: {
+        IntegrationID.DOLOMITE_USDE: 14,
+        IntegrationID.DOLOMITE_SUSDE: 10,
+    },
 }
 
 class DolomiteIntegration(
@@ -65,16 +71,20 @@ class DolomiteIntegration(
                 at that block.
         """
         network_id = CHAIN_TO_NETWORK_MAP[self.chain]
-        usde_market_id = CHAIN_TO_USDE_MARKET_ID_MAP[self.chain]
+        market_id = CHAIN_TO_INTEGRATION_TO_MARKET_ID_MAP[self.chain][self.integration_id]
 
         result: Dict[int, Dict[ChecksumAddress, float]] = {}
+
+        if market_id is None:
+            return result
+
         for block in blocks:
             result[block] = {}
             if cached_data.__contains__(block):
                 result[block] = cached_data[block]
                 continue
 
-            response = get(f'{API_BASE}/balances/{network_id}/{usde_market_id}?blockNumber={block}&filter=supply')
+            response = get(f'{API_BASE}/balances/{network_id}/{market_id}?blockNumber={block}&filter=supply')
             if response.status_code == 200:
                 data = response.json()
 
