@@ -62,13 +62,13 @@ PSM_CONTRACT_BY_CHAIN = {
 # block height of first deployment of contract or pair
 PSM_USDE_START_BLOCK_BY_CHAIN = {
     Chain.ETHEREUM: 21725765,
-    Chain.SEPOLIA: 7214863,
+    Chain.SEPOLIA: 7414863,
 }
 
 # block height of first deployment of contract or pair
 PSM_SUSDE_START_BLOCK_BY_CHAIN = {
     Chain.ETHEREUM: 21725765,
-    Chain.SEPOLIA: 7214863,
+    Chain.SEPOLIA: 7414863,
 }
 
 # See: https://docs.ethena.fi/solution-design/key-addresses
