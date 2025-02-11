@@ -1,7 +1,5 @@
-from typing import Callable, Dict, List, Optional, Set
 from constants.chains import Chain
 from utils.web3_utils import w3
-from constants.summary_columns import SummaryColumn
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 import requests
@@ -23,7 +21,6 @@ class ZerolendIntegration(CachedBalancesIntegration):
             None,
             reward_multiplier,
             1,
-            None,
             None,
             None,
         )
