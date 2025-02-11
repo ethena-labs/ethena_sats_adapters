@@ -1,14 +1,15 @@
 import logging
 import os
 import time
+from datetime import datetime
 import traceback
+from typing import Iterable
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
-from datetime import datetime
 
 from web3 import Web3
-from web3.types import BlockIdentifier
+from web3.types import BlockIdentifier, EventData
 
 from utils.slack import slack_message
 from constants.chains import Chain
@@ -34,6 +35,8 @@ SWELL_NODE_URL = os.getenv("SWELL_NODE_URL")
 w3_swell = Web3(Web3.HTTPProvider(SWELL_NODE_URL))
 BASE_NODE_URL = os.getenv("BASE_NODE_URL")
 w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
+SEPOLIA_NODE_URL = os.getenv("SEPOLIA_NODE_URL")
+w3_sepolia = Web3(Web3.HTTPProvider(SEPOLIA_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -69,6 +72,9 @@ W3_BY_CHAIN = {
     Chain.BASE: {
         "w3": w3_base,
     },
+    Chain.SEPOLIA: {
+        "w3": w3_sepolia,
+    },
 }
 
 
@@ -98,7 +104,11 @@ MULTICALL_ABI = [
 MULTICALL_ADDRESS = (
     "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
 )
-MULTICALL_ADDRESS_BY_CHAIN = {Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11"}
+MULTICALL_ADDRESS_BY_CHAIN = {
+    Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11",
+    Chain.SEPOLIA: "0x25Eef291876194AeFAd0D60Dff89e268b90754Bb",
+    Chain.ETHEREUM: MULTICALL_ADDRESS,
+}
 
 
 def fetch_events_logs_with_retry(
@@ -108,14 +118,17 @@ def fetch_events_logs_with_retry(
     to_block: int | str = "latest",
     retries: int = 3,
     delay: int = 2,
+    # pylint: disable=redefined-builtin
     filter: dict | None = None,
-) -> dict:
+) -> Iterable[EventData]:
     for attempt in range(retries):
         try:
             if filter is None:
                 return contract_event.get_logs(fromBlock=from_block, toBlock=to_block)
             else:
-                return contract_event.get_logs(filter)
+                return contract_event.get_logs(
+                    argument_filters=filter, fromBlock=from_block, toBlock=to_block
+                )
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(delay)
@@ -143,6 +156,7 @@ def call_with_retry(contract_function, block="latest", retries=3, delay=2):
                 raise e
 
 
+# pylint: disable=redefined-outer-name
 def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest"):
     multicall_contract = w3.eth.contract(
         address=Web3.to_checksum_address(MULTICALL_ADDRESS), abi=MULTICALL_ABI
@@ -169,6 +183,7 @@ def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest
 
 
 def multicall_by_address(
+    # pylint: disable=redefined-outer-name
     w3: Web3,
     multical_address: str,
     calls: list,
@@ -209,11 +224,14 @@ def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
     timestamp_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H")
     return timestamp_date
 
-def fetch_transaction_receipt_with_retry(chain: Chain, transaction_hash, retries=3, delay=2):
+
+def fetch_transaction_receipt_with_retry(
+    chain: Chain, transaction_hash, retries=3, delay=2
+):
     wb3 = W3_BY_CHAIN[chain]["w3"]
     for attempt in range(retries):
         try:
-            return wb3.eth.get_transaction_receipt(transaction_hash);
+            return wb3.eth.get_transaction_receipt(transaction_hash)
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(delay)

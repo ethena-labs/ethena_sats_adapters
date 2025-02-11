@@ -1,0 +1,636 @@
+[
+  {
+    "type": "function",
+    "name": "addLiquidity",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "raAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "ctAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountRamin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountCtmin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amountRa",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountCt",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "mintedLp",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAmountIn",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "raForCt",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "amountOut",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amountIn",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAmountOut",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "raForCt",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "amountIn",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amountOut",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getFee",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "baseFeePercentage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "actualFeePercentage",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getForwarder",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getLiquidityToken",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getMarketSnapshot",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct MarketSnapshot",
+        "components": [
+          {
+            "name": "ra",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "ct",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "reserveRa",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reserveCt",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "oneMinusT",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "baseFee",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "liquidityToken",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPoolKey",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct PoolKey",
+        "components": [
+          {
+            "name": "currency0",
+            "type": "address",
+            "internalType": "Currency"
+          },
+          {
+            "name": "currency1",
+            "type": "address",
+            "internalType": "Currency"
+          },
+          {
+            "name": "fee",
+            "type": "uint24",
+            "internalType": "uint24"
+          },
+          {
+            "name": "tickSpacing",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "hooks",
+            "type": "address",
+            "internalType": "contract IHooks"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPoolManager",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getReserves",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "removeLiquidity",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "liquidityAmount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountRamin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountCtmin",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amountRa",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountCt",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "swap",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amountRaOut",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountCtOut",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "data",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "amountIn",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "AddedLiquidity",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "raAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "ctAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "mintedLp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "who",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RemovedLiquidity",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "raAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "ctAmount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "who",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Swapped",
+    "inputs": [
+      {
+        "name": "input",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "output",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "amountIn",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "amountOut",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "who",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "baseFeePercentage",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "realizedFeePercentage",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Deadline",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "DisableNativeLiquidityModification",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Insufficient0Amount",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Insufficient1Amount",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InsufficientOutputAmout",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAmount",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidFee",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidToken",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoExactIn",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NoSender",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotEnoughLiquidity",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotInitialized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OnlySelfCall",
+    "inputs": []
+  }
+]
