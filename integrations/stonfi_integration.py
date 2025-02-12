@@ -12,12 +12,15 @@ from integrations.integration_ids import IntegrationID
 from utils.request_utils import requests_retry_session
 from utils.slack import slack_message
 
-STONFI_ENDPOINT = "https://api.ston.fi"
+# STONFI_ENDPOINT = "https://api.ston.fi"
+STONFI_ENDPOINT = "https://api-preprod.ston.fi" # FIXME: replace to prod url
 
 STONFI_LP_TOKEN_DECIMALS = 9
 
-TOKEN_SYMBOL_ADDRESS_MAP = {
-    Token.USDE: "EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO",  # FIXME: replace with real USDe address
+TOKEN_SYMBOL_POOLS_MAP = {
+    Token.USDE: [
+        "EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO", # FIXME: replace with real USDe <-> USDT pool address
+    ],
 }
 
 class StonFiIntegration(L2DelegationIntegration):
@@ -65,41 +68,42 @@ class StonFiIntegration(L2DelegationIntegration):
 
     def get_participants_data(self, block: int) -> Dict[str, float]:
         # block timestamp format "2025-01-16T01:00:00"
-        target_date = get_block_date(block, Chain.ETHEREUM, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
+        target_date = get_block_date(block, self.chain, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
 
         logging.info(
             f"Fetching participants data for STON.fi L2 delegation at block {block} timestamp {target_date}..."
         )
 
-        token_address = TOKEN_SYMBOL_ADDRESS_MAP[self.get_token_symbol()]
+        pools_list = TOKEN_SYMBOL_POOLS_MAP[self.get_token_symbol()]
         lp_token_decimals_base = 10 ** STONFI_LP_TOKEN_DECIMALS
 
         block_data: Dict[str, float] = {}
         try:
-            # example: https://api.ston.fi/v1/stats/asset/EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO/holders?with_staked=true&timestamp=2025-01-16T01:00:00
-            res = requests_retry_session().get(
-                STONFI_ENDPOINT + "/v1/stats/asset/" + token_address + "/holders",
-                params={
-                    "with_staked": "true",
-                    "timestamp": target_date
-                },
-                timeout=60,
-            )
-            payload = res.json()
+            for pool_address in pools_list:
+                # example: https://api-preprod.ston.fi/v1/snapshots/liquidity_providers?timestamp=2025-02-11T01:00:00&pool_address=EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO
+                res = requests_retry_session().get(
+                    STONFI_ENDPOINT + "/v1/snapshots/liquidity_providers",
+                    params={
+                        "pool_address": pool_address,
+                        "timestamp": target_date
+                    },
+                    timeout=60,
+                )
+                payload = res.json()
 
-            pools_data = payload["pools"]
+                snapshot = payload["snapshot"]
 
-            if "holders" in payload and len(payload["holders"]) > 0:
-                for holder in payload["holders"]:
-                    wallet_address = holder["wallet_address"]
+                if len(snapshot) != 1:
+                    raise Exception("Invalid liquidity providers snapshot data")
 
-                    total_amount_usd = 0
-                    for pool in holder["pools"]:
-                        pool_data = pools_data[pool["pool_address"]]
-                        pool_lp_token_amount = int(pool.get("lp_amount", "0")) + int(pool.get("staked_lp_amount", "0"))
-                        total_amount_usd += pool_data["lp_price_usd"] * pool_lp_token_amount / lp_token_decimals_base
+                pool_snapshot = snapshot[0]
+                lp_price_usd = float(pool_snapshot["lp_price_usd"])
 
-                    block_data[wallet_address] = total_amount_usd
+                for position in pool_snapshot["positions"]:
+                    wallet_address = position["wallet_address"]
+                    lp_token_amount = int(position["lp_amount"]) + int(position["staked_lp_amount"])
+                    position_value_usd = lp_token_amount * lp_price_usd / lp_token_decimals_base
+                    block_data[wallet_address] = block_data.get(wallet_address, 0) + position_value_usd
 
         except Exception as e:
             # pylint: disable=line-too-long
@@ -123,7 +127,7 @@ if __name__ == "__main__":
 
     stonfi_integration_output = stonfi_integration.get_l2_block_balances(
         cached_data={},
-        blocks=[21671160, 21683570],
+        blocks=[21819590, 21819700],
     )
 
     print("=" * 120)
