@@ -12,7 +12,7 @@ from constants.summary_columns import SummaryColumn
 from constants.cork import (
     AMM_CONTRACT_BY_CHAIN,
     SUSDE_TOKEN_ADDRESS_BY_CHAIN,
-    PSM_SUSDE_START_BLOCK_BY_CHAIN,
+    SUSDE_START_BLOCK_BY_CHAIN,
     PSM_CONTRACT_BY_CHAIN,
     LV_ADDRESS_BY_CHAIN,
     PAGINATION_SIZE,
@@ -44,7 +44,7 @@ VaultShareTokenAddress = NewType("VaultShareTokenAddress", ChecksumAddress)
 
 class TermConfig(NamedTuple):
     share_token_addr: PsmShareTokenAddress
-    amm_lp_token_addr: LpTokenAddress
+    amm_lp_token_addr: Optional[LpTokenAddress]
     amm_pool_addr: ChecksumAddress
     start_block: int
 
@@ -80,6 +80,7 @@ class CorkIntegration(
     def __init__(
         self,
         integration_id: IntegrationID,
+        eligible_token_addr: ChecksumAddress,
         start_block: int,
         chain: Chain = Chain.ETHEREUM,
         summary_cols: Optional[List[SummaryColumn]] = None,
@@ -104,13 +105,14 @@ class CorkIntegration(
         )
 
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
-        self.eligible_token_addr = SUSDE_TOKEN_ADDRESS_BY_CHAIN[self.chain]
+        self.eligible_token_addr = eligible_token_addr
 
         self.pair_config_by_id: Dict[bytes, PairConfig] = None
         self.psm_contract = PSM_CONTRACT_BY_CHAIN[self.chain]
         self.psm_balances_by_share_token: Dict[PsmShareTokenAddress, PooledBalance] = None
 
         self.amm_contract = AMM_CONTRACT_BY_CHAIN[self.chain]
+        self.amm_pool_addr: Optional[ChecksumAddress] = None
         self.amm_balances_by_lp_token: Dict[LpTokenAddress, PooledBalance] = None
 
         self.vault_balances_by_vault_share_token: Dict[VaultShareTokenAddress, PooledBalance] = None
@@ -177,8 +179,38 @@ class CorkIntegration(
             # if event["args"]["ra"] == self.eligible_token_addr
         })
 
+        # Fetch events that indicates new lpt was created
+        # event Initialized(address indexed ra, address indexed ct, address liquidityToken);
+        new_lpt_events = fetch_events_logs_with_retry(
+            "LPT Initialized on pairs with USDe",
+            self.amm_contract.events.Initialized(),
+            from_block or self.start_block,
+            to_block,
+            filter = {
+                "ra": [
+                    pair_config.amm_quote_token_addr
+                    for pair_config in pair_config_by_id.values()
+                ],
+            },
+        )
+
         # For each pair, update term config...
         for pair_id, pair_config in pair_config_by_id.items():
+            # Update the LP token address for each term
+            for term_id, term_config in pair_config.terms.items():
+                if term_config.amm_lp_token_addr is None:
+                    # Find the LP token address for the given CT token
+                    amm_lp_token_addr = next((
+                        Web3.to_checksum_address(lpt_event["args"]["liquidityToken"])
+                        for lpt_event in new_lpt_events
+                        if lpt_event["args"]["ct"] == term_config.share_token_addr.lower()
+                    ), None)
+
+                    if amm_lp_token_addr is not None:
+                        pair_config.terms[term_id] = term_config._replace(
+                            amm_lp_token_addr=amm_lp_token_addr
+                        )
+
             # Fetch events that indicate a new term was issued/started
             new_term_events_of_pair = fetch_events_logs_with_retry(
                 "Issuance on pairs with USDe",
@@ -189,21 +221,6 @@ class CorkIntegration(
                     "id": pair_id,
                 },
             )
-
-            # Get LP token address
-            # WORKAROUND: until LP token address is available from Issued event
-            amm_contract_function = self.amm_contract.functions.getLiquidityToken
-            amm_calls = [
-                (
-                    self.amm_contract,
-                    amm_contract_function.fn_name,
-                    [pair_config.amm_quote_token_addr, event["args"]["ct"]],
-                )
-                for event in new_term_events_of_pair
-            ]
-            multicall_results = multicall(self.w3, amm_calls, to_block)
-            for event, result in zip(new_term_events_of_pair, multicall_results):
-                event["args"]["lpt"] = result[0]
 
             # For each term, update config...
             for event in new_term_events_of_pair:
@@ -223,12 +240,23 @@ class CorkIntegration(
                 # the `ds_id` identifies each term, but is not unique globally (across pairs)
                 term_id: TermId = TermId(event["args"]["dsId"])
 
+                # Find the LP token address for the given CT token
+                amm_lp_token_addr = next((
+                    Web3.to_checksum_address(lpt_event["args"]["liquidityToken"])
+                    for lpt_event in new_lpt_events
+                    if lpt_event["args"]["ct"] == event["args"]["ct"]
+                ), None)
+
+                # In Uniswap v4, the Pool Manager contract address holds the reserves of the pool
+                if self.amm_pool_addr is None:
+                    self.amm_pool_addr = self.amm_contract.functions.getPoolManager().call()
+
                 # the `share_token_addr` is unique and only valid for each term (or issuance)
                 # the `lp_token_addr` is also unique and only valid for each term (or issuance)
                 term_config = TermConfig(
                     share_token_addr=Web3.to_checksum_address(event["args"]["ct"]),
-                    amm_lp_token_addr=Web3.to_checksum_address(event["args"]["lpt"]),
-                    amm_pool_addr=self.amm_contract.address,
+                    amm_lp_token_addr=amm_lp_token_addr,
+                    amm_pool_addr=self.amm_pool_addr,
                     start_block=event["blockNumber"],
                 )
 
@@ -309,7 +337,7 @@ class CorkIntegration(
                 )
                 # pylint: enable=line-too-long
 
-                # TODO: Rollover Events
+                # Includes Rollover Events
                 if pair_config.eligible_asset == TokenType.RA:
                     balance_in = sum(
                         [event["args"]["amount"] for event in deposit_events] +
@@ -689,7 +717,8 @@ if __name__ == "__main__":
     # simple tests for the integration
     cork_integration = CorkIntegration(
         integration_id=IntegrationID.CORK_SUSDE,
-        start_block=PSM_SUSDE_START_BLOCK_BY_CHAIN[Chain.ETHEREUM],
+        eligible_token_addr=SUSDE_TOKEN_ADDRESS_BY_CHAIN[Chain.ETHEREUM],
+        start_block=SUSDE_START_BLOCK_BY_CHAIN[Chain.ETHEREUM],
         summary_cols=[SummaryColumn.CORK_PSM_PTS],
         chain=Chain.ETHEREUM,
         reward_multiplier=50,

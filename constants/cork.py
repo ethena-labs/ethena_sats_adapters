@@ -60,13 +60,13 @@ PSM_CONTRACT_BY_CHAIN = {
 }
 
 # block height of first deployment of contract or pair
-PSM_USDE_START_BLOCK_BY_CHAIN = {
+USDE_START_BLOCK_BY_CHAIN = {
     Chain.ETHEREUM: 21840338,
     Chain.SEPOLIA: 7214863,
 }
 
 # block height of first deployment of contract or pair
-PSM_SUSDE_START_BLOCK_BY_CHAIN = {
+SUSDE_START_BLOCK_BY_CHAIN = {
     Chain.ETHEREUM: 21840338,
     Chain.SEPOLIA: 7214863,
 }

@@ -121,7 +121,7 @@ def fetch_events_logs_with_retry(
             if filter is None:
                 return contract_event.get_logs(fromBlock=from_block, toBlock=to_block)
             else:
-                return contract_event.get_logs(argument_filters=filter, fromBlock=from_block, toBlock=to_block)
+                return contract_event.get_logs(fromBlock=from_block, toBlock=to_block, argument_filters=filter)
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(delay)
@@ -157,7 +157,7 @@ def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest
     aggregate_calls = []
     for call in calls:
         contract, fn_name, args = call
-        call_data = contract.encodeABI(fn_name=fn_name, args=args)
+        call_data = contract.encode_abi(fn_name=fn_name, args=args)
         aggregate_calls.append((contract.address, call_data))
 
     result = multicall_contract.functions.aggregate(aggregate_calls).call(
@@ -187,7 +187,7 @@ def multicall_by_address(
     aggregate_calls = []
     for call in calls:
         contract, fn_name, args = call
-        call_data = contract.encodeABI(fn_name=fn_name, args=args)
+        call_data = contract.encode_abi(fn_name=fn_name, args=args)
         aggregate_calls.append((contract.address, call_data))
 
     result = multicall_contract.functions.aggregate(aggregate_calls).call(
