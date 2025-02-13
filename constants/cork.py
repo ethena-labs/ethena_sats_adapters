@@ -20,20 +20,20 @@ ZERO_ADDRESS = Web3.to_checksum_address("0x0000000000000000000000000000000000000
 ABI_PATH = pathlib.Path(__file__).parent.parent / "abi"
 with open(ABI_PATH / "ERC20_abi.json") as f:
     ERC20_ABI = json.load(f)
-with open(ABI_PATH / "cork_module_core.json") as f:
+with open(ABI_PATH / "cork" / "ModuleCore.json") as f:
     MODULE_CORE_ABI = json.load(f)
-with open(ABI_PATH / "ICorkHook.json") as f:
+with open(ABI_PATH / "cork" / "ICorkHook.json") as f:
     ICORK_HOOK_ABI = json.load(f)
 
 PSM_ADDRESS_BY_CHAIN = {
-    Chain.ETHEREUM: Web3.to_checksum_address("0xF6a5b7319DfBc84EB94872478be98462aA9Aab99"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0x0e1968D9f29E99f14F9023021219eCedD67EB712"),
     Chain.SEPOLIA: Web3.to_checksum_address("0xF6a5b7319DfBc84EB94872478be98462aA9Aab99"),
 }
 
 LV_ADDRESS_BY_CHAIN = PSM_ADDRESS_BY_CHAIN
 
 AMM_ADDRESS_BY_CHAIN = {
-    Chain.ETHEREUM: Web3.to_checksum_address("0xf190c07670Db093962814393daCbF833CE02ea88"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0x0f956f42d92e478e9d61b5432c5080c09134AA88"),
     Chain.SEPOLIA: Web3.to_checksum_address("0xf190c07670Db093962814393daCbF833CE02ea88"),
 }
 
@@ -61,13 +61,13 @@ PSM_CONTRACT_BY_CHAIN = {
 
 # block height of first deployment of contract or pair
 PSM_USDE_START_BLOCK_BY_CHAIN = {
-    Chain.ETHEREUM: 21725765,
+    Chain.ETHEREUM: 21840338,
     Chain.SEPOLIA: 7214863,
 }
 
 # block height of first deployment of contract or pair
 PSM_SUSDE_START_BLOCK_BY_CHAIN = {
-    Chain.ETHEREUM: 21725765,
+    Chain.ETHEREUM: 21840338,
     Chain.SEPOLIA: 7214863,
 }
 

@@ -10,7 +10,6 @@ from eth_typing import ChecksumAddress
 from constants.chains import Chain
 from constants.summary_columns import SummaryColumn
 from constants.cork import (
-    # AMM_ADDRESS_BY_CHAIN,
     AMM_CONTRACT_BY_CHAIN,
     SUSDE_TOKEN_ADDRESS_BY_CHAIN,
     PSM_SUSDE_START_BLOCK_BY_CHAIN,
@@ -514,8 +513,8 @@ class CorkIntegration(
             )
 
             # loop through the sorted blocks and find the closest previous block
-            prev_block = self.start_block - 1
-            start = prev_block + 1
+            prev_block = self.start_block
+            start = prev_block
             account_bals: Dict[ChecksumAddress, Decimal | float] = {}
 
             for existing_block in sorted_existing_blocks:
@@ -690,13 +689,12 @@ if __name__ == "__main__":
     # simple tests for the integration
     cork_integration = CorkIntegration(
         integration_id=IntegrationID.CORK_SUSDE,
-        start_block=PSM_SUSDE_START_BLOCK_BY_CHAIN[Chain.SEPOLIA],
+        start_block=PSM_SUSDE_START_BLOCK_BY_CHAIN[Chain.ETHEREUM],
         summary_cols=[SummaryColumn.CORK_PSM_PTS],
-        chain=Chain.SEPOLIA,
+        chain=Chain.ETHEREUM,
         reward_multiplier=50,
         excluded_addresses={
-            Web3.to_checksum_address("0x0000000000000000000000000000000000000000"),
-            # AMM_ADDRESS_BY_CHAIN[Chain.SEPOLIA], # exclude Cork AMMs from being counted
+            ZERO_ADDRESS,
         },
     )
 
