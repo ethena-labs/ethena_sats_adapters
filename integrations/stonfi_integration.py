@@ -12,8 +12,7 @@ from integrations.integration_ids import IntegrationID
 from utils.request_utils import requests_retry_session
 from utils.slack import slack_message
 
-# STONFI_ENDPOINT = "https://api.ston.fi"
-STONFI_ENDPOINT = "https://api-preprod.ston.fi" # FIXME: replace to prod url
+STONFI_ENDPOINT = "https://api.ston.fi"
 
 STONFI_LP_TOKEN_DECIMALS = 9
 
@@ -80,7 +79,7 @@ class StonFiIntegration(L2DelegationIntegration):
         block_data: Dict[str, float] = {}
         try:
             for pool_address in pools_list:
-                # example: https://api-preprod.ston.fi/v1/snapshots/liquidity_providers?timestamp=2025-02-11T01:00:00&pool_address=EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO
+                # example: https://api.ston.fi/v1/snapshots/liquidity_providers?timestamp=2025-02-11T01:00:00&pool_address=EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO
                 res = requests_retry_session().get(
                     STONFI_ENDPOINT + "/v1/snapshots/liquidity_providers",
                     params={
