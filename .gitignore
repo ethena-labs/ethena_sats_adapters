@@ -64,6 +64,9 @@ db.sqlite3-journal
 # VSCode
 .vscode/
 
+# Idea/PyCharm
+.idea
+
 # Flask stuff:
 instance/
 .webassets-cache
