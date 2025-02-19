@@ -26,14 +26,14 @@ with open(ABI_PATH / "cork" / "ICorkHook.json") as f:
     ICORK_HOOK_ABI = json.load(f)
 
 PSM_ADDRESS_BY_CHAIN = {
-    Chain.ETHEREUM: Web3.to_checksum_address("0x0e1968D9f29E99f14F9023021219eCedD67EB712"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0xCCd90F6435dd78C4ECCED1FA4db0D7242548a2a9"),
     Chain.SEPOLIA: Web3.to_checksum_address("0xF6a5b7319DfBc84EB94872478be98462aA9Aab99"),
 }
 
 LV_ADDRESS_BY_CHAIN = PSM_ADDRESS_BY_CHAIN
 
 AMM_ADDRESS_BY_CHAIN = {
-    Chain.ETHEREUM: Web3.to_checksum_address("0x0f956f42d92e478e9d61b5432c5080c09134AA88"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0x5287E8915445aee78e10190559D8Dd21E0E9Ea88"),
     Chain.SEPOLIA: Web3.to_checksum_address("0xf190c07670Db093962814393daCbF833CE02ea88"),
 }
 
@@ -61,13 +61,13 @@ PSM_CONTRACT_BY_CHAIN = {
 
 # block height of first deployment of contract or pair
 USDE_START_BLOCK_BY_CHAIN = {
-    Chain.ETHEREUM: 21840338,
+    Chain.ETHEREUM: 21843727,
     Chain.SEPOLIA: 7214863,
 }
 
 # block height of first deployment of contract or pair
 SUSDE_START_BLOCK_BY_CHAIN = {
-    Chain.ETHEREUM: 21840338,
+    Chain.ETHEREUM: 21843728,
     Chain.SEPOLIA: 7214863,
 }
 
@@ -81,5 +81,5 @@ USDE_TOKEN_ADDRESS_BY_CHAIN = defaultdict(lambda: USDE_TOKEN_ADDRESS_FOR_L2, {
 
 SUSDE_TOKEN_ADDRESS_FOR_L2 = Web3.to_checksum_address("0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2")
 SUSDE_TOKEN_ADDRESS_BY_CHAIN = defaultdict(lambda: SUSDE_TOKEN_ADDRESS_FOR_L2, {
-    Chain.ETHEREUM: Web3.to_checksum_address("0x9d39a5de30e57443bff2a8307a4256c8797a3497"),
+    Chain.ETHEREUM: Web3.to_checksum_address("0x9D39A5DE30e57443BfF2A8307A4256c8797A3497"),
 })
