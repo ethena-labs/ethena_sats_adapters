@@ -385,20 +385,20 @@ class CorkIntegration(
                     value = int(transfer["args"]["value"])
 
                     sender = Web3.to_checksum_address(transfer["args"]["from"])
-                    if sender not in self.excluded_addresses:
-                        pool.shares_by_account.setdefault(sender, 0)
-                        pool.shares_by_account[sender] -= value
-                    elif sender == ZERO_ADDRESS:
+                    if sender == ZERO_ADDRESS:
                         # token was minted, update total supply
                         pool.total_supply += value
+                    elif sender not in self.excluded_addresses:
+                        pool.shares_by_account.setdefault(sender, 0)
+                        pool.shares_by_account[sender] -= value
 
                     recipient = Web3.to_checksum_address(transfer["args"]["to"])
-                    if recipient not in self.excluded_addresses:
-                        pool.shares_by_account.setdefault(recipient, 0)
-                        pool.shares_by_account[recipient] += value
-                    elif sender == ZERO_ADDRESS:
+                    if recipient == ZERO_ADDRESS:
                         # token was burned, update total supply
                         pool.total_supply -= value
+                    elif recipient not in self.excluded_addresses:
+                        pool.shares_by_account.setdefault(recipient, 0)
+                        pool.shares_by_account[recipient] += value
         return pool_balances
 
 
@@ -438,20 +438,20 @@ class CorkIntegration(
                     value = int(transfer["args"]["value"])
 
                     sender = Web3.to_checksum_address(transfer["args"]["from"])
-                    if sender not in self.excluded_addresses:
-                        pool.shares_by_account.setdefault(sender, 0)
-                        pool.shares_by_account[sender] -= value
-                    elif sender == ZERO_ADDRESS:
+                    if sender == ZERO_ADDRESS:
                         # token was minted, update total supply
                         pool.total_supply += value
+                    elif sender not in self.excluded_addresses:
+                        pool.shares_by_account.setdefault(sender, 0)
+                        pool.shares_by_account[sender] -= value
 
                     recipient = Web3.to_checksum_address(transfer["args"]["to"])
-                    if recipient not in self.excluded_addresses:
-                        pool.shares_by_account.setdefault(recipient, 0)
-                        pool.shares_by_account[recipient] += value
-                    elif sender == ZERO_ADDRESS:
+                    if recipient == ZERO_ADDRESS:
                         # token was burned, update total supply
                         pool.total_supply -= value
+                    elif recipient not in self.excluded_addresses:
+                        pool.shares_by_account.setdefault(recipient, 0)
+                        pool.shares_by_account[recipient] += value
         return pool_balances
 
 
@@ -488,20 +488,20 @@ class CorkIntegration(
                 value = int(transfer["args"]["value"])
 
                 sender = Web3.to_checksum_address(transfer["args"]["from"])
-                if sender not in self.excluded_addresses:
-                    pool.shares_by_account.setdefault(sender, 0)
-                    pool.shares_by_account[sender] -= value
-                elif sender == ZERO_ADDRESS:
+                if sender == ZERO_ADDRESS:
                     # token was minted, update total supply
                     pool.total_supply += value
+                elif sender not in self.excluded_addresses:
+                    pool.shares_by_account.setdefault(sender, 0)
+                    pool.shares_by_account[sender] -= value
 
                 recipient = Web3.to_checksum_address(transfer["args"]["to"])
-                if recipient not in self.excluded_addresses:
-                    pool.shares_by_account.setdefault(recipient, 0)
-                    pool.shares_by_account[recipient] += value
-                elif sender == ZERO_ADDRESS:
+                if recipient == ZERO_ADDRESS:
                     # token was burned, update total supply
                     pool.total_supply -= value
+                elif recipient not in self.excluded_addresses:
+                    pool.shares_by_account.setdefault(recipient, 0)
+                    pool.shares_by_account[recipient] += value
         return pool_balances
 
 
