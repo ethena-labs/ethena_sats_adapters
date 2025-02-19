@@ -2,7 +2,7 @@ import logging
 from copy import deepcopy
 from decimal import Decimal
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, NewType, Optional, Set, NamedTuple
+from typing import Callable, Dict, List, NewType, Optional, Set, NamedTuple, Tuple, Union
 
 from web3 import Web3
 from eth_typing import ChecksumAddress
@@ -68,8 +68,8 @@ class PooledBalance:
     '''
     pair_config: PairConfig
     term_config: Optional[TermConfig] = None
-    total_assets: int = 0
-    # total_assets_by_token: Dict[ChecksumAddress, int | Decimal] = {}
+    total_assets: Union[int, Tuple[int, ...]] = 0
+    # total_assets_by_token: Dict[ChecksumAddress, int] = {}
     total_supply: int = 0
     shares_by_account: Dict[ChecksumAddress, int] = field(default_factory=dict)
 
@@ -179,7 +179,10 @@ class CorkIntegration(
             # if event["args"]["ra"] == self.eligible_token_addr
         })
 
-        # Fetch events that indicates new lpt was created
+        # Uniswap v4 Native Liquidity Modification is disabled on Cork AMM pools,
+        # which also prevents the creation of LP tokens (NFT) by the Uniswap V4 Position Manager.
+        # Fetch events emitted by Cork's custom UniV4 Hook,
+        # that indicates new LP token (ERC20) was created.
         # event Initialized(address indexed ra, address indexed ct, address liquidityToken);
         new_lpt_events = fetch_events_logs_with_retry(
             "LPT Initialized on pairs with USDe",
@@ -241,6 +244,7 @@ class CorkIntegration(
                 term_id: TermId = TermId(event["args"]["dsId"])
 
                 # Find the LP token address for the given CT token
+                # event Initialized(address indexed ra, address indexed ct, address liquidityToken);
                 amm_lp_token_addr = next((
                     Web3.to_checksum_address(lpt_event["args"]["liquidityToken"])
                     for lpt_event in new_lpt_events
@@ -596,13 +600,11 @@ class CorkIntegration(
                 # continue pagination
 
             # finished pagination loop, block height reached...
-            # Filter out non-eligible AMM pools
-            eligible_amm_balances = {
-                lp_token_addr: amm_pool
-                for lp_token_addr, amm_pool in self.amm_balances_by_lp_token.items()
-                if amm_pool.pair_config.amm_quote_token_addr == self.eligible_token_addr
-            }
 
+            # Uniswap V4 doesn’t store reserves explicitly in storage.
+            # Instead, reserves are inferred from the pool’s liquidity and price data,
+            # necessitating off-chain computation of contract events for precise reserve values.
+            # Instead, use the `getReserves()` function on Cork's custom UniV4 Hook to,
             # Fetch the reserve asset balances of each eligible AMM pool
             # Note: We cannot assume that all LP token holders have withdrawn
             # remaining reserves after end of epoch/term.
@@ -616,25 +618,29 @@ class CorkIntegration(
                         amm_pool.term_config.share_token_addr
                     ],
                 )
-                for amm_pool in eligible_amm_balances.values()
+                for amm_pool in self.amm_balances_by_lp_token.values()
             ]
             multicall_results = multicall(self.w3, amm_calls, block)
 
             # The results contain the following:
             #   - The `result[0]` is the total balance of the asset token in the AMM pool
             #   - The `result[1]` is the total balance of the share token in the AMM pool
-            for amm_pool, result in zip(eligible_amm_balances.values(), multicall_results):
-                # Update the total asset balance of each AMM pool
-                amm_pool.total_assets = result[0]
+            for amm_pool, result in zip(self.amm_balances_by_lp_token.values(), multicall_results):
+                # Update the total Ethena-asset and PSM-shares balance of each AMM pool
+                amm_pool.total_assets = (result[0], result[1])
 
-                # Update the total shares of PSM pool of each AMM pool
-                # amm_pool.total_assets_by_token[amm_pool.term_config.share_token_addr] = result[1]
+            # Filter out non-eligible AMM pools
+            eligible_amm_balances = {
+                lp_token_addr: amm_pool
+                for lp_token_addr, amm_pool in self.amm_balances_by_lp_token.items()
+                if amm_pool.pair_config.amm_quote_token_addr == self.eligible_token_addr
+            }
 
             # Attribute Ethena asset balances on AMM pools to their respective LP token holders
-            for amm_pool in self.amm_balances_by_lp_token.values():
+            for amm_pool in eligible_amm_balances.values():
                 for account_addr, account_shares in amm_pool.shares_by_account.items():
                     amount = (
-                        Decimal(amm_pool.total_assets)
+                        Decimal(amm_pool.total_assets[0])
                         * Decimal(account_shares)
                         / Decimal(amm_pool.total_supply)
                     )
@@ -660,7 +666,7 @@ class CorkIntegration(
                     #     psm_pool = self.psm_balances_by_share_token[share_token_addr]
                     #     account_share_token_bals = psm_pool.shares_by_account
                     #     share_amount = (
-                    #         Decimal(amm_pool.total_assets_by_token[share_token_addr])
+                    #         Decimal(amm_pool.total_assets[1])
                     #         * Decimal(account_shares)
                     #         / Decimal(amm_pool.total_supply)
                     #     )
@@ -676,7 +682,7 @@ class CorkIntegration(
                         * Decimal(account_shares)
                         / Decimal(psm_pool.total_supply)
                     )
-                    # If the account_addr is the vault_addr, then we need to attribute the
+                    # If the account_addr is the Cork Vault address, then we need to attribute the
                     # Ethena asset balances to the respective LV token holders
                     if account_addr == psm_pool.pair_config.vault_addr:
                         vault_share_token_addr = psm_pool.pair_config.vault_share_token_addr
@@ -688,11 +694,21 @@ class CorkIntegration(
                                 * Decimal(account_shares)
                                 / Decimal(vault.total_supply)
                             )
-                    # If the account_addr is the amm_contract, then we need to attribute the
-                    # Ethena asset balances to the respective LP token holders
+                    # If the account_addr is the UniV4 PoolManager address, then we need to
+                    # attribute the Ethena asset balances to the respective LP token holders
                     elif account_addr == psm_pool.term_config.amm_pool_addr:
                         lp_token_addr = psm_pool.term_config.amm_lp_token_addr
                         amm_pool = self.amm_balances_by_lp_token[lp_token_addr]
+                        # If there are other Uniswap V4 pools which manage PSM-shares,
+                        # the total amount of PSM-shares at the UniV4 PoolManager address
+                        # will exceed the amount present in the Cork AMM pool,
+                        # so we need to correct the attributed amount.
+                        if account_shares > amm_pool.total_assets[1]:
+                            amount = (
+                                Decimal(psm_pool.total_assets)
+                                * Decimal(amm_pool.total_assets[1])
+                                / Decimal(psm_pool.total_supply)
+                            )
                         for account_addr, account_shares in amm_pool.shares_by_account.items():
                             account_bals.setdefault(account_addr, Decimal(0))
                             account_bals[account_addr] = Decimal(account_bals[account_addr]) + (
