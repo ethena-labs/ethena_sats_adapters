@@ -73,11 +73,23 @@ class IntegrationID(Enum):
         "Thala sUSDe/USDC LP",
         Token.SUSDE,
     )
-    
+
     # Echelon
     ECHELON_SUSDE_COLLATERAL = (
         "echelon_susde_collateral",
         "Echelon sUSDe Collateral",
+        Token.SUSDE,
+    )
+
+    # Termmax
+    TERMMAX_USDE = (
+        "termmax_usde",
+        "Termmax USDe",
+        Token.USDE,
+    )
+    TERMMAX_SUSDE = (
+        "termmax_susde",
+        "Termmax sUSDe",
         Token.SUSDE,
     )
 
@@ -425,7 +437,7 @@ class IntegrationID(Enum):
     )
 
     # Zerolend
-    ZEROLEND_SUSDE = ("zerolend_susde_deposit","Zerolend sUSDe",Token.SUSDE)
+    ZEROLEND_SUSDE = ("zerolend_susde_deposit", "Zerolend sUSDe", Token.SUSDE)
     ZEROLEND_USDE = ("zerolend_usde_deposit", "Zerolend USDe", Token.USDE)
 
     KAMINO_SUSDE_COLLATERAL_EXAMPLE = (
@@ -457,7 +469,7 @@ class IntegrationID(Enum):
     RUMPEL_SENA_LP = (
         "rumpel_kpsats3_sena_lp_held",
         "Rumpel kpSATS-3/sENA LP",
-        Token.SENA
+        Token.SENA,
     )
 
     # InfinityPools
