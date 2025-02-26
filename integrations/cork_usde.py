@@ -23,7 +23,12 @@ from constants.cork import (
 
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
-from utils.web3_utils import fetch_events_logs_with_retry, multicall, W3_BY_CHAIN
+from utils.web3_utils import (
+    MULTICALL_ADDRESS_BY_CHAIN,
+    fetch_events_logs_with_retry,
+    W3_BY_CHAIN,
+    multicall_by_address,
+)
 
 ########################################################################
 # Terminologies
@@ -94,16 +99,16 @@ class CorkIntegration(CachedBalancesIntegration):
         ethereal_multiplier_func: Optional[Callable[[int, str], int]] = None,
     ):
         super().__init__(
-            integration_id=integration_id,
-            start_block=start_block,
-            chain=chain,
-            summary_cols=summary_cols,
-            reward_multiplier=reward_multiplier,
-            balance_multiplier=balance_multiplier,
-            excluded_addresses=excluded_addresses,
-            end_block=end_block,
-            ethereal_multiplier=ethereal_multiplier,
-            ethereal_multiplier_func=ethereal_multiplier_func,
+            integration_id,
+            start_block,
+            chain,
+            summary_cols,
+            reward_multiplier,
+            balance_multiplier,
+            excluded_addresses,
+            end_block,
+            ethereal_multiplier,
+            ethereal_multiplier_func,
         )
 
         self.w3 = W3_BY_CHAIN[self.chain]["w3"]
@@ -126,23 +131,28 @@ class CorkIntegration(CachedBalancesIntegration):
     def update_pair_config(
         self,
         pair_config_by_id: Dict[bytes, PairConfig],
-        from_block: int = 0,
+        from_block: Optional[int] = None,
         to_block: int | str = "latest",
     ) -> Dict[bytes, PairConfig]:
+        from_block = from_block or self.start_block
+
         # Fetch events that indicates new pair was created
+        print("from_block", from_block)
+        print("self.start_block", self.start_block)
+        print("to_block", to_block)
         new_pair_events_with_eligible_pa = fetch_events_logs_with_retry(
-            "Pairs initialized with USDe as PA",
+            "Pair Initialized with USDe as PA",
             self.psm_contract.events.InitializedModuleCore(),
-            from_block or self.start_block,
+            from_block,
             to_block,
             filter={
                 "pa": self.eligible_token_addr,
             },
         )
         new_pair_events_with_eligible_ra = fetch_events_logs_with_retry(
-            "Pairs initialized with USDe as RA",
+            "Pair Initialized with USDe as RA",
             self.psm_contract.events.InitializedModuleCore(),
-            from_block or self.start_block,
+            from_block,
             to_block,
             filter={
                 "ra": self.eligible_token_addr,
@@ -199,7 +209,7 @@ class CorkIntegration(CachedBalancesIntegration):
         new_lpt_events = fetch_events_logs_with_retry(
             "LPT Initialized on pairs with USDe",
             self.amm_contract.events.Initialized(),
-            from_block or self.start_block,
+            from_block,
             to_block,
             filter = {
                 "ra": [
@@ -211,31 +221,37 @@ class CorkIntegration(CachedBalancesIntegration):
 
         # For each pair, update term config...
         for pair_id, pair_config in pair_config_by_id.items():
-            # Update the LP token address for each term
-            for term_id, term_config in pair_config.terms.items():
-                if term_config.amm_lp_token_addr is None:
-                    # Find the LP token address for the given CT token
-                    amm_lp_token_addr = next((
-                        Web3.to_checksum_address(lpt_event["args"]["liquidityToken"])
-                        for lpt_event in new_lpt_events
-                        if lpt_event["args"]["ct"] == term_config.share_token_addr.lower()
-                    ), None)
+            start_block = max(from_block, pair_config.start_block)
+            if len(new_lpt_events) > 0:
+                # print(f"Found {len(new_lpt_events)} new LPT events")
+                # Update the LP token address for each term
+                for term_id, term_config in pair_config.terms.items():
+                    if term_config.amm_lp_token_addr is None:
+                        # Find the LP token address for the given CT token
+                        amm_lp_token_addr = next((
+                            Web3.to_checksum_address(lpt_event["args"]["liquidityToken"])
+                            for lpt_event in new_lpt_events
+                            if lpt_event["args"]["ct"] == term_config.share_token_addr
+                        ), None)
 
-                    if amm_lp_token_addr is not None:
-                        pair_config.terms[term_id] = term_config._replace(
-                            amm_lp_token_addr=amm_lp_token_addr
-                        )
+                        if amm_lp_token_addr is not None:
+                            pair_config.terms[term_id] = term_config._replace(
+                                amm_lp_token_addr=amm_lp_token_addr
+                            )
 
             # Fetch events that indicate a new term was issued/started
             new_term_events_of_pair = fetch_events_logs_with_retry(
-                "Issuance on pairs with USDe",
+                "Term Initialized on pairs with USDe",
                 self.psm_contract.events.Issued(),
-                pair_config.start_block or self.start_block,
+                start_block,
                 to_block,
                 filter={
                     "id": pair_id,
                 },
             )
+
+            # if len(new_term_events_of_pair) > 0:
+            #     print(f"Found {len(new_term_events_of_pair)} new Term events")
 
             # For each term, update config...
             for event in new_term_events_of_pair:
@@ -375,10 +391,9 @@ class CorkIntegration(CachedBalancesIntegration):
 
                 # Get pooled balances of each PSM
                 share_token_addr = term_config.share_token_addr
-                pool_balances.setdefault(
+                pool = pool_balances.setdefault(
                     share_token_addr, PooledBalance(pair_config, term_config)
                 )
-                pool = pool_balances[share_token_addr]
 
                 # Update asset balance of PSM pool
                 pool.total_assets += balance_in - balance_out
@@ -427,15 +442,16 @@ class CorkIntegration(CachedBalancesIntegration):
         # For each pair...
         for _pair_id, pair_config in self.pair_config_by_id.items():
             # For each term...
-            for _term_id, term_config in pair_config.terms.items():
+            for term_config in (
+                v for v in pair_config.terms.values() if v.amm_lp_token_addr is not None
+            ):
                 start_block = max(from_block, term_config.start_block)
 
                 # Get pooled balances of each AMM pair
                 lp_token_addr = term_config.amm_lp_token_addr
-                pool_balances.setdefault(
+                pool = pool_balances.setdefault(
                     lp_token_addr, PooledBalance(pair_config, term_config)
                 )
-                pool = pool_balances[lp_token_addr]
 
                 # For each token, accumulate all balance changes from Transfer events...
                 token_contract = self.w3.eth.contract(
@@ -483,8 +499,7 @@ class CorkIntegration(CachedBalancesIntegration):
             start_block = max(from_block, pair_config.start_block)
 
             vault_share_token_addr = pair_config.vault_share_token_addr
-            pool_balances.setdefault(vault_share_token_addr, PooledBalance(pair_config))
-            pool = pool_balances[pool_balances]
+            pool = pool_balances.setdefault(vault_share_token_addr, PooledBalance(pair_config))
 
             # For each token, accumulate all balance changes from Transfer events...
             token_contract = self.w3.eth.contract(
@@ -573,25 +588,27 @@ class CorkIntegration(CachedBalancesIntegration):
             # Fetch pair config at prev_block if not already done
             if self.pair_config_by_id is None:
                 self.pair_config_by_id = self.update_pair_config(
-                    {}, to_block=prev_block
+                    {}, from_block=prev_block, to_block=start
                 )
 
             # Fetch Peg Stability term balances at prev_block if not already done
             if self.psm_balances_by_share_token is None:
                 self.psm_balances_by_share_token = self.update_psm_pool_balances(
-                    {}, to_block=prev_block
+                    {}, from_block=prev_block, to_block=start
                 )
 
             # Fetch AMM Liquidity Pool term balances at prev_block if not already done
             if self.amm_balances_by_lp_token is None:
                 self.amm_balances_by_lp_token = self.update_amm_pool_balances(
-                    {}, to_block=prev_block
+                    {}, from_block=prev_block, to_block=start
                 )
 
             # Fetch Vault term balances at prev_block if not already done
             if self.vault_balances_by_vault_share_token is None:
                 self.vault_balances_by_vault_share_token = (
-                    self.update_vault_pool_balances({}, to_block=prev_block)
+                    self.update_vault_pool_balances(
+                        {}, from_block=prev_block, to_block=start
+                    )
                 )
 
             # parse events since and update bals
@@ -641,7 +658,12 @@ class CorkIntegration(CachedBalancesIntegration):
                 )
                 for amm_pool in self.amm_balances_by_lp_token.values()
             ]
-            multicall_results = multicall(self.w3, amm_calls, block)
+            multicall_results = multicall_by_address(
+                w3=self.w3,
+                multical_address=MULTICALL_ADDRESS_BY_CHAIN[self.chain],
+                calls=amm_calls,
+                block_identifier=block,
+            )
 
             # The results contain the following:
             #   - The `result[0]` is the total balance of the asset token in the AMM pool
@@ -670,9 +692,7 @@ class CorkIntegration(CachedBalancesIntegration):
                     # If the account_addr is the vault_addr, then we need to attribute the
                     # Ethena asset balances to the respective LV token holders
                     if account_addr == amm_pool.pair_config.vault_addr:
-                        vault_share_token_addr = (
-                            amm_pool.pair_config.vault_share_token_addr
-                        )
+                        vault_share_token_addr = amm_pool.pair_config.vault_share_token_addr
                         vault = self.vault_balances_by_vault_share_token[
                             vault_share_token_addr
                         ]
@@ -680,19 +700,15 @@ class CorkIntegration(CachedBalancesIntegration):
                             account_addr,
                             account_shares,
                         ) in vault.shares_by_account.items():
-                            account_bals.setdefault(account_addr, Decimal(0))
-                            account_bals[account_addr] = Decimal(
-                                account_bals[account_addr]
-                            ) + (
+                            bal = account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(bal) + (
                                 amount
                                 * Decimal(account_shares)
                                 / Decimal(vault.total_supply)
                             )
                     else:
-                        account_bals.setdefault(account_addr, Decimal(0))
-                        account_bals[account_addr] = (
-                            Decimal(account_bals[account_addr]) + amount
-                        )
+                        bal = account_bals.setdefault(account_addr, Decimal(0))
+                        account_bals[account_addr] = Decimal(bal) + amount
 
                     # # Attribute PSM share token balances to their respective LP token holders
                     # if amm_pool.term_config is not None:
@@ -704,9 +720,8 @@ class CorkIntegration(CachedBalancesIntegration):
                     #         * Decimal(account_shares)
                     #         / Decimal(amm_pool.total_supply)
                     #     )
-                    #     account_share_token_bals.setdefault(account_addr, Decimal(0))
-                    #     bal = Decimal(account_share_token_bals[account_addr])
-                    #     account_share_token_bals[account_addr] = bal + share_amount
+                    #     bal = account_share_token_bals.setdefault(account_addr, Decimal(0))
+                    #     account_share_token_bals[account_addr] = Decimal(bal) + share_amount
 
             # Attribute Ethena asset balances on PSM pools to their respective CT token holders
             for psm_pool in self.psm_balances_by_share_token.values():
@@ -719,9 +734,7 @@ class CorkIntegration(CachedBalancesIntegration):
                     # If the account_addr is the Cork Vault address, then we need to attribute the
                     # Ethena asset balances to the respective LV token holders
                     if account_addr == psm_pool.pair_config.vault_addr:
-                        vault_share_token_addr = (
-                            psm_pool.pair_config.vault_share_token_addr
-                        )
+                        vault_share_token_addr = psm_pool.pair_config.vault_share_token_addr
                         vault = self.vault_balances_by_vault_share_token[
                             vault_share_token_addr
                         ]
@@ -729,10 +742,8 @@ class CorkIntegration(CachedBalancesIntegration):
                             account_addr,
                             account_shares,
                         ) in vault.shares_by_account.items():
-                            account_bals.setdefault(account_addr, Decimal(0))
-                            account_bals[account_addr] = Decimal(
-                                account_bals[account_addr]
-                            ) + (
+                            bal = account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(bal) + (
                                 amount
                                 * Decimal(account_shares)
                                 / Decimal(vault.total_supply)
@@ -753,28 +764,23 @@ class CorkIntegration(CachedBalancesIntegration):
                                 * Decimal(amm_pool.total_assets[1])
                                 / Decimal(psm_pool.total_supply)
                             )
-
                         for (
                             account_addr,
                             account_shares,
                         ) in amm_pool.shares_by_account.items():
-                            account_bals.setdefault(account_addr, Decimal(0))
-                            account_bals[account_addr] = Decimal(
-                                account_bals[account_addr]
-                            ) + (
+                            bal = account_bals.setdefault(account_addr, Decimal(0))
+                            account_bals[account_addr] = Decimal(bal) + (
                                 amount
                                 * Decimal(account_shares)
                                 / Decimal(amm_pool.total_supply)
                             )
                     else:
-                        account_bals.setdefault(account_addr, Decimal(0))
-                        account_bals[account_addr] = (
-                            Decimal(account_bals[account_addr]) + amount
-                        )
+                        bal = account_bals.setdefault(account_addr, Decimal(0))
+                        account_bals[account_addr] = Decimal(bal) + amount
 
             # Round off to 4 decimals
             for account_addr, account_bal in account_bals.items():
-                account_bals[account_addr] = round(account_bal / Decimal(1e18), 4)
+                account_bals[account_addr] = float(round(Decimal(account_bal) / Decimal(1e18), 4))
 
             new_block_data[block] = account_bals
             cache_copy_of_account_bals[block] = account_bals
@@ -799,8 +805,8 @@ if __name__ == "__main__":
     print(
         "Run without cached data",
         cork_integration.get_block_balances(
-            cached_data={}, blocks=[7686000, 7686001, 7686002]
-        ),
+            cached_data={}, blocks=[21929053, 21929054, 21929055]
+        )
     )
     # Example output:
     # {
@@ -814,13 +820,13 @@ if __name__ == "__main__":
         "Run with cached data",
         cork_integration.get_block_balances(
             cached_data={
-                7686000: {
-                    Web3.to_checksum_address("0x123"): 100,
-                    Web3.to_checksum_address("0x456"): 200,
+                21929053: {
+                    Web3.to_checksum_address("0x0000000000000000000000000000000000000000"): 100,
+                    Web3.to_checksum_address("0x0000000000000000000000000000000000000001"): 200,
                 },
-                7686001: {
-                    Web3.to_checksum_address("0x123"): 101,
-                    Web3.to_checksum_address("0x456"): 201,
+                21929054: {
+                    Web3.to_checksum_address("0x0000000000000000000000000000000000000000"): 101,
+                    Web3.to_checksum_address("0x0000000000000000000000000000000000000001"): 201,
                 },
             },
             blocks=[7686002],
