@@ -1,6 +1,6 @@
-SUSDE_LPT_COIN = "0x48271d39d0b05bd6efca2278f22277d6fcc375504f9839fd73f74ace240861af::stable_pool::StablePoolToken<0xfaf4e633ae9eb31366c9ca24214231760926576c7b625313b3688b5e900731f6::staking::ThalaAPT, 0x1::aptos_coin::AptosCoin, 0x48271d39d0b05bd6efca2278f22277d6fcc375504f9839fd73f74ace240861af::base_pool::Null, 0x48271d39d0b05bd6efca2278f22277d6fcc375504f9839fd73f74ace240861af::base_pool::Null>" # TODO: APT/thAPT Address for now
+SUSDE_LPT_COIN = "0x7ca61cf9aa2239412154145e863823814b9fec37ef34b469718c5f690919e69e::coins::Coin5"
 
-SUSDE_LPT_PID = 18 # APT/THAPT PID for now
+SUSDE_LPT_PID = 27
 
 ETHENA_ADDRESS_API_URL="https://app.thala.fi/api/ethena-addresses"
 
