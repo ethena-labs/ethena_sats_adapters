@@ -36,6 +36,8 @@ class SummaryColumn(Enum):
 
     CURVE_LLAMALEND_SHARDS = ("curve_llamalend_shards", SummaryColumnType.ETHENA_PTS)
 
+    CORK_PSM_PTS = ("cork_psm_shards", SummaryColumnType.ETHENA_PTS)
+
     CLAIMED_ENA_PTS_EXAMPLE = ("claimed_ena_example", SummaryColumnType.ETHENA_PTS)
 
     BEEFY_CACHED_BALANCE_EXAMPLE = (

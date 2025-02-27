@@ -1,10 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Dict, List, Optional, Set
 from eth_typing import ChecksumAddress
 
 from constants.chains import Chain
-from integrations.integration_ids import IntegrationID
 from constants.summary_columns import SummaryColumn
+from integrations.integration_ids import IntegrationID
 
 
 class Integration(ABC):
