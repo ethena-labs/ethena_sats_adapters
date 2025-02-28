@@ -11,9 +11,11 @@ from constants.example_integrations import (
 )
 from constants.thala import (
     ETHENA_ADDRESS_API_URL,
+    SUSDE_LPT_ADDRESS,
     SUSDE_LPT_COIN,
     SUSDE_LPT_PID,
     THALA_FARMING_V1_ADDRESS,
+    THALASWAP_V2_ADDRESS,
 )
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
@@ -87,7 +89,7 @@ class ThalaAptosIntegration(L2DelegationIntegration):
     def get_thala_block_data(
         self, block: int, user_addresses: Optional[List[str]] = None
     ):
-        print("Getting participants data")
+        print("Getting participants data for block: ", block)
         if not user_addresses:
             user_addresses = []
         try:
@@ -96,7 +98,9 @@ class ThalaAptosIntegration(L2DelegationIntegration):
                     "ts-node",
                     self.thala_ts_location,
                     THALA_FARMING_V1_ADDRESS,
+                    THALASWAP_V2_ADDRESS,
                     str(SUSDE_LPT_PID),
+                    str(SUSDE_LPT_ADDRESS),
                     str(self.decimals),
                     str(block),
                     json.dumps(user_addresses),
@@ -135,7 +139,7 @@ if __name__ == "__main__":
 
     example_integration_output = example_integration.get_l2_block_balances(
         cached_data={},
-        blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 1)),
+        blocks=list(range(THALA_SUSDE_START_BLOCK, THALA_SUSDE_START_BLOCK + 25306000, 1500000)),
     )
 
     print("=" * 120)
