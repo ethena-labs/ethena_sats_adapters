@@ -129,7 +129,7 @@ if __name__ == "__main__":
     )
 
     example_integration_output = example_integration.get_l2_block_balances(
-        cached_data={}, blocks=list(range(ECHELON_SUSDE_COLLATERAL_START_BLOCK, ECHELON_SUSDE_COLLATERAL_START_BLOCK + 300))
+        cached_data={}, blocks=list(range(ECHELON_SUSDE_COLLATERAL_START_BLOCK, ECHELON_SUSDE_COLLATERAL_START_BLOCK + 40548182, 2000000))
     )
 
     print("=" * 120)
