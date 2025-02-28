@@ -36,16 +36,13 @@ class BulbaswapIntegration(CachedBalancesIntegration):
             ethereal_multiplier,
             ethereal_multiplier_func,
         )
-        self.api_url = "https://api.bulbaswap.io/v1/partner-tasks/ethena/positions"
-        self.target_address = None
-
-    def set_target_address(self, address: str) -> None:
-        """Set the target address for querying positions.
-
-        Args:
-            address: The Ethereum address to query positions for.
-        """
-        self.target_address = Web3.to_checksum_address(address)
+        self.api_url = "https://api-dev.bulbaswap.io/v1/partner-tasks/ethena/positions"
+        # Token addresses for USDE and sUSDE
+        self.token_addresses = [
+            "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",  # USDe
+            "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2",  # sUSDe
+        ]
+        self.page_size = 100  # Configurable page size
 
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
@@ -69,38 +66,51 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                 
             block_data = {}
             
-            # Get the address from the request
-            if not hasattr(self, 'target_address'):
-                raise ValueError("target_address is required. Set it using set_target_address() method.")
-            
             try:
-                # Get user's positions data
-                response = requests.get(
-                    self.api_url,
-                    params={
-                        "address": self.target_address,
-                        "blockNumber": block
-                    }
-                )
-                data = response.json()
-                
-                if data["code"] == 200 and data["data"]["status"] == 0:
-                    positions_data = data["data"]["data"]
-                    total_liquidity = 0
-                    
-                    # Sum V2 positions
-                    for pool_data in positions_data.get("v2Positions", {}).values():
-                        if float(pool_data["liquidityUSD"]) > 0:
-                            total_liquidity += float(pool_data["liquidityUSD"])
-                    
-                    # Sum V3 positions
-                    for pool_data in positions_data.get("v3Positions", {}).values():
-                        if float(pool_data["liquidityUSD"]) > 0:
-                            total_liquidity += float(pool_data["liquidityUSD"])
-                    
-                    # Only add to result if user has liquidity
-                    if total_liquidity > 0:
-                        block_data[Web3.to_checksum_address(self.target_address)] = total_liquidity
+                # Fetch data for both token addresses
+                for token_address in self.token_addresses:
+                    page = 0
+                    while True:
+                        # Get positions data with pagination
+                        response = requests.get(
+                            self.api_url,
+                            params={
+                                "tokenAddress": token_address,
+                                "blockNumber": block,
+                                "page": page,
+                                "limit": self.page_size
+                            }
+                        )
+                        data = response.json()
+                        
+                        if data["code"] == 200 and data["data"]["status"] == 0:
+                            positions_data = data["data"]["data"]
+                            
+                            # Process each user's positions
+                            for item in positions_data["items"]:
+                                user_address = Web3.to_checksum_address(item["userAddress"])
+                                
+                                # Sum up liquidity for all pools
+                                total_liquidity = 0
+                                for pool_data in item["userPositions"].values():
+                                    if float(pool_data["liquidityUSD"]) > 0:
+                                        total_liquidity += float(pool_data["liquidityUSD"])
+                                
+                                # Add or update user's total liquidity
+                                if total_liquidity > 0:
+                                    if user_address in block_data:
+                                        block_data[user_address] += total_liquidity
+                                    else:
+                                        block_data[user_address] = total_liquidity
+                            
+                            # Check if we've processed all pages
+                            pagination = positions_data["pagination"]
+                            if page >= pagination["totalPages"] - 1:
+                                break
+                            page += 1
+                        else:
+                            print(f"Error in API response for block {block}, token {token_address}")
+                            break
                             
             except Exception as e:
                 print(f"Error fetching data for block {block}: {str(e)}")
@@ -115,25 +125,15 @@ if __name__ == "__main__":
     # Simple test
     integration = BulbaswapIntegration(
         integration_id=IntegrationID.BULBASWAP,
-        start_block=3000000,
+        start_block=15817416,
         chain=Chain.ETHEREUM,
         summary_cols=[SummaryColumn.TEMPLATE_PTS],
         reward_multiplier=1
     )
     
-    # Set target address for testing
-    integration.set_target_address("0xB6702191769266D18F69e1d00B5E73f0D181b75E")
-    
     # Test with a specific block
     result = integration.get_block_balances(
         cached_data={},
-        blocks=[3000000]
+        blocks=[15817416]
     )
     print("Block balances:", result)
-    
-    # Example output format:
-    # {
-    #     3000000: {
-    #         "0xB6702191769266D18F69e1d00B5E73f0D181b75E": 82701.265912
-    #     }
-    # }
