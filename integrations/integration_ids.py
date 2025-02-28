@@ -455,6 +455,13 @@ class IntegrationID(Enum):
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
 
+    # Bulbaswap
+    BULBASWAP = (
+        "bulbaswap",
+        "Bulbaswap",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
