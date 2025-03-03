@@ -12,12 +12,12 @@ from utils.address import to_checksum_address
 logger = logging.getLogger(__name__)
 
 # Contract addresses for dTrinity on Fraxtal
-USDE_ATOKEN_ADDRESS = "0x1234567890123456789012345678901234567890"  # Replace with actual aToken address for USDe
-SUSDE_ATOKEN_ADDRESS = "0x0987654321098765432109876543210987654321"  # Replace with actual aToken address for sUSDe
-LENDING_POOL_ADDRESS = "0xABCDEF1234567890ABCDEF1234567890ABCDEF12"  # Replace with dTrinity's lending pool address
+USDE_ATOKEN_ADDRESS = "0x1234567890123456789012345678901234567890"  
+SUSDE_ATOKEN_ADDRESS = "0x0987654321098765432109876543210987654321"  
+LENDING_POOL_ADDRESS = "0xABCDEF1234567890ABCDEF1234567890ABCDEF12"  
 
 # Block where the dTrinity contracts were deployed on Fraxtal
-DTRINITY_GENESIS_BLOCK = 1000000  # Replace with the actual genesis block
+DTRINITY_GENESIS_BLOCK = 1000000  
 
 
 class DTrinityIntegration(CachedBalancesIntegration):
