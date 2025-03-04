@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List 
 from decimal import Decimal
 from web3 import Web3
 
@@ -7,17 +7,16 @@ from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from constants.chains import Chain
 from utils import abi
-from utils.address import to_checksum_address
 
 logger = logging.getLogger(__name__)
 
 # Contract addresses for dTrinity on Fraxtal
-USDE_ATOKEN_ADDRESS = "0x1234567890123456789012345678901234567890"  
-SUSDE_ATOKEN_ADDRESS = "0x0987654321098765432109876543210987654321"  
-LENDING_POOL_ADDRESS = "0xABCDEF1234567890ABCDEF1234567890ABCDEF12"  
+USDE_ATOKEN_ADDRESS = "0x6ae1450d550e44bb014d4c8cd98592863edb0706"  
+SUSDE_ATOKEN_ADDRESS = "0x12ED58F0744dE71C39118143dCc26977Cb99cDef"  
+LENDING_POOL_ADDRESS = "0xD76C827Ee2Ce1E37c37Fc2ce91376812d3c9BCE2"  
 
 # Block where the dTrinity contracts were deployed on Fraxtal
-DTRINITY_GENESIS_BLOCK = 1000000  
+DTRINITY_GENESIS_BLOCK = 13034325  
 
 
 class DTrinityIntegration(CachedBalancesIntegration):
@@ -36,8 +35,8 @@ class DTrinityIntegration(CachedBalancesIntegration):
         self.susde_integration = IntegrationID.DTRINITY_SUSDE
         
         # Load ABIs
-        self.atoken_abi = abi.get_abi("abi/atoken.json")
-        self.lending_pool_abi = abi.get_abi("abi/lending_pool.json")
+        self.atoken_abi = abi.get_abi("abi/dtrinity_atoken.json")
+        self.lending_pool_abi = abi.get_abi("abi/dtrinity_lending_pool.json")
         
         # Create contract instances
         self.usde_atoken = self.web3.eth.contract(
@@ -103,7 +102,7 @@ class DTrinityIntegration(CachedBalancesIntegration):
         # Extract unique user addresses
         users = set()
         for event in deposit_events + withdraw_events:
-            users.add(to_checksum_address(event.args.user))
+            users.add(Web3.to_checksum_address(event.args.user))
             
         return list(users)
     
