@@ -247,6 +247,21 @@
             "name": "liquidityToken",
             "type": "address",
             "internalType": "address"
+          },
+          {
+            "name": "startTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "endTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "treasuryFeePercentage",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       }
@@ -441,13 +456,13 @@
       {
         "name": "ra",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
         "name": "ct",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -479,18 +494,43 @@
   },
   {
     "type": "event",
-    "name": "RemovedLiquidity",
+    "name": "Initialized",
     "inputs": [
       {
         "name": "ra",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
         "name": "ct",
         "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "liquidityToken",
+        "type": "address",
         "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RemovedLiquidity",
+    "inputs": [
+      {
+        "name": "ra",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "ct",
+        "type": "address",
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -527,7 +567,7 @@
       {
         "name": "output",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -545,7 +585,7 @@
       {
         "name": "who",
         "type": "address",
-        "indexed": false,
+        "indexed": true,
         "internalType": "address"
       },
       {
@@ -556,6 +596,12 @@
       },
       {
         "name": "realizedFeePercentage",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "realizedFeeAmount",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
