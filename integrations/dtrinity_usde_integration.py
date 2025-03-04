@@ -51,7 +51,7 @@ class DTrinityUSDEIntegration(CachedBalancesIntegration):
                 continue
                 
             # Get all Supply events since the last processed block
-            last_processed_block = max([b for b in previous_balances.keys() if b < block] or [self.genesis_block])
+            last_processed_block = max([b for b in previous_balances.keys() if b < block] or [self.start_block])
             
             # Get all supplier addresses that may have changed their balances
             users_to_check = dtrinity.get_active_users(self.lending_pool, last_processed_block, block)
