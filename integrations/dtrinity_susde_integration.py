@@ -5,9 +5,9 @@ from decimal import Decimal
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from constants.chains import Chain
-from constants.dtrinity import SUSDE_GENESIS_BLOCK, SUSDE_ATOKEN_ADDRESS
+from constants.dtrinity import SUSDE_GENESIS_BLOCK, lending_pool_contract, susde_atoken_contract
 from utils import dtrinity
-
+from utils.web3_utils import w3_fraxtal
 logger = logging.getLogger(__name__)
 
 class DTrinitySUSDEIntegration(CachedBalancesIntegration):
@@ -20,12 +20,12 @@ class DTrinitySUSDEIntegration(CachedBalancesIntegration):
         super().__init__(
             integration_id=IntegrationID.DTRINITY_SUSDE,
             chain=Chain.FRAXTAL,
-            genesis_block=SUSDE_GENESIS_BLOCK,
+            start_block=SUSDE_GENESIS_BLOCK,
         )
         
         # Create contract instances
-        self.lending_pool = dtrinity.get_lending_pool_contract(self.web3)
-        self.susde_atoken = dtrinity.get_atoken_contract(self.web3, SUSDE_ATOKEN_ADDRESS)
+        self.lending_pool = lending_pool_contract
+        self.susde_atoken = susde_atoken_contract
 
     def get_block_balances(
         self, 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     integration = DTrinitySUSDEIntegration()
     
     # Test with a recent block
-    latest_block = integration.web3.eth.block_number
+    latest_block = w3_fraxtal.eth.block_number
     test_blocks = [latest_block]
     
     # Run the integration with empty previous balances

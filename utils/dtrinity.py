@@ -3,41 +3,9 @@ from typing import Dict, List
 from decimal import Decimal
 from web3 import Web3
 
-from constants.dtrinity import (
-    ATOKEN_ABI,
-    LENDING_POOL_ABI,
-    LENDING_POOL_ADDRESS,
-    USDE_ATOKEN_ADDRESS,
-    SUSDE_ATOKEN_ADDRESS,
-    USDE_GENESIS_BLOCK,
-    SUSDE_GENESIS_BLOCK,
-    lending_pool_contract,
-    usde_atoken_contract,
-    susde_atoken_contract
-)
 from utils.web3_utils import call_with_retry
 
 logger = logging.getLogger(__name__)
-
-def get_lending_pool_contract(web3_instance):
-    """
-    Create and return the lending pool contract instance.
-    """
-    return web3_instance.eth.contract(
-        address=Web3.to_checksum_address(LENDING_POOL_ADDRESS),
-        abi=LENDING_POOL_ABI
-    )
-
-
-def get_atoken_contract(web3_instance, atoken_address):
-    """
-    Create and return an aToken contract instance.
-    """
-    return web3_instance.eth.contract(
-        address=Web3.to_checksum_address(atoken_address),
-        abi=ATOKEN_ABI
-    )
-
 
 def get_active_users(lending_pool, from_block: int, to_block: int) -> List[str]:
     """
