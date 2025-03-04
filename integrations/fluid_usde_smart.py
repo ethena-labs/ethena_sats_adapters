@@ -2,19 +2,24 @@ from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from integrations.integration import Integration
 from utils.web3_utils import call_with_retry, W3_BY_CHAIN
-from utils.fluid import vaultResolver_contract, vaultPositionResolver_contract
+from utils.fluid import (
+    vaultResolver_contract,
+    vaultPositionResolver_contract,
+    dexResolver_contract,
+)
 from constants.fluid import USDe
+import json
 
-# covers all Fluid normal col USDE vaults.
+# covers all Fluid smart col USDE vaults (LP positions)
 class FluidIntegration(Integration):
 
     def __init__(self):
         super().__init__(
-            IntegrationID.FLUID_USDE,
-            21016131,
+            IntegrationID.FLUID_USDE_SMART,
+            21673938,
             Chain.ETHEREUM,
             [],
-            20,
+            30,
             1,
             None,
             None,
@@ -27,9 +32,45 @@ class FluidIntegration(Integration):
             userPositions, vaultEntireDatas = call_with_retry(
                 vaultResolver_contract.functions.positionsByUser(user), block
             )
+            dexEntireDatas = {}
             for i in range(len(userPositions)):
-                if (vaultEntireDatas[i][3][8][0] == USDe) and not (vaultEntireDatas[i][1]): # not smart col types
-                    balance += userPositions[i][9]
+                if (vaultEntireDatas[i][3][8][0] == USDe or vaultEntireDatas[i][3][8][1] == USDe) and (vaultEntireDatas[i][1]): # ONLY smart col types
+                    # underlying dex as supply token in the vault
+                    # fetching the dex state to get the shares to tokens ratio
+                    dexAddress = vaultEntireDatas[i][3][6]
+                    if dexAddress not in dexEntireDatas:
+                        dexEntireDatas[dexAddress] = (
+                            dexResolver_contract.functions.getDexEntireData(dexAddress).call(
+                                block_identifier=block
+                            )
+                        )
+                    
+                    # For an example walkthrough see fluid_susde_smart.py
+
+                    # userShares =  userPositions[i][9]
+                    # token0PerSupplyShare = dexEntireDatas[dexAddress][7][-4]
+                    # token1PerSupplyShare = dexEntireDatas[dexAddress][7][-3]
+                    userPositionToken0 = userPositions[i][9] * dexEntireDatas[dexAddress][7][-4] / 1e18
+                    userPositionToken1 = userPositions[i][9] * dexEntireDatas[dexAddress][7][-3] / 1e18
+
+                    if (vaultEntireDatas[i][3][8][0] == USDe): 
+                        # token0 at the dex is USDe
+                        balance += userPositionToken0
+                        # lastStoredPrice = dexEntireDatas[dexAddress][4][0]
+                        userPositionToken1 = userPositionToken1 * 1e54 / dexEntireDatas[dexAddress][4][0] / 1e27
+                        # * 1e6 * numeratorPrecision / denominatorPrecision
+                        userPositionToken1 = userPositionToken1 * 1e6 * dexEntireDatas[dexAddress][2][2] / dexEntireDatas[dexAddress][2][3]
+
+                        balance += userPositionToken1
+                    else:
+                        # token1 at the dex is USDe
+                        balance += userPositionToken1
+                        # lastStoredPrice = dexEntireDatas[dexAddress][4][0]
+                        userPositionToken0 = userPositionToken0 * dexEntireDatas[dexAddress][4][0] / 1e27
+                        # * 1e6 * numeratorPrecision / denominatorPrecision
+                        userPositionToken0 = userPositionToken0 * 1e6 * dexEntireDatas[dexAddress][2][0] / dexEntireDatas[dexAddress][2][1]
+                    
+                        balance += userPositionToken1
             return balance / 1e18
         except Exception as e:
             return 0
@@ -83,7 +124,7 @@ class FluidIntegration(Integration):
             vaultData = call_with_retry(
                 vaultResolver_contract.functions.getVaultEntireData(vaultAddress), block
             )
-            if (vaultData[3][8][0] == USDe) and not (vaultData[1]): # not smart col types
+            if (vaultData[3][8][0] == USDe or vaultData[3][8][1] == USDe) and (vaultData[1]): # ONLY smart col types
                 relevantVaults.append(vaultAddress)
         self.blocknumber_to_usdeVaults[block] = relevantVaults
         return relevantVaults
@@ -91,9 +132,8 @@ class FluidIntegration(Integration):
 
 if __name__ == "__main__":
     example_integration = FluidIntegration()
-    current_block = W3_BY_CHAIN[example_integration.chain]["w3"].eth.get_block_number()
     print("getting relevant vaults")
-    print(example_integration.get_relevant_vaults(current_block))
+    print(example_integration.get_relevant_vaults(21745303))
 
     print("\n\n\ngetting participants")
     print(example_integration.get_participants(None))
@@ -101,6 +141,7 @@ if __name__ == "__main__":
     print("\n\n\n getting balance")
     print(
         example_integration.get_balance(
-            "0xD15B0aA03Bc9F74Aa3d07d078502867Da3B7d198", 21745303
+            # should be ~669k USDE
+            "0xDB611d682cb1ad72fcBACd944a8a6e2606a6d158", 21745303
         )
     )

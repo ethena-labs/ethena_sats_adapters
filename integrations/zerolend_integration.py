@@ -1,10 +1,8 @@
-from typing import Callable, Dict, List, Optional, Set
+import requests
 from constants.chains import Chain
 from utils.web3_utils import w3
-from constants.summary_columns import SummaryColumn
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
-import requests
 
 ZEOLEND_API_URL = "https://api.zerolend.xyz"
 
@@ -17,23 +15,23 @@ class ZerolendIntegration(CachedBalancesIntegration):
         token: str,
     ):
         super().__init__(
-            integration_id,
-            20000000,  # not used
-            Chain.ETHEREUM,
-            None,
-            reward_multiplier,
-            1,
-            None,
-            None,
-            None,
+            integration_id=integration_id,
+            start_block=20000000,  # not used
+            chain=Chain.ETHEREUM,
+            summary_cols=None,
+            reward_multiplier=reward_multiplier,
+            balance_multiplier=1,
+            excluded_addresses=None,
+            end_block=None,
         )
 
         self.token = token
+
     def get_balance(self, user: str, block: int) -> float:
         try:
-            url = f"{ZEOLEND_API_URL}/ethena"  # TODO: add api url
+            url = f"{ZEOLEND_API_URL}/ethena"
             params = {"token": self.token, "address": str(user), "blockNo": str(block)}
-            response = requests.get(url, params=params)  # type: ignore
+            response = requests.get(url, params=params, timeout=10)  # type: ignore
             print(response.json())
             data = response.json()
             asset_balance = data["data"]
@@ -49,7 +47,7 @@ class ZerolendIntegration(CachedBalancesIntegration):
         """
         url = f"{ZEOLEND_API_URL}/ethena/participants"
         params = {"token": self.token}
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=10)
         data = response.json()
         return data["data"]
 

@@ -399,7 +399,14 @@ class IntegrationID(Enum):
     )
 
     # Fluid
-    FLUID = ("Fluid_susde", "Fluid sUSDe", Token.SUSDE)
+    FLUID_SUSDE = ("Fluid_susde", "Fluid sUSDe", Token.SUSDE)
+    FLUID_USDE = ("Fluid_usde", "Fluid USDe", Token.USDE)
+    FLUID_SUSDE_SMART = ("Fluid_susde_smart", "Fluid sUSDe Smart", Token.SUSDE)
+    FLUID_USDE_SMART = ("Fluid_usde_smart", "Fluid USDe Smart", Token.USDE)
+
+    # Cork
+    CORK_USDE = ("cork_usde", "Cork USDe", Token.USDE)
+    CORK_SUSDE = ("cork_susde", "Cork SUSDe", Token.SUSDE)
 
     # Claimed ENA
     CLAIMED_ENA_EXAMPLE = ("claimed_ena_example", "Claimed ENA Example", Token.ENA)
@@ -436,6 +443,13 @@ class IntegrationID(Enum):
         "agni",
         "Agni",
         Token.USDE,
+    )
+
+    # Rumpel
+    RUMPEL_SENA_LP = (
+        "rumpel_kpsats3_sena_lp_held",
+        "Rumpel kpSATS-3/sENA LP",
+        Token.SENA
     )
 
     # InfinityPools
