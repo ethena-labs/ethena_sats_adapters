@@ -1,22 +1,14 @@
 import logging
 from typing import Dict, List
 from decimal import Decimal
-from web3 import Web3
 
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from constants.chains import Chain
-from utils import abi
+from constants.dtrinity import SUSDE_GENESIS_BLOCK, SUSDE_ATOKEN_ADDRESS
+from utils import dtrinity
 
 logger = logging.getLogger(__name__)
-
-# Contract addresses for dTrinity on Fraxtal
-SUSDE_ATOKEN_ADDRESS = "0x12ED58F0744dE71C39118143dCc26977Cb99cDef"  
-LENDING_POOL_ADDRESS = "0xD76C827Ee2Ce1E37c37Fc2ce91376812d3c9BCE2"  
-
-# Block where the dTrinity contracts were deployed on Fraxtal
-DTRINITY_GENESIS_BLOCK = 13799261  
-
 
 class DTrinitySUSDEIntegration(CachedBalancesIntegration):
     """
@@ -28,22 +20,12 @@ class DTrinitySUSDEIntegration(CachedBalancesIntegration):
         super().__init__(
             integration_id=IntegrationID.DTRINITY_SUSDE,
             chain=Chain.FRAXTAL,
-            genesis_block=DTRINITY_GENESIS_BLOCK,
+            genesis_block=SUSDE_GENESIS_BLOCK,
         )
-        
-        # Load ABIs
-        self.atoken_abi = abi.get_abi("abi/dtrinity_atoken.json")
-        self.lending_pool_abi = abi.get_abi("abi/dtrinity_lending_pool.json")
         
         # Create contract instances
-        self.susde_atoken = self.web3.eth.contract(
-            address=Web3.to_checksum_address(SUSDE_ATOKEN_ADDRESS),
-            abi=self.atoken_abi
-        )
-        self.lending_pool = self.web3.eth.contract(
-            address=Web3.to_checksum_address(LENDING_POOL_ADDRESS),
-            abi=self.lending_pool_abi
-        )
+        self.lending_pool = dtrinity.get_lending_pool_contract(self.web3)
+        self.susde_atoken = dtrinity.get_atoken_contract(self.web3, SUSDE_ATOKEN_ADDRESS)
 
     def get_block_balances(
         self, 
@@ -71,49 +53,15 @@ class DTrinitySUSDEIntegration(CachedBalancesIntegration):
             last_processed_block = max([b for b in previous_balances.keys() if b < block] or [self.genesis_block])
             
             # Get all supplier addresses that may have changed their balances
-            users_to_check = self._get_active_users(last_processed_block, block)
+            users_to_check = dtrinity.get_active_users(self.lending_pool, last_processed_block, block)
             
             # Get balances for sUSDe
-            susde_balances = self._get_user_balances(users_to_check, block)
+            susde_balances = dtrinity.get_user_balances(users_to_check, block, self.susde_atoken)
             
             # Store results
             result[block] = susde_balances
             
         return result
-    
-    def _get_active_users(self, from_block: int, to_block: int) -> List[str]:
-        """
-        Get a list of users who have had any activity in the given block range.
-        This is optimized by looking for relevant events instead of checking all users.
-        """
-        # Look for deposit/withdrawal events in the lending pool
-        deposit_events = self.lending_pool.events.Supply().get_logs(fromBlock=from_block, toBlock=to_block)
-        withdraw_events = self.lending_pool.events.Withdraw().get_logs(fromBlock=from_block, toBlock=to_block)
-        
-        # Extract unique user addresses
-        users = set()
-        for event in deposit_events + withdraw_events:
-            users.add(Web3.to_checksum_address(event.args.user))
-            
-        return list(users)
-    
-    def _get_user_balances(self, users: List[str], block: int) -> Dict[str, Decimal]:
-        """
-        Get user balances for sUSDe aToken at a specific block.
-        """
-        balances = {}
-        
-        for user in users:
-            try:
-                # Call balanceOf for each user
-                balance_raw = self.susde_atoken.functions.balanceOf(user).call(block_identifier=block)
-                # Convert to decimal, assuming 18 decimals (standard for aTokens)
-                balance = Decimal(balance_raw) / Decimal(10**18)
-                balances[user] = balance
-            except Exception as e:
-                logger.error(f"Error getting sUSDe balance for {user} at block {block}: {e}")
-                
-        return balances
 
 
 # Add basic tests that we can run to verify the integration works
