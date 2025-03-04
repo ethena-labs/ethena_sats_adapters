@@ -779,9 +779,16 @@ class CorkIntegration(CachedBalancesIntegration):
             ):
                 # Update the total asset balance of each psm pool
                 pair_config = self.pair_config_by_id[pair_id]
-                share_token_addr = pair_config.terms[term_id].share_token_addr
+                term_config = pair_config.terms[term_id]
+                share_token_addr = term_config.share_token_addr
                 psm_pool = self.psm_balances_by_share_token[share_token_addr]
-                psm_pool.total_assets = result[0]
+
+                if int(term_id) > 1:
+                    assert (
+                        psm_pool.total_assets == result[0]
+                    ), f"psm_pool.total_assets != psm_contract.valueLocked for {pair_id}:{term_id}"
+                else:
+                    psm_pool.total_assets = result[0]
                 print("psm_pool.total_assets", psm_pool.total_assets, block)
 
             # Attribute Ethena asset balances on Vault pools to their respective LV token holders
