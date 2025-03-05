@@ -14,4 +14,5 @@ class Chain(Enum):
     SWELL = "Swell"
     SOLANA = "Solana"
     BASE = "Base"
+    APTOS = "Aptos"
     SEPOLIA = "Sepolia"
