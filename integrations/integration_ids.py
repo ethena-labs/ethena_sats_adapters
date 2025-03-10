@@ -67,12 +67,20 @@ class IntegrationID(Enum):
     )
     PENDLE_ZIRCUIT_USDE_YT = ("pendle_zircuit_usde_yt_held", "Pendle Zircuit USDe YT")
 
+    # Thala
+    THALA_SUSDE_LP = (
+        "thala_susde_usdc_lp",
+        "Thala sUSDe/USDC LP",
+        Token.SUSDE,
+    )
+    
     # Echelon
     ECHELON_SUSDE_COLLATERAL = (
         "echelon_susde_collateral",
         "Echelon sUSDe Collateral",
         Token.SUSDE,
     )
+
     # Stake DAO
     STAKEDAO_SUSDE_JULY_LPT = (
         "stakedao_susde_july_effective_lpt_held",
