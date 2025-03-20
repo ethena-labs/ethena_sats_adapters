@@ -476,6 +476,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Apostro
+    APOSTRO_MORPHO_USDE_VAULT = (
+        "apostro_morpho_usde_vault",
+        "Apostro Morpho USDe Vault",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
