@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from eth_typing import ChecksumAddress
 from typing import Callable, Dict, List, Optional, Set
 from web3 import Web3
+from web3.contract import Contract
 
 from constants.chains import Chain
 from constants.example_integrations import PAGINATION_SIZE
@@ -29,20 +30,14 @@ class Erc4626SupplyIntegration(CachedBalancesIntegration):
         ethereal_multiplier: int = 0,
         ethereal_multiplier_func: Optional[Callable[[int, str], int]] = None,
     ):
-        vault = VAULT_BY_INTEGRATION.get(integration_id)
-        if not vault:
-            raise ValueError(f"Vault not found for integration {integration_id}")
-        self.vault = vault
-        self.vault_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(vault.address),
-            abi=ERC4626_ABI,
-        )
+        self.vault = self.get_vault_config(integration_id)
+        self.vault_contract = self.create_vault_contract(self.vault.address)
         self.share_rates_cache: Dict[int, float] = {}
 
         super().__init__(
             integration_id=integration_id,
-            start_block=vault.start_block,
-            chain=vault.chain,
+            start_block=self.vault.start_block,
+            chain=self.vault.chain,
             summary_cols=summary_cols,
             reward_multiplier=reward_multiplier,
             balance_multiplier=balance_multiplier,
@@ -50,6 +45,18 @@ class Erc4626SupplyIntegration(CachedBalancesIntegration):
             end_block=end_block,
             ethereal_multiplier=ethereal_multiplier,
             ethereal_multiplier_func=ethereal_multiplier_func,
+        )
+
+    def get_vault_config(self, integration_id: IntegrationID) -> "VaultConfig":
+        vault = VAULT_BY_INTEGRATION.get(integration_id)
+        if not vault:
+            raise ValueError(f"Vault not found for integration {integration_id}")
+        return vault
+
+    def create_vault_contract(self, address: str) -> Contract:
+        return w3.eth.contract(
+            address=Web3.to_checksum_address(address),
+            abi=ERC4626_ABI,
         )
 
     def get_share_rate(self, block: int) -> float:
@@ -141,7 +148,7 @@ class Erc4626SupplyIntegration(CachedBalancesIntegration):
             for transfer in transfers:
                 recipient = transfer["args"]["to"]
                 sender = transfer["args"]["from"]
-                value = transfer["args"]["value"] / 10**18
+                value = transfer["args"]["value"] / 10**self.vault.share_decimals
 
                 share_bals[recipient] = share_bals.get(recipient, 0) + round(value, 4)
                 share_bals[sender] = share_bals.get(sender, 0) - round(value, 4)
