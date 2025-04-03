@@ -52,6 +52,30 @@ LYRA_CONTRACTS_AND_START_BY_TOKEN: Dict[IntegrationID, LyraVaultDetails] = {
         ),
         page_size=5000,
     ),
+    IntegrationID.LYRA_SUSDE_BULL_BASE: LyraVaultDetails(
+        detail_type=DetailType.Vault,
+        start=16692334,
+        chain=Chain.BASE,
+        integration_token=W3_BY_CHAIN[Chain.BASE]["w3"].eth.contract(
+            address=Web3.to_checksum_address(
+                "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2"
+            ),
+            abi=erc20_abi,
+        ),  # sUSDe
+        bridge=W3_BY_CHAIN[Chain.BASE]["w3"].eth.contract(
+            address=Web3.to_checksum_address(
+                "0xFE00C281729fa7E7AaB453690ed184284F51268C"
+            ),
+            abi=erc20_abi,
+        ),
+        vault_token=W3_BY_CHAIN[Chain.BASE]["w3"].eth.contract(
+            address=Web3.to_checksum_address(
+                "0x98f1AED814443d6DDD0a724B0f40098F517159Bc"
+            ),
+            abi=erc20_abi,
+        ),
+        page_size=5000,
+    ),
     IntegrationID.LYRA_SUSDE_BULL_ARBITRUM: LyraVaultDetails(
         detail_type=DetailType.Vault,
         start=227626020,
