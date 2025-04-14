@@ -6,7 +6,7 @@ from eth_typing import ChecksumAddress
 from web3 import Web3
 
 from constants.chains import Chain
-from constants.termmax import CHAIN_TO_CONFIG_MAP, TERMMAX_SUSDE_START_BLOCK
+from constants.termmax import CHAIN_TO_CONFIG_MAP
 from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from utils.request_utils import requests_retry_session
@@ -33,9 +33,9 @@ class TermmaxCachedBalancesIntegration(CachedBalancesIntegration):
 
     @property
     def _token_address(self) -> ChecksumAddress:
-        return CHAIN_TO_CONFIG_MAP[self.chain]["token_to_address_map"][
+        return CHAIN_TO_CONFIG_MAP[self.chain]["token_to_config_map"][
             self.integration_id.value[2]
-        ]
+        ]["address"]
 
     @property
     def _data_manager_api_origin(self) -> str:
@@ -114,10 +114,12 @@ class TermmaxCachedBalancesIntegration(CachedBalancesIntegration):
 if __name__ == "__main__":
     integration = TermmaxCachedBalancesIntegration(
         integration_id=IntegrationID.TERMMAX_SUSDE,
-        start_block=TERMMAX_SUSDE_START_BLOCK,
+        start_block=CHAIN_TO_CONFIG_MAP[Chain.ETHEREUM]["token_to_config_map"][
+            IntegrationID.TERMMAX_SUSDE.value[2]
+        ]["start_block"],
         chain=Chain.ETHEREUM,
     )
     balances = integration.get_block_balances(
-        cached_data={}, blocks=[20000000, 20000001, 20000002]
+        cached_data={}, blocks=[22174000, 22174001, 22174002]
     )
     print(balances)
