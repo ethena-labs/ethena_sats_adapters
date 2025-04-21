@@ -222,8 +222,27 @@ class IntegrationID(Enum):
     )
 
     # EulerV2
-    EULER_USDE = ("euler_usde_deposit", "EulerV2 USDe", Token.USDE)
-    EULER_SUSDE = ("euler_susde_deposit", "EulerV2 sUSDe", Token.SUSDE)
+    EULER_MAINNET_MAXI_USDE = ("euler_mainnet_maxi_usde", "EulerV2 Mainnet Maxi USDe", Token.USDE)
+    EULER_MAINNET_MAXI_SUSDE = ("euler_mainnet_maxi_susde", "EulerV2 Mainnet Maxi sUSDe", Token.SUSDE)
+
+    EULER_MAINNET_ALTERSCOPE_USDE = ("euler_mainnet_alterscope_usde", "EulerV2 Mainnet Alterscope USDe", Token.USDE)
+
+    EULER_MAINNET_ESCROW_SUSDE = ("euler_mainnet_escrow_susde", "EulerV2 Mainnet Escrow sUSDe", Token.SUSDE)
+
+    EULER_MAINNET_YIELD_USDE = ("euler_mainnet_yield_usde", "EulerV2 Mainnet Yield USDe", Token.USDE)
+    EULER_MAINNET_YIELD_SUSDE = ("euler_mainnet_yield_susde", "EulerV2 Mainnet Yield sUSDe", Token.SUSDE)
+    
+    EULER_BERA_MEV_USDE = ("euler_bera_mev_usde", "EulerV2 Bera MEV USDe", Token.USDE)
+    EULER_BERA_MEV_SUSDE = ("euler_bera_mev_susde", "EulerV2 Bera MEV sUSDe", Token.SUSDE)
+
+    EULER_BSC_TULIPA_USDE = ("euler_bsc_tulipa_usde", "EulerV2 BSC Tulipa USDe", Token.USDE)
+    EULER_BSC_TULIPA_SUSDE = ("euler_bsc_tulipa_susde", "EulerV2 BSC Tulipa sUSDe", Token.SUSDE)
+    
+    EULER_BSC_K3_USDE = ("euler_bsc_k3_usde", "EulerV2 BSC K3 USDe", Token.USDE)
+    EULER_BSC_K3_SUSDE = ("euler_bsc_k3_susde", "EulerV2 BSC K3 sUSDe", Token.SUSDE)
+
+    EULER_BSC_APOSTRO_USDE = ("euler_bsc_apostro_usde", "EulerV2 BSC Apostro USDe", Token.USDE)
+    EULER_BSC_APOSTRO_SUSDE = ("euler_bsc_apostro_susde", "EulerV2 BSC Apostro sUSDe", Token.SUSDE)
 
     # Term Finance
     TERM_SUSDE = ("term_susde_held", "Term Finance sUSDe", Token.SUSDE)

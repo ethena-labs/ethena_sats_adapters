@@ -57,6 +57,29 @@ class SummaryColumn(Enum):
 
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
+    #EulerV2
+    EULER_MAINNET_MAXI_USDE_PTS = ("euler_mainnet_maxi_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_MAINNET_MAXI_SUSDE_PTS = ("euler_mainnet_maxi_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_MAINNET_ALTERSCOPE_USDE_PTS = ("euler_mainnet_alterscope_usde_pts", SummaryColumnType.ETHENA_PTS)
+    
+    EULER_MAINNET_ESCROW_SUSDE_PTS = ("euler_mainnet_escrow_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_MAINNET_YIELD_USDE_PTS = ("euler_mainnet_yield_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_MAINNET_YIELD_SUSDE_PTS = ("euler_mainnet_yield_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_BERA_MEV_USDE_PTS = ("euler_bera_mev_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_BERA_MEV_SUSDE_PTS = ("euler_bera_mev_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_BSC_TULIPA_USDE_PTS = ("euler_bsc_tulipa_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_BSC_TULIPA_SUSDE_PTS = ("euler_bsc_tulipa_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_BSC_K3_USDE_PTS = ("euler_bsc_k3_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_BSC_K3_SUSDE_PTS = ("euler_bsc_k3_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+    EULER_BSC_APOSTRO_USDE_PTS = ("euler_bsc_apostro_usde_pts", SummaryColumnType.ETHENA_PTS)
+    EULER_BSC_APOSTRO_SUSDE_PTS = ("euler_bsc_apostro_susde_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

@@ -1,9 +1,21 @@
-from web3 import Web3
+MAINNET_MAXI_USDE_URL="http://points.euler.finance/integrations/ethena/mainnet/maxi/usde"
+MAINNET_MAXI_SUSDE_URL="http://points.euler.finance/integrations/ethena/mainnet/maxi/susde"
 
-EVC_ADDRESS = Web3.to_checksum_address("0x0C9a3dd6b8F28529d72d7f9cE918D493519EE383")
-USDE_VAULT_ADDRESS = Web3.to_checksum_address(
-    "0xac73efa7696dc1c1617bbc20aec64422c8b70eda"
-)
-SUSDE_VAULT_ADDRESS = Web3.to_checksum_address(
-    "0x8dde384022d4de1d6c67891a8865f551c444dc4c"
-)
+MAINNET_ALTERSCOPE_USDE_URL="http://points.euler.finance/integrations/ethena/mainnet/alterscope/usde"
+
+MAINNET_ESCROW_SUSDE_URL="http://points.euler.finance/integrations/ethena/mainnet/alterscope/susde"
+
+MAINNET_YIELD_USDE_URL="http://points.euler.finance/integrations/ethena/mainnet/yield/usde"
+MAINNET_YIELD_SUSDE_URL="http://points.euler.finance/integrations/ethena/mainnet/yield/susde"
+
+BERA_MEV_USDE_URL="http://points.euler.finance/integrations/ethena/berachain/mev/usde"
+BERA_MEV_SUSDE_URL="http://points.euler.finance/integrations/ethena/berachain/mev/susde"
+
+BSC_TULIPA_USDE_URL="http://points.euler.finance/integrations/ethena/bsc/tulipa/usde"
+BSC_TULIPA_SUSDE_URL="http://points.euler.finance/integrations/ethena/bsc/tulipa/susde"
+
+BSC_K3_USDE_URL="http://points.euler.finance/integrations/ethena/bsc/k3/usde"
+BSC_K3_SUSDE_URL="http://points.euler.finance/integrations/ethena/bsc/k3/susde"
+
+BSC_APOSTRO_USDE_URL="http://points.euler.finance/integrations/ethena/bsc/apostro/usde"
+BSC_APOSTRO_SUSDE_URL="http://points.euler.finance/integrations/ethena/bsc/apostro/susde"
