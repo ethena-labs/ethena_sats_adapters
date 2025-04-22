@@ -8,6 +8,8 @@ MAINNET_ESCROW_SUSDE_URL="http://points.euler.finance/integrations/ethena/mainne
 MAINNET_YIELD_USDE_URL="http://points.euler.finance/integrations/ethena/mainnet/yield/usde"
 MAINNET_YIELD_SUSDE_URL="http://points.euler.finance/integrations/ethena/mainnet/yield/susde"
 
+MAINNET_ESUSDE_URL="http://points.euler.finance/integrations/ethena/mainnet/eusde"
+
 BERA_MEV_USDE_URL="http://points.euler.finance/integrations/ethena/berachain/mev/usde"
 BERA_MEV_SUSDE_URL="http://points.euler.finance/integrations/ethena/berachain/mev/susde"
 
