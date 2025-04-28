@@ -75,6 +75,9 @@ W3_BY_CHAIN = {
     Chain.SEPOLIA: {
         "w3": w3_sepolia,
     },
+    Chain.TON: {
+        "w3": w3,
+    },
 }
 
 
