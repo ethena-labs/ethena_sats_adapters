@@ -75,6 +75,9 @@ W3_BY_CHAIN = {
     Chain.SEPOLIA: {
         "w3": w3_sepolia,
     },
+    Chain.TON: {
+        "w3": w3,
+    },
 }
 
 
@@ -213,7 +216,7 @@ def multicall_by_address(
     return decoded_results
 
 
-def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
+def get_block_date(block: int, chain: Chain, adjustment: int = 0, fmt: str = "%Y-%m-%d %H") -> str:
     wb3 = W3_BY_CHAIN[chain]["w3"]
     block_info = wb3.eth.get_block(block)
     timestamp = (
@@ -221,7 +224,7 @@ def get_block_date(block: int, chain: Chain, adjustment: int = 0) -> str:
         if adjustment == 0
         else block_info["timestamp"] - adjustment
     )
-    timestamp_date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H")
+    timestamp_date = datetime.fromtimestamp(timestamp).strftime(fmt)
     return timestamp_date
 
 

@@ -20,11 +20,13 @@ from web3 import Web3
 
 from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
+from constants.evaa import EVAA_USDE_START_BLOCK
 from constants.summary_columns import SummaryColumn
 from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 from integrations.pendle_lpt_integration import PendleLPTIntegration
 from integrations.pendle_yt_integration import PendleYTIntegration
+from integrations.evaa_integration import EvaaIntegration
 from integrations.template import ProtocolNameIntegration
 
 # TODO: Add your integration here
@@ -40,6 +42,13 @@ INTEGRATIONS: List[Integration] = [
             Web3.to_checksum_address("0x0000000000000000000000000000000000000000")
         },
         end_block=40000000,
+    ),
+    EvaaIntegration(
+        integration_id=IntegrationID.EVAA_TON_USDE,
+        start_block=EVAA_USDE_START_BLOCK,
+        summary_cols=[SummaryColumn.EVAA_USDE_PTS],
+        chain=Chain.TON,
+        reward_multiplier=1,
     ),
     # Example integration using cached user balances for improved performance,
     # reads from previous balance snapshots
