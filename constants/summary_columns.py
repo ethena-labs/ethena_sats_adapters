@@ -19,6 +19,10 @@ class SummaryColumn(Enum):
     AMBIENT_SCROLL_SHARDS = ("ambient_scroll_shards", SummaryColumnType.ETHENA_PTS)
     AMBIENT_SWELL_SHARDS = ("ambient_swell_shards", SummaryColumnType.ETHENA_PTS)
 
+    THALA_SHARDS = ("thala_shards", SummaryColumnType.ETHENA_PTS)
+
+    ECHELON_SHARDS = ("echelon_shards", SummaryColumnType.ETHENA_PTS)
+
     NURI_SHARDS = ("nuri_shards", SummaryColumnType.ETHENA_PTS)
     LENDLE_MANTLE_SHARDS = ("lendle_mantle_shards", SummaryColumnType.ETHENA_PTS)
 
