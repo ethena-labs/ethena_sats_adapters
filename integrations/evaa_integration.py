@@ -103,5 +103,5 @@ if __name__ == "__main__":
     balances = integration.get_l2_block_balances(last_block)
     print(f"Balances at block {last_block}:", balances)
 
-    participants = integration.get_participants_data()
+    participants = evaa_integration.get_participants_data(last_block)
     print("Participants:", participants)
