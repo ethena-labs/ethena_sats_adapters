@@ -7,7 +7,8 @@ from integrations.integration_ids import IntegrationID
 from utils.web3_utils import get_block_date
 from utils.request_utils import requests_retry_session
 from utils.slack import slack_message
-
+from constants.summary_columns import SummaryColumn
+from constants.chains import Chain
 class EvaaIntegration(L2DelegationIntegration):
     def __init__(
          self,
