@@ -8,7 +8,7 @@ from eth_typing import ChecksumAddress
 
 import math
 from utils.web3_utils import w3, fetch_events_logs_with_retry, fetch_transaction_receipt_with_retry, call_with_retry
-from constants.rumpel import KPSATS3_SENA_UNIV3_POOL_DEPLOYED_BLOCK, KPSATS3_SENA_UNIV3_POOL_CONTRACT, UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT, UNIV3_NONFUNGUBLE_POSITION_MANAGER_ADDRESS, KPSAT3_ADDRESS, SENA_ADDRESS
+from constants.rumpel import KPSATS_POOLS, UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT, SENA_ADDRESS,UNIV3_POOL_ABI
 
 def calculate_lp_tokens(tick, tick_lower, tick_upper, sqrt_price, liquidity):
     if liquidity == 0:
@@ -63,63 +63,71 @@ class RumpelIntegration(
         users: Dict[int, Dict[ChecksumAddress, float]] = {}
 
         for block in blocks:
-            start = KPSATS3_SENA_UNIV3_POOL_DEPLOYED_BLOCK
-            end = block
-            users[end] = {}
-            
-            pool = KPSATS3_SENA_UNIV3_POOL_CONTRACT
-            nfpm = UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT
-
-            poolState = call_with_retry(pool.functions.slot0(), block=end)
-            pool_price_sqrt_x96 = poolState[0]
-            pool_tick = poolState[1]
-
-            # query all mint events directly from the pool
-            mints = fetch_events_logs_with_retry(
-                        "Rumpel liquidity Minted",
-                        pool.events.Mint(),
-                        start,
-                        end,
-                    )
-            
-            lp_positions = set()
-            increase_liquidity_event = UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT.events.IncreaseLiquidity()
-            increase_liquidity_param_types = [param['type'] for param in increase_liquidity_event.abi['inputs']]
-            increase_liquidity_signature = f"{increase_liquidity_event.event_name}({','.join(increase_liquidity_param_types)})"
-            topic_hash = w3.keccak(text=increase_liquidity_signature).hex()
-
-            # get the IncreaseLiquidity event from the NonFungiblePositionManager Increase Liquidity Event
-            # dev: if the tx updates multiple pools, this will include out of scope positions.
-            # for this reason there is a check on the positions tokens
-            for mint in mints:
-                tx = fetch_transaction_receipt_with_retry(Chain.ETHEREUM, mint["transactionHash"].hex());
-                for log in tx.logs:
-                    if(log.topics[0].hex() == topic_hash):
-                        token_id = int.from_bytes(log.topics[1], 'big')
-                        lp_positions.add(token_id);
-
-
-            # get each positions owner and data, calculate the users balance, and update storage
-            for lp_position in lp_positions:
-                owner = call_with_retry(nfpm.functions.ownerOf(lp_position), block=end)
-                position_data = call_with_retry(nfpm.functions.positions(lp_position), block=end)
-
-                # check the position is for this pool
-                token0 = position_data[2]
-                token1 = position_data[3]
-                if(token0 != KPSAT3_ADDRESS or token1 != SENA_ADDRESS):
+            for kpsat_pool in KPSATS_POOLS:
+                if(block < kpsat_pool.deployed_block):
                     continue
+                
 
-                lower_tick = position_data[5]
-                upper_tick = position_data[6]
-                liquidity = position_data[7]
+                start = kpsat_pool.deployed_block
+                end = block
+                users[end] = {}
 
-                balances = calculate_lp_tokens(pool_tick, lower_tick, upper_tick, pool_price_sqrt_x96 / (2**96), liquidity)
+                pool = w3.eth.contract(
+                    address=kpsat_pool.pool_address,
+                    abi=UNIV3_POOL_ABI,
+                )
+                nfpm = UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT
 
-                if users.get(end, {}).get(owner) is not None:
-                    users[end][owner] += balances[1]
-                else:
-                    users[end][owner] = balances[1]
+                poolState = call_with_retry(pool.functions.slot0(), block=end)
+                pool_price_sqrt_x96 = poolState[0]
+                pool_tick = poolState[1]
+
+                # query all mint events directly from the pool
+                mints = fetch_events_logs_with_retry(
+                            "Rumpel liquidity Minted",
+                            pool.events.Mint(),
+                            start,
+                            end,
+                        )
+                
+                lp_positions = set()
+                increase_liquidity_event = UNIV3_NONFUNGIBLE_POSITION_MANAGER_CONTRACT.events.IncreaseLiquidity()
+                increase_liquidity_param_types = [param['type'] for param in increase_liquidity_event.abi['inputs']]
+                increase_liquidity_signature = f"{increase_liquidity_event.event_name}({','.join(increase_liquidity_param_types)})"
+                topic_hash = w3.keccak(text=increase_liquidity_signature).hex()
+
+                # get the IncreaseLiquidity event from the NonFungiblePositionManager Increase Liquidity Event
+                # dev: if the tx updates multiple pools, this will include out of scope positions.
+                # for this reason there is a check on the positions tokens
+                for mint in mints:
+                    tx = fetch_transaction_receipt_with_retry(Chain.ETHEREUM, mint["transactionHash"].hex());
+                    for log in tx.logs:
+                        if(log.topics[0].hex() == topic_hash):
+                            token_id = int.from_bytes(log.topics[1], 'big')
+                            lp_positions.add(token_id);
+
+
+                # get each positions owner and data, calculate the users balance, and update storage
+                for lp_position in lp_positions:
+                    owner = call_with_retry(nfpm.functions.ownerOf(lp_position), block=end)
+                    position_data = call_with_retry(nfpm.functions.positions(lp_position), block=end)
+
+                    # check the position is for this pool
+                    token0 = position_data[2]
+                    token1 = position_data[3]
+                    if(token0 != kpsat_pool.kpsats_address or token1 != SENA_ADDRESS):
+                        continue
+
+                    lower_tick = position_data[5]
+                    upper_tick = position_data[6]
+                    liquidity = position_data[7]
+
+                    balances = calculate_lp_tokens(pool_tick, lower_tick, upper_tick, pool_price_sqrt_x96 / (2**96), liquidity)
+
+                    if users.get(end, {}).get(owner) is not None:
+                        users[end][owner] += balances[1]
+                    else:
+                        users[end][owner] = balances[1]
 
         return users
         
@@ -128,7 +136,7 @@ class RumpelIntegration(
 if __name__ == "__main__":
     example_integration = RumpelIntegration(
         integration_id=IntegrationID.RUMPEL_SENA_LP,
-        start_block=KPSATS3_SENA_UNIV3_POOL_DEPLOYED_BLOCK,
+        start_block=KPSATS_POOLS[0].deployed_block,
         summary_cols=[SummaryColumn.TEMPLATE_PTS],
         chain=Chain.ETHEREUM,
         reward_multiplier=20,
@@ -139,6 +147,6 @@ if __name__ == "__main__":
     )
     print(
         example_integration.get_block_balances(
-            cached_data={}, blocks=[21645700, 21645701, 21645702]
+            cached_data={}, blocks=[21645700, 21645701, 21645702, 22375313]
         )
     )
