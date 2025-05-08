@@ -17,3 +17,5 @@ class Chain(Enum):
     BASE = "Base"
     APTOS = "Aptos"
     SEPOLIA = "Sepolia"
+    BERACHAIN = "Berachain"
+    BSC = "BSC"
