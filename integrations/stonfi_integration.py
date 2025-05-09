@@ -18,7 +18,7 @@ STONFI_LP_TOKEN_DECIMALS = 9
 
 TOKEN_SYMBOL_POOLS_MAP = {
     Token.USDE: [
-        "EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO", # FIXME: replace with real USDe <-> USDT pool address
+        "EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy", # https://app.ston.fi/pools/EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy
     ],
 }
 
@@ -79,7 +79,7 @@ class StonFiIntegration(L2DelegationIntegration):
         block_data: Dict[str, float] = {}
         try:
             for pool_address in pools_list:
-                # example: https://api.ston.fi/v1/snapshots/liquidity_providers?timestamp=2025-02-11T01:00:00&pool_address=EQBbsMjyLRj-xJE4eqMbtgABvPq34TF_hwiAGEAUGUb5sNGO
+                # example: https://api.ston.fi/v1/snapshots/liquidity_providers?timestamp=2025-05-09T10:00:00&pool_address=EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy
                 res = requests_retry_session().get(
                     STONFI_ENDPOINT + "/v1/snapshots/liquidity_providers",
                     params={
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     stonfi_integration_output = stonfi_integration.get_l2_block_balances(
         cached_data={},
-        blocks=[21819590, 21819700],
+        blocks=[22445190, 22445191, 22445550], # https://etherscan.io/blocks?p=1
     )
 
     print("=" * 120)

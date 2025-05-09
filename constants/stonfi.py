@@ -1,1 +1,1 @@
-STONFI_USDE_START_BLOCK = 21819590 # FIXME: replace with real start block number
+STONFI_USDE_START_BLOCK = 22445190 # `EQBSUY4UWGJFAps0KwHY4tpOGqzU41DZhyrT8OuyAWWtnezy` first data snapshot at 2025-05-09 10:00:00 UTC
