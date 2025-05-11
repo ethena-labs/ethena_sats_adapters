@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Set, Any, Tuple, Union
 from web3 import Web3
 from eth_typing import ChecksumAddress
 from eth_abi.abi import decode
+import os
 
 # Attempt to import project-specific modules.
 try:
@@ -190,7 +191,7 @@ class HyperlendUsdeIntegration(CachedBalancesIntegration):
         if not hasattr(self, "cached_balances") or self.cached_balances is None:
             self.cached_balances: Dict[int, Dict[ChecksumAddress, float]] = {}
 
-        self.rpc_url = "https://rpc.hyperlend.finance/archive"
+        self.rpc_url = os.getenv("HYPEREVM_NODE_URL") #"https://rpc.hyperlend.finance/archive"
         try:
             self.w3 = Web3(Web3.HTTPProvider(self.rpc_url))
             if not self.w3.is_connected():
