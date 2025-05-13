@@ -438,6 +438,10 @@ class IntegrationID(Enum):
 
     FIVA_USDE_EXAMPLE = ("fiva_usde_example", "Fiva USDe Example", Token.USDE)
 
+    # STON.fi
+    STONFI_USDE = ("stonfi_usde", "STON.fi USDe", Token.USDE)
+
+
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
