@@ -1,4 +1,6 @@
 import json
+import subprocess
+import os
 import logging
 
 from typing import Dict, List, Optional
@@ -40,6 +42,7 @@ class StonFiIntegration(L2DelegationIntegration):
             reward_multiplier=reward_multiplier,
             end_block=end_block,
         )
+        self.is_farmix_position_ts_location = "ts/farmix_position_check.ts"
 
     def get_token_symbol(self):
         return self.integration_id.get_token()
@@ -102,7 +105,18 @@ class StonFiIntegration(L2DelegationIntegration):
                     wallet_address = position["wallet_address"]
                     lp_token_amount = int(position["lp_amount"]) + int(position["staked_lp_amount"])
                     position_value_usd = lp_token_amount * lp_price_usd / lp_token_decimals_base
-                    block_data[wallet_address] = block_data.get(wallet_address, 0) + position_value_usd
+                    is_contract_farmix_position = self.get_contract_is_farmix_position(wallet_address)
+
+                    real_wallet_addr = wallet_address
+                    if (
+                            'is_position' in is_contract_farmix_position
+                            and is_contract_farmix_position['is_position']
+                            and 'owner_addr' in is_contract_farmix_position
+                    ):
+                        real_wallet_addr = is_contract_farmix_position['owner_addr']
+                        logging.info(f"farmix position detected stonfi lp provider {wallet_address} is farmix position with owner {real_wallet_addr}")
+
+                    block_data[real_wallet_addr] = block_data.get(wallet_address, 0) + position_value_usd
 
         except Exception as e:
             # pylint: disable=line-too-long
@@ -111,6 +125,40 @@ class StonFiIntegration(L2DelegationIntegration):
             slack_message(err_msg)
 
         return block_data
+
+    def get_contract_is_farmix_position(self, addr: str):
+        logging.debug(
+            f"Getting constract is farmix position for addr ${addr}..."
+        )
+        max_retries = 1
+        retry_count = 0
+
+        while retry_count < max_retries:
+            retry_count += 1
+            try:
+                response = subprocess.run(
+                    [
+                        "tsx",
+                        os.path.join(
+                            os.path.dirname(
+                                __file__), "..", self.is_farmix_position_ts_location
+                        ),
+                        addr,
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    env=os.environ.copy(),
+                )
+                result = json.loads(response.stdout)
+                if hasattr(result, 'err'):
+                    logging.error(result.err)
+                else:
+                    return result
+            except Exception as e:
+                logging.error(e)
+
+        return {}
 
 
 if __name__ == "__main__":
@@ -126,7 +174,7 @@ if __name__ == "__main__":
 
     stonfi_integration_output = stonfi_integration.get_l2_block_balances(
         cached_data={},
-        blocks=[22445190, 22445191, 22445550], # https://etherscan.io/blocks?p=1
+        blocks=[22445190, 22445191, 22445550, 22497283], # https://etherscan.io/blocks?p=1
     )
 
     print("=" * 120)

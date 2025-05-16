@@ -14,6 +14,8 @@
     "@kamino-finance/klend-sdk": "^3.2.7",
     "@solana/web3.js": "^1.95.2",
     "dotenv": "^16.4.5",
-    "@aptos-labs/ts-sdk": "1.33.1"
+    "@aptos-labs/ts-sdk": "1.33.1",
+    "@ton/core": "~0.60.1",
+    "axios": "^1.8.0"
   }
 }
