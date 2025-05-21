@@ -17,3 +17,4 @@ class Chain(Enum):
     BASE = "Base"
     SEPOLIA = "Sepolia"
     TON = "Ton"
+
