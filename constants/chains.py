@@ -15,5 +15,8 @@ class Chain(Enum):
     SOLANA = "Solana"
     APTOS = "Aptos"
     BASE = "Base"
+    APTOS = "Aptos"
+    BERACHAIN = "Berachain"
+    BSC = "BSC"
     SEPOLIA = "Sepolia"
     TON = "Ton"
