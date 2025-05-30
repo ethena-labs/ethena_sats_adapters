@@ -6,6 +6,6 @@ EVAA_ENDPOINT="https://api.evaa.space"
 
 EVAA_POOLS_MAP = {
   Token.USDE: [
-    "EQCn95X_qLJa5VUXfyIQkWDH2iq3PTatsO4esunMaIsnyyeW" # TODO: Replace to MAIN Pool address
+    "EQC8rUZqR_pWV1BylWUlPNBzyiTYVoBEmQkMIQDZXICfnuRr"
   ]
 }
