@@ -98,10 +98,10 @@ if __name__ == "__main__":
         start_block=EVAA_USDE_START_BLOCK,
         summary_cols=[SummaryColumn.EVAA_USDE_PTS],
         chain=Chain.TON,
-        reward_multiplier=1,
-    ),
+        reward_multiplier=1
+    )
     last_block = EVAA_USDE_START_BLOCK
-balances = evaa_integration.get_l2_block_balances(
+    balances = evaa_integration.get_l2_block_balances(
         cached_data={}, blocks=[last_block]
     )
     print(f"Balances at block {last_block}:", balances)
