@@ -100,11 +100,8 @@ if __name__ == "__main__":
         chain=Chain.TON,
         reward_multiplier=1
     )
-    last_block = EVAA_USDE_START_BLOCK
     balances = evaa_integration.get_l2_block_balances(
-        cached_data={}, blocks=[last_block]
+        cached_data={}, blocks=[22596292]
     )
-    print(f"Balances at block {last_block}:", balances)
 
-    participants = evaa_integration.get_participants_data(last_block)
-    print("Participants:", participants)
+    print("Balances:", balances)
