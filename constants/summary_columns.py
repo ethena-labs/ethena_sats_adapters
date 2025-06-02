@@ -55,9 +55,15 @@ class SummaryColumn(Enum):
 
     RATEX_EXAMPLE_PTS = ("ratex_example_pts", SummaryColumnType.ETHENA_PTS)
 
+    FIVA_EXAMPLE_PTS = ("fiva_example_pts", SummaryColumnType.ETHENA_PTS)
+
+    STONFI_USDE_PTS = ("stonfi_usde_pts", SummaryColumnType.ETHENA_PTS)
+
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
     EVAA_USDE_PTS = ("evaa_usde_pts", SummaryColumnType.ETHENA_PTS)
+    # Sentiment
+    SENTIMENT_USDE_PTS = ("sentiment_usde_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name

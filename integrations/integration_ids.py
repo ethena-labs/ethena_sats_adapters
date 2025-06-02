@@ -436,6 +436,12 @@ class IntegrationID(Enum):
 
     RATEX_USDE_EXAMPLE = ("ratex_usde_example", "Ratex USDe Example", Token.USDE)
 
+    FIVA_USDE_EXAMPLE = ("fiva_usde_example", "Fiva USDe Example", Token.USDE)
+
+    # STON.fi
+    STONFI_USDE = ("stonfi_usde", "STON.fi USDe", Token.USDE)
+
+
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
 
@@ -478,6 +484,9 @@ class IntegrationID(Enum):
         "Bulbaswap",
         Token.USDE,
     )
+
+    # Sentiment
+    SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
