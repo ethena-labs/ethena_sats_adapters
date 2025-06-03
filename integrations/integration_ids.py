@@ -475,6 +475,10 @@ class IntegrationID(Enum):
     # Venus
     VENUS_SUSDE = ("venus_susde", "Venus sUSDe", Token.SUSDE)
 
+    # EVAA Protocol
+    EVAA_TON_USDE = ("evaa_ton_usde", "EVAA TON USDe", Token.USDE)
+    EVAA_TON_SUSDE = ("evaa_ton_susde", "EVAA TON sUSDe", Token.SUSDE)
+
     # Bulbaswap
     BULBASWAP = (
         "bulbaswap",
