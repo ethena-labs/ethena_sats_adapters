@@ -250,6 +250,11 @@ class IntegrationID(Enum):
         "Lyra sUSDe Bull Vault Arbitrum",
         Token.SUSDE,
     )
+    LYRA_SUSDE_BULL_BASE = (
+        "lyra_susde_bull_base",
+        "Lyra sUSDe Bull Vault Base",
+        Token.SUSDE,
+    )
     LYRA_SUSDE_EXCHANGE_DEPOSIT = (
         "lyra_susde_exchange_deposit",
         "Lyra sUSDe Exchange Deposits",
