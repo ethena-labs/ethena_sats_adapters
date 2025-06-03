@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Tuple
 
-from constants.evaa import EVAA_POOLS_MAP, EVAA_ENDPOINT, EVAA_USDE_START_BLOCK
+from constants.evaa import EVAA_POOLS_MAP, EVAA_ENDPOINT, EVAA_USDE_START_BLOCK, EVAA_SUSDE_START_BLOCK
 
 from integrations.l2_delegation_integration import L2DelegationIntegration
 from integrations.integration_ids import IntegrationID
@@ -73,7 +73,8 @@ class EvaaIntegration(L2DelegationIntegration):
                     EVAA_ENDPOINT + "/query/adapters/ethena",
                     params={
                         "pool_address": pool,
-                        "timestamp": target_date
+                        "timestamp": target_date,
+                        "token": token.value
                     },
                     
                     timeout=60,
@@ -93,15 +94,27 @@ class EvaaIntegration(L2DelegationIntegration):
 
 
 if __name__ == "__main__":
-    evaa_integration = EvaaIntegration(
+    evaa_integration_usde = EvaaIntegration(
         integration_id=IntegrationID.EVAA_TON_USDE,
         start_block=EVAA_USDE_START_BLOCK,
         summary_cols=[SummaryColumn.EVAA_USDE_PTS],
         chain=Chain.TON,
-        reward_multiplier=1
+        reward_multiplier=20
     )
-    balances = evaa_integration.get_l2_block_balances(
+    evaa_integration_susde = EvaaIntegration(
+        integration_id=IntegrationID.EVAA_TON_SUSDE,
+        start_block=EVAA_SUSDE_START_BLOCK,
+        summary_cols=[SummaryColumn.EVAA_SUSDE_PTS],
+        chain=Chain.TON,
+        reward_multiplier=5
+    )
+
+    balances_usde = evaa_integration_usde.get_l2_block_balances(
+        cached_data={}, blocks=[22596292]
+    )
+    balances_susde = evaa_integration_susde.get_l2_block_balances(
         cached_data={}, blocks=[22596292]
     )
 
-    print("Balances:", balances)
+    print("Balances USDe:", balances_usde)
+    print("Balances sUSDe:", balances_susde)

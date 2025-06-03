@@ -20,7 +20,7 @@ from web3 import Web3
 
 from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
-from constants.evaa import EVAA_USDE_START_BLOCK
+from constants.evaa import EVAA_USDE_START_BLOCK, EVAA_SUSDE_START_BLOCK
 from constants.summary_columns import SummaryColumn
 from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
@@ -48,7 +48,14 @@ INTEGRATIONS: List[Integration] = [
         start_block=EVAA_USDE_START_BLOCK,
         summary_cols=[SummaryColumn.EVAA_USDE_PTS],
         chain=Chain.TON,
-        reward_multiplier=1,
+        reward_multiplier=20,
+    ),
+    EvaaIntegration(
+        integration_id=IntegrationID.EVAA_TON_SUSDE,
+        start_block=EVAA_SUSDE_START_BLOCK,
+        summary_cols=[SummaryColumn.EVAA_SUSDE_PTS],
+        chain=Chain.TON,
+        reward_multiplier=5,
     ),
     # Example integration using cached user balances for improved performance,
     # reads from previous balance snapshots

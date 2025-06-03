@@ -471,6 +471,7 @@ class IntegrationID(Enum):
 
     # EVAA Protocol
     EVAA_TON_USDE = ("evaa_ton_usde", "EVAA TON USDe", Token.USDE)
+    EVAA_TON_SUSDE = ("evaa_ton_susde", "EVAA TON sUSDe", Token.SUSDE)
 
     # Bulbaswap
     BULBASWAP = (
