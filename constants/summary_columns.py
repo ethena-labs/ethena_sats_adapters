@@ -61,6 +61,11 @@ class SummaryColumn(Enum):
 
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
+    LISTA_USDE_PTS = ("lista_usde_pts", SummaryColumnType.ETHENA_PTS)
+
+    LISTA_SUSDE_PTS = ("lista_susde_pts", SummaryColumnType.ETHENA_PTS)
+
+
     # Sentiment
     SENTIMENT_USDE_PTS = ("sentiment_usde_pts", SummaryColumnType.ETHENA_PTS)
 

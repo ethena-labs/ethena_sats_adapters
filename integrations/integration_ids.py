@@ -485,6 +485,10 @@ class IntegrationID(Enum):
     # Sentiment
     SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
 
+    # Lista
+    LISTA_USDE = ("lista_usde", "Lista USDe", Token.USDE)
+    LISTA_SUSDE = ("lista_susde", "Lista sUSDe", Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
