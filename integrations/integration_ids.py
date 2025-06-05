@@ -73,7 +73,7 @@ class IntegrationID(Enum):
         "Thala sUSDe/USDC LP",
         Token.SUSDE,
     )
-    
+
     # Echelon
     ECHELON_SUSDE_COLLATERAL = (
         "echelon_susde_collateral",
@@ -484,6 +484,9 @@ class IntegrationID(Enum):
 
     # Sentiment
     SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
+
+    # Strata Money
+    STRATA_MONEY_PREDEPOSIT = ("strata_pusde", "Strata pUSDe", Token.USDE)
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
