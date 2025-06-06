@@ -482,6 +482,12 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # InfiniFi
+    INFINIFI_IUSD = (
+        "infinifi_iusd",
+        "InfiniFi iUSD",
+        Token.USDE,
+    )
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
