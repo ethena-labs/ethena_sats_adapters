@@ -63,6 +63,9 @@ class SummaryColumn(Enum):
 
     HYPERBEAT_USDE_PTS = ("hyperbeat_usde_pts", SummaryColumnType.ETHENA_PTS)
 
+    # Sentiment
+    SENTIMENT_USDE_PTS = ("sentiment_usde_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

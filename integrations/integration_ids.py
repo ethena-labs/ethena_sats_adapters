@@ -485,6 +485,9 @@ class IntegrationID(Enum):
     # Hyperbeat
     HYPERBEAT_USDE = ("hyperbeat_usde", "Hyperbeat USDe", Token.USDE)
 
+    # Sentiment
+    SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
