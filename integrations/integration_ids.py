@@ -482,6 +482,9 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Hyperbeat
+    HYPERBEAT_USDE = ("hyperbeat_usde", "Hyperbeat USDe", Token.USDE)
+
     # Sentiment
     SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
 
