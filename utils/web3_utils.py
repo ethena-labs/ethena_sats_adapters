@@ -37,6 +37,8 @@ BASE_NODE_URL = os.getenv("BASE_NODE_URL")
 w3_base = Web3(Web3.HTTPProvider(BASE_NODE_URL))
 SEPOLIA_NODE_URL = os.getenv("SEPOLIA_NODE_URL")
 w3_sepolia = Web3(Web3.HTTPProvider(SEPOLIA_NODE_URL))
+HYPEREVM_NODE_URL = os.getenv("HYPEREVM_NODE_URL")
+w3_hyperevm = Web3(Web3.HTTPProvider(HYPEREVM_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -78,8 +80,8 @@ W3_BY_CHAIN = {
     Chain.SEPOLIA: {
         "w3": w3_sepolia,
     },
-    Chain.TON: {
-        "w3": w3,
+    Chain.HYPEREVM: {
+        "w3": w3_hyperevm,
     },
 }
 

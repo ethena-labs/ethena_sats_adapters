@@ -61,6 +61,7 @@ class SummaryColumn(Enum):
 
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
+    HYPERBEAT_USDE_PTS = ("hyperbeat_usde_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
