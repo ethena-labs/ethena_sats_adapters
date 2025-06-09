@@ -62,6 +62,8 @@ class SummaryColumn(Enum):
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
     INFINIFI_IUSD_PTS = ("infinifi_iusd_pts", SummaryColumnType.ETHENA_PTS)
+    INFINIFI_SIUSD_PTS = ("infinifi_siusd_pts", SummaryColumnType.ETHENA_PTS)
+    INFINIFI_LIUSD_PTS = ("infinifi_liusd_pts", SummaryColumnType.ETHENA_PTS)
     
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name

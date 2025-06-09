@@ -13,15 +13,25 @@ from utils.web3_utils import w3, fetch_events_logs_with_retry
 
 PAGINATION_SIZE = 1000
 
-IUSD_ADDRESS = Web3.to_checksum_address("0x48f9e38f3070AD8945DFEae3FA70987722E3D89c")
+# 1w 2w 4w 6w 8w 13w
+LIUSD_ADDRESSES = [
+    Web3.to_checksum_address("0x12b004719fb632f1E7c010c6F5D6009Fb4258442"),
+    Web3.to_checksum_address("0xf1839BeCaF586814D022F16cDb3504ff8D8Ff361"),
+    Web3.to_checksum_address("0x66bCF6151D5558AfB47c38B20663589843156078"),
+    Web3.to_checksum_address("0xb06Cc4548FebfF3D66a680F9c516381c79bC9707"),
+    Web3.to_checksum_address("0xf68b95b7e851170c0e5123a3249dD1Ca46215085"),
+    Web3.to_checksum_address("0xbd3f9814eB946E617f1d774A6762cDbec0bf087A")
+]
 
 with open("abi/ERC20_abi.json") as f:
     ERC20_ABI = json.load(f)
 
-IUSD_CONTRACT = w3.eth.contract(
-    address=IUSD_ADDRESS,
-    abi=ERC20_ABI,
-)
+LIUSD_CONTRACTS = {}
+for address in LIUSD_ADDRESSES:
+    LIUSD_CONTRACTS[address] = w3.eth.contract(
+        address=address,
+        abi=ERC20_ABI,
+    )
 
 class InfiniFiIntegration (
     CachedBalancesIntegration
@@ -55,10 +65,10 @@ class InfiniFiIntegration (
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
-        logging.info("Getting block data for iUSD balance")
+        logging.info("Getting block data for liUSD balance")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            logging.error("No blocks provided for infinifi iUSD get_block_balances")
+            logging.error("No blocks provided for infinifi liUSD get_block_balances")
             return new_block_data
         sorted_blocks = sorted(blocks)
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)
@@ -82,10 +92,14 @@ class InfiniFiIntegration (
             # parse transfer events since and update bals
             while start <= block:
                 to_block = min(start + PAGINATION_SIZE, block)
-                # print(f"Fetching transfers from {start} to {to_block}")
-                transfers = fetch_events_logs_with_retry(
-                    "iUSD token transfers",
-                    IUSD_CONTRACT.events.Transfer(),
+                # get transfers from all liUSD addresses and sum them up
+                # exchange rate does not matter between all liUSD tokens
+                # so we can just sum them up
+                for liusd_address in LIUSD_ADDRESSES:
+                    # print(f"Fetching transfers from {start} to {to_block}")
+                    transfers = fetch_events_logs_with_retry(
+                        "liUSD token transfers",
+                        LIUSD_CONTRACTS[liusd_address].events.Transfer(),
                     start,
                     to_block,
                 )
@@ -96,7 +110,7 @@ class InfiniFiIntegration (
                         bals[sender] = 0
                     if recipient not in bals:
                         bals[recipient] = 0
-                        
+
                     amount = round(transfer["args"]["value"] / 10**18, 4)
                     if recipient not in self.excluded_addresses:
                         bals[recipient] += amount
@@ -119,9 +133,9 @@ class InfiniFiIntegration (
 if __name__ == "__main__":
     # TODO: Write simple tests for the integration
     example_integration = InfiniFiIntegration(
-        integration_id=IntegrationID.INFINIFI_IUSD,
-        start_block=22540416, # iusd deploy block
-        summary_cols=[SummaryColumn.INFINIFI_IUSD_PTS],
+        integration_id=IntegrationID.INFINIFI_LIUSD,
+        start_block=22540416, # liUSD deploy block
+        summary_cols=[SummaryColumn.INFINIFI_LIUSD_PTS],
         chain=Chain.ETHEREUM,
         reward_multiplier=20,
         excluded_addresses={
