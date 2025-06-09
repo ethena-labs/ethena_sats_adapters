@@ -1,7 +1,6 @@
 from copy import deepcopy
 import json
-import logging
-from os import path
+import os
 from typing import Callable, Dict, List, Optional, Set
 from web3 import Web3
 from eth_typing import ChecksumAddress
@@ -12,7 +11,7 @@ from integrations.integration_ids import IntegrationID
 from utils.web3_utils import w3, fetch_events_logs_with_retry
 
 
-PAGINATION_SIZE = 1000
+PAGINATION_SIZE = int(os.getenv("PAGINATION_SIZE", "1000"))
 
 SIUSD_ADDRESS = Web3.to_checksum_address("0xDBDC1Ef57537E34680B898E1FEBD3D68c7389bCB")
 
@@ -56,10 +55,10 @@ class InfiniFiIntegration (
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
-        logging.info("Getting block data for siUSD balance")
+        print("Getting block data for siUSD balance")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            logging.error("No blocks provided for infinifi siUSD get_block_balances")
+            print("No blocks provided for infinifi siUSD get_block_balances")
             return new_block_data
         sorted_blocks = sorted(blocks)
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)

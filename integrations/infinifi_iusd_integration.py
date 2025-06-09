@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 import logging
+import os
 from typing import Callable, Dict, List, Optional, Set
 from web3 import Web3
 from eth_typing import ChecksumAddress
@@ -11,7 +12,7 @@ from integrations.integration_ids import IntegrationID
 from utils.web3_utils import w3, fetch_events_logs_with_retry
 
 
-PAGINATION_SIZE = 1000
+PAGINATION_SIZE = int(os.getenv("PAGINATION_SIZE", "1000"))
 
 IUSD_ADDRESS = Web3.to_checksum_address("0x48f9e38f3070AD8945DFEae3FA70987722E3D89c")
 
@@ -55,10 +56,10 @@ class InfiniFiIntegration (
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
-        logging.info("Getting block data for iUSD balance")
+        print("Getting block data for iUSD balance")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            logging.error("No blocks provided for infinifi iUSD get_block_balances")
+            print("No blocks provided for infinifi iUSD get_block_balances")
             return new_block_data
         sorted_blocks = sorted(blocks)
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)
@@ -78,6 +79,7 @@ class InfiniFiIntegration (
                     prev_block = existing_block
                     start = existing_block + 1
                     bals = deepcopy(cache_copy[prev_block])
+                    print(f"Found previous block {prev_block} with {len(bals)} balances to use as base for fetching balance at block {block}")
                     break
             # parse transfer events since and update bals
             while start <= block:
@@ -115,7 +117,7 @@ class InfiniFiIntegration (
         return new_block_data
 
 
-
+# run with "python -m integrations.infinifi_iusd_integration"
 if __name__ == "__main__":
     # TODO: Write simple tests for the integration
     example_integration = InfiniFiIntegration(
@@ -129,44 +131,18 @@ if __name__ == "__main__":
         },
         end_block=40000000,
     )
-    # print(
-    #     example_integration.get_block_balances(
-    #         cached_data={}, blocks=[22540500, 22541000, 22542000]
-    #     )
-    # )
+    
+    previous_balances =  example_integration.get_block_balances(
+                cached_data={}, blocks=[22540500, 22541000, 22542000, 22645137]
+            )
     
     # save output as json with proper line return
     with open("infinifi_iusd_balances.json", "w") as f:
-        json.dump(
-            example_integration.get_block_balances(
-                cached_data={}, blocks=[22540500, 22541000, 22542000, 22645137]
-            ),
-            f,
-            indent=4,
-        )
-    # Example output:
-    # {
-    #   20000000: {"0x123": 100, "0x456": 200},
-    #   20000001: {"0x123": 101, "0x456": 201},
-    #   20000002: {"0x123": 102, "0x456": 202},
-    # }
-
-    # print(
-    #     example_integration.get_block_balances(
-    #         cached_data={
-    #             20000000: {
-    #                 Web3.to_checksum_address("0x123"): 100,
-    #                 Web3.to_checksum_address("0x456"): 200,
-    #             },
-    #             20000001: {
-    #                 Web3.to_checksum_address("0x123"): 101,
-    #                 Web3.to_checksum_address("0x456"): 201,
-    #             },
-    #         },
-    #         blocks=[20000002],
-    #     )
-    # )
-    # Example output:
-    # {
-    #   20000002: {"0x123": 102, "0x456": 202},
-    # }
+        json.dump(previous_balances,f,indent=4)
+        
+    new_balances = example_integration.get_block_balances(
+                cached_data=previous_balances, blocks=[22666601]
+            )
+    
+    with open("infinifi_iusd_balances_2.json", "w") as f:
+        json.dump(new_balances,f,indent=4)

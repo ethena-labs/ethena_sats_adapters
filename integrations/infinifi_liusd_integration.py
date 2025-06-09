@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 import logging
+import os
 from typing import Callable, Dict, List, Optional, Set
 from web3 import Web3
 from eth_typing import ChecksumAddress
@@ -11,7 +12,7 @@ from integrations.integration_ids import IntegrationID
 from utils.web3_utils import w3, fetch_events_logs_with_retry
 
 
-PAGINATION_SIZE = 1000
+PAGINATION_SIZE = int(os.getenv("PAGINATION_SIZE", "1000"))
 
 # 1w 2w 4w 6w 8w 13w
 LIUSD_ADDRESSES = [
@@ -95,15 +96,17 @@ class InfiniFiIntegration (
                 # get transfers from all liUSD addresses and sum them up
                 # exchange rate does not matter between all liUSD tokens
                 # so we can just sum them up
+                all_events = []
                 for liusd_address in LIUSD_ADDRESSES:
                     # print(f"Fetching transfers from {start} to {to_block}")
                     transfers = fetch_events_logs_with_retry(
                         "liUSD token transfers",
                         LIUSD_CONTRACTS[liusd_address].events.Transfer(),
-                    start,
-                    to_block,
-                )
-                for transfer in transfers:
+                        start,
+                        to_block,
+                    )
+                    all_events.extend(transfers)
+                for transfer in all_events:
                     sender = transfer["args"]["from"]
                     recipient = transfer["args"]["to"]
                     if sender not in bals:
@@ -143,44 +146,19 @@ if __name__ == "__main__":
         },
         end_block=40000000,
     )
-    # print(
-    #     example_integration.get_block_balances(
-    #         cached_data={}, blocks=[22540500, 22541000, 22542000]
-    #     )
-    # )
+    
+    
+    previous_balances =  example_integration.get_block_balances(
+                cached_data={}, blocks=[22540500, 22541000, 22542000, 22645137]
+            )
     
     # save output as json with proper line return
-    with open("infinifi_iusd_balances.json", "w") as f:
-        json.dump(
-            example_integration.get_block_balances(
-                cached_data={}, blocks=[22540500, 22541000, 22542000, 22645137]
-            ),
-            f,
-            indent=4,
-        )
-    # Example output:
-    # {
-    #   20000000: {"0x123": 100, "0x456": 200},
-    #   20000001: {"0x123": 101, "0x456": 201},
-    #   20000002: {"0x123": 102, "0x456": 202},
-    # }
-
-    # print(
-    #     example_integration.get_block_balances(
-    #         cached_data={
-    #             20000000: {
-    #                 Web3.to_checksum_address("0x123"): 100,
-    #                 Web3.to_checksum_address("0x456"): 200,
-    #             },
-    #             20000001: {
-    #                 Web3.to_checksum_address("0x123"): 101,
-    #                 Web3.to_checksum_address("0x456"): 201,
-    #             },
-    #         },
-    #         blocks=[20000002],
-    #     )
-    # )
-    # Example output:
-    # {
-    #   20000002: {"0x123": 102, "0x456": 202},
-    # }
+    with open("infinifi_liusd_balances.json", "w") as f:
+        json.dump(previous_balances,f,indent=4)
+        
+    new_balances = example_integration.get_block_balances(
+                cached_data=previous_balances, blocks=[22666601]
+            )
+    
+    with open("infinifi_liusd_balances_2.json", "w") as f:
+        json.dump(new_balances,f,indent=4)
