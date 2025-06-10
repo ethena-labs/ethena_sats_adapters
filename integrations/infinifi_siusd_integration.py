@@ -1,5 +1,6 @@
 from copy import deepcopy
 import json
+import logging
 import os
 from typing import Callable, Dict, List, Optional, Set
 from web3 import Web3
@@ -55,10 +56,10 @@ class InfiniFiIntegration (
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
-        print("Getting block data for siUSD balance")
+        logging.info("[Infinifi siUSD integration] Getting block data...")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            print("No blocks provided for infinifi siUSD get_block_balances")
+            logging.warning("[Infinifi siUSD integration] No blocks provided for infinifi siUSD get_block_balances")
             return new_block_data
         sorted_blocks = sorted(blocks)
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)
@@ -78,12 +79,12 @@ class InfiniFiIntegration (
                     prev_block = existing_block
                     start = existing_block + 1
                     bals = deepcopy(cache_copy[prev_block])
-                    print(f"Found previous block {prev_block} with {len(bals)} balances to use as base for fetching balance at block {block}")
+                    logging.debug(f"[Infinifi siUSD integration] Found previous block {prev_block} with {len(bals)} balances to use as base for fetching balance at block {block}")
                     break
             # parse transfer events since and update bals
             while start <= block:
                 to_block = min(start + PAGINATION_SIZE, block)
-                # print(f"Fetching transfers from {start} to {to_block}")
+                logging.debug(f"[Infinifi siUSD integration] Fetching transfers from {start} to {to_block}")
                 transfers = fetch_events_logs_with_retry(
                     "siUSD token transfers",
                     SIUSD_CONTRACT.events.Transfer(),

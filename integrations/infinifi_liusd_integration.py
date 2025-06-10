@@ -66,10 +66,10 @@ class InfiniFiIntegration (
     def get_block_balances(
         self, cached_data: Dict[int, Dict[ChecksumAddress, float]], blocks: List[int]
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
-        logging.info("Getting block data for liUSD balance")
+        logging.info("[Infinifi liUSD integration] Getting block data...")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            logging.error("No blocks provided for infinifi liUSD get_block_balances")
+            logging.error("[Infinifi liUSD integration] No blocks provided for infinifi liUSD get_block_balances")
             return new_block_data
         sorted_blocks = sorted(blocks)
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)
@@ -89,6 +89,7 @@ class InfiniFiIntegration (
                     prev_block = existing_block
                     start = existing_block + 1
                     bals = deepcopy(cache_copy[prev_block])
+                    logging.debug(f"[Infinifi liUSD integration] Found previous block {prev_block} with {len(bals)} balances to use as base for fetching balance at block {block}")
                     break
             # parse transfer events since and update bals
             while start <= block:
@@ -98,7 +99,7 @@ class InfiniFiIntegration (
                 # so we can just sum them up
                 all_events = []
                 for liusd_address in LIUSD_ADDRESSES:
-                    # print(f"Fetching transfers from {start} to {to_block}")
+                    logging.debug(f"[Infinifi liUSD integration]Fetching transfers from {start} to {to_block}")
                     transfers = fetch_events_logs_with_retry(
                         "liUSD token transfers",
                         LIUSD_CONTRACTS[liusd_address].events.Transfer(),
