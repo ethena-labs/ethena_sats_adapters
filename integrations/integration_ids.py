@@ -398,6 +398,8 @@ class IntegrationID(Enum):
 
     # Inverse Finance FiRM
     FIRM_SUSDE = ("firm_susde", "Inverse Finance FiRM sUSDe", Token.SUSDE)
+    FIRM_SUSDE_DOLA_CLP = ("firm_susde_dola_clp", "Inverse Finance FiRM sUSDe/DOLA CLP", Token.SUSDE)
+    FIRM_YV_SUSDE_DOLA_CLP = ("firm_yv_susde_dola_clp", "Inverse Finance FiRM YV sUSDe/DOLA CLP", Token.SUSDE)
 
     # Hyperdrive
     HYPERDRIVE_SUSDE = (
