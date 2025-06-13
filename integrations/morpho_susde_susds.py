@@ -27,7 +27,7 @@ class MorphoSusdeSusds(CachedBalancesIntegration):
             start_block=MORPHO_SUSDE_SUSDS_START_BLOCK,
             chain=Chain.ETHEREUM,
             summary_cols=[SummaryColumn.MORPHO_SUSDE_SUSDS_PTS],
-            reward_multiplier=5,
+            reward_multiplier=30,
             balance_multiplier=1,
         )
 
