@@ -64,9 +64,11 @@ class SummaryColumn(Enum):
     # EVAA Protocol
     EVAA_USDE_PTS = ("evaa_usde_pts", SummaryColumnType.ETHENA_PTS)
     EVAA_SUSDE_PTS = ("evaa_susde_pts", SummaryColumnType.ETHENA_PTS)
-    
+
     # Sentiment
     SENTIMENT_USDE_PTS = ("sentiment_usde_pts", SummaryColumnType.ETHENA_PTS)
+
+    MORPHO_SUSDE_SUSDS_PTS = ("morpho_susde_susds_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
