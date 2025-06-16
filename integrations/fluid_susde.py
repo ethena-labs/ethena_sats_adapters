@@ -92,14 +92,16 @@ class FluidIntegration(Integration):
 if __name__ == "__main__":
     example_integration = FluidIntegration()
     print("getting relevant vaults")
-    print(example_integration.get_relevant_vaults(21745303))
+    print(example_integration.get_relevant_vaults(22046702))
 
     print("\n\n\ngetting participants")
-    print(example_integration.get_participants(None))
+    print(example_integration.get_participants(22046702))
 
     print("\n\n\n getting balance")
     print(
         example_integration.get_balance(
-            "0xEb54fC872F70A4B7addb34C331DeC3fDf9a329de", 21079685
+            "0x74f2FeF5D1C24f8b7237740A507A97098615a0a6", 22046702
         )
     )
+
+# run with PYTHONPATH=$(pwd) python integrations/fluid_susde.py
