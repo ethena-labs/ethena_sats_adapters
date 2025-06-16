@@ -413,6 +413,8 @@ class IntegrationID(Enum):
     FLUID_USDE = ("Fluid_usde", "Fluid USDe", Token.USDE)
     FLUID_SUSDE_SMART = ("Fluid_susde_smart", "Fluid sUSDe Smart", Token.SUSDE)
     FLUID_USDE_SMART = ("Fluid_usde_smart", "Fluid USDe Smart", Token.USDE)
+    FLUID_SUSDE_SMART_LENDING = ("Fluid_susde_smart_lending", "Fluid sUSDe Smart Lending", Token.SUSDE)
+    FLUID_USDE_SMART_LENDING = ("Fluid_usde_smart_lending", "Fluid USDe Smart Lending", Token.USDE)
 
     # Cork
     CORK_USDE = ("cork_usde", "Cork USDe", Token.USDE)
