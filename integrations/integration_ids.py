@@ -491,6 +491,13 @@ class IntegrationID(Enum):
     # Sentiment
     SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
 
+    # Morpho Curve sUSDS-sUSDe
+    MORPHO_SUSDE_SUSDS = (
+        "morpho_susde_susds",
+        "Morpho Curve sUSDe-sUSDS LP token",
+        Token.SUSDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
