@@ -2,7 +2,7 @@ import json
 from utils.web3_utils import (
     w3,
 )
-from constants.fluid import vaultResolver, vaultPositionResolver, dexResolver
+from constants.fluid import vaultResolver, vaultPositionResolver, dexResolver, smartLendingResolver
 
 with open("abi/fluid_vault_resolver.json") as f:
     resolver_abi = json.load(f)

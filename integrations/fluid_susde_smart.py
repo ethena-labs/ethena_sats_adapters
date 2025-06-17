@@ -85,7 +85,7 @@ class FluidIntegration(Integration):
                         # * 1e6 * numeratorPrecision / denominatorPrecision
                         userPositionToken0 = userPositionToken0 * 1e6 * dexEntireDatas[dexAddress][2][0] / dexEntireDatas[dexAddress][2][1]
                     
-                        balance += userPositionToken1
+                        balance += userPositionToken0
             return balance / 1e18
         except Exception as e:
             return 0
