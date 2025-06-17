@@ -11,7 +11,7 @@ STRATA_TESTNET = {
 }
 STRATA_MAINNET = {
     "pUSDe": {
-        "block": 0,
-        "address": "0x0000000000000000000000000000000000000000"
+        "block": 22716572,
+        "address": "0xA62B204099277762d1669d283732dCc1B3AA96CE"
     },
 }
