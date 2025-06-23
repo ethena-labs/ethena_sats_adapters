@@ -488,6 +488,14 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Timeswap
+    TIMESWAP = (
+        "timeswap",
+        "Timeswap",
+        Token.USDE,
+    )
+
+
     # Sentiment
     SENTIMENT_USDE = ("sentiment_usde", "Sentiment USDe", Token.USDE)
 
