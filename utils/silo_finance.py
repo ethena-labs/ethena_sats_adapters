@@ -43,9 +43,7 @@ class SiloFinance(CachedBalancesIntegration):
         logger.info(f"Getting block data for Silo Finance {market.address}")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
-            logging.error(
-                "No blocks provided to Silo Finance LP-eUSDe get_block_balances"
-            )
+            logger.error("No blocks provided to get_block_balances")
             return new_block_data
 
         cache_copy: Dict[int, Dict[ChecksumAddress, float]] = deepcopy(cached_data)
