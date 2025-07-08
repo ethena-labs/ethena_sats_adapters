@@ -519,6 +519,13 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    # Silo Finance LP-eUSDe (14 Aug 2025)
+    SILO_FINANCE_LP_EUSDE_AUG_14_EXPIRY = (
+        "silo_finance_lp_eusde_aug_14_expiry",
+        "Silo Finance LP-eUSDe (Aug 14)",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
