@@ -26,6 +26,10 @@ class SiloFinance(CachedBalancesIntegration):
     def get_market(self) -> SiloFinanceMarket:
         return SILO_FINANCE_INTEGRATION_ID_TO_MARKET[self.integration_id]
 
+    def get_silo_contract(self) -> Contract:
+        market = self.get_market()
+        return get_silo_contract(chain=self.chain, market=market)
+
     def get_logger(self) -> logging.Logger:
         logger = logging.getLogger(self.integration_id.get_column_name())
         logger.setLevel(logging.INFO)
@@ -36,7 +40,7 @@ class SiloFinance(CachedBalancesIntegration):
     ) -> Dict[int, Dict[ChecksumAddress, float]]:
         logger = self.get_logger()
         market = self.get_market()
-        logger.warning(f"Getting block data for Silo Finance {market.address}")
+        logger.info(f"Getting block data for Silo Finance {market.address}")
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
             logging.error(
@@ -56,28 +60,27 @@ class SiloFinance(CachedBalancesIntegration):
                     f"Found closest cached data for block {block}: {prev_block}"
                 )
                 start = prev_block + 1
+            supply_index = self.fetch_supply_index(block)
+            logger.info(f"Supply index on block {block}: {supply_index}")
             while start <= block:
                 to_block = min(start + PAGINATION_SIZE, block)
                 logger.info(
                     f"fetching transfers for market {market.address} from block {start} to block {to_block}"
                 )
+                # Transfers are used to keep track of the user positions.
                 for transfer in self.fetch_transfers(
                     market=market, from_block=start, to_block=to_block
                 ):
-                    self.process_transfer_event(transfer=transfer, bals=bals)
+                    self.process_transfer_event(
+                        transfer=transfer, bals=bals, supply_index=supply_index
+                    )
                 start = to_block + 1
-                logger.info(
+                logger.warning(
                     f"processed transfers for market {market.address} from block {start} to block {to_block}"
                 )
             new_block_data[block] = bals
             cache_copy[block] = bals
         return new_block_data
-
-    """
-    Find the closest cached data for a given block.
-    Returns the block number and the cached data for that block. Create a new instance of the cached data to allow mutations.
-    If no cached data is found, returns None.
-    """
 
     def find_closest_cached_data(
         self, block: int, cached_data: Dict[int, Dict[ChecksumAddress, float]]
@@ -90,6 +93,20 @@ class SiloFinance(CachedBalancesIntegration):
             if existing_block < block:
                 return (existing_block, deepcopy(cached_data[existing_block]))
         return None
+
+    def fetch_supply_index(self, block: int) -> float:
+        """
+        Supply index is the number of assets that 1 share is worth. It's used to convert between shares and assets.
+        1 shares = 1 * supply_index (assets)
+        """
+        market = self.get_market()
+        silo_contract = self.get_silo_contract()
+        return (
+            silo_contract.functions.convertToAssets(10**market.shares_decimals).call(
+                block_identifier=block
+            )
+            / 10**market.shares_decimals
+        )
 
     def fetch_transfers(
         self, *, market: SiloFinanceMarket, from_block: int, to_block: int
@@ -115,21 +132,43 @@ class SiloFinance(CachedBalancesIntegration):
         )
 
     def process_transfer_event(
-        self, *, transfer: Dict, bals: Dict[ChecksumAddress, float]
+        self,
+        *,
+        transfer: Dict,
+        bals: Dict[ChecksumAddress, float],
+        supply_index: float,
     ):
         sender = transfer["args"]["from"]
         receiver = transfer["args"]["to"]
         value = transfer["args"]["value"]
         if is_null_address(sender):
             # Minting
-            add_to_bals(bals=bals, address=receiver, value=value, decimals=18)
+            add_to_bals(
+                bals=bals,
+                address=receiver,
+                value=value * supply_index,
+                decimals=18,
+            )
         elif is_null_address(receiver):
             # Burning
-            subtract_from_bals(bals=bals, address=sender, value=value, decimals=18)
+            subtract_from_bals(
+                bals=bals, address=sender, value=value * supply_index, decimals=18
+            )
         else:
             # Transfer
-            add_to_bals(bals=bals, address=sender, value=value, decimals=18)
-            subtract_from_bals(bals=bals, address=receiver, value=value, decimals=18)
+            # Convert to assets
+            add_to_bals(
+                bals=bals,
+                address=sender,
+                value=value * supply_index,
+                decimals=18,
+            )
+            subtract_from_bals(
+                bals=bals, address=receiver, value=value * supply_index, decimals=18
+            )
+
+
+ROUND_DECIMALS = 6
 
 
 def is_null_address(address: ChecksumAddress) -> bool:
@@ -144,7 +183,8 @@ def add_to_bals(
 ):
     if address not in bals:
         bals[address] = 0
-    bals[address] += round(value / 10**decimals, 6)
+    bals[address] += round(value / 10**decimals, ROUND_DECIMALS)
+    bals[address] = round(bals[address], ROUND_DECIMALS)
 
 
 def subtract_from_bals(
@@ -155,9 +195,11 @@ def subtract_from_bals(
 ):
     if address not in bals:
         bals[address] = 0
-    bals[address] -= round(value / 10**decimals, 6)
-    # if bals[address] < 0:
-    #     bals[address] = 0
+    bals[address] -= round(value / 10**decimals, ROUND_DECIMALS)
+    # If the balance is negative, set it to 0. happens because of rounding errors.
+    if bals[address] < 0:
+        bals[address] = 0
+    bals[address] = round(bals[address], ROUND_DECIMALS)
 
 
 def get_silo_contract(chain: Chain, market: SiloFinanceMarket) -> Contract:
