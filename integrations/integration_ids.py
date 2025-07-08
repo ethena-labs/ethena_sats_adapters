@@ -509,7 +509,7 @@ class IntegrationID(Enum):
     SILO_FINANCE_LP_SUSDE_SEP_25_EXPIRY = (
         "silo_finance_lp_susde_sep_25_expiry",
         "Silo Finance LP-sUSDe (Sep 25)",
-        Token.USDE,
+        Token.SUSDE,
     )
 
     # Silo Finance LP-sUSDe (31 Jul 2025)
