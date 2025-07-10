@@ -50,7 +50,6 @@ class TermMaxSusde(CachedBalancesIntegration):
         block_number_to_account_address_to_balance_map = deepcopy(cached_data)
         for block in blocks:
             if block not in block_number_to_account_address_to_balance_map:
-                print(f"{block=}")
                 block_number_to_account_address_to_balance_map[block] = (
                     self._get_account_address_to_balance_map_for_block(
                         block_id=f"{block}"
