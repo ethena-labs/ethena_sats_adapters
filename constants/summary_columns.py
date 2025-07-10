@@ -59,6 +59,9 @@ class SummaryColumn(Enum):
 
     STONFI_USDE_PTS = ("stonfi_usde_pts", SummaryColumnType.ETHENA_PTS)
 
+    AFFLUENT_USDE_PTS = ("affluent_usde_pts", SummaryColumnType.ETHENA_PTS)
+    AFFLUENT_SUSDE_PTS = ("affluent_susde_pts", SummaryColumnType.ETHENA_PTS)
+
     VENUS_SUSDE_PTS = ("venus_susde_pts", SummaryColumnType.ETHENA_PTS)
 
     # EVAA Protocol

@@ -498,6 +498,10 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    # Affluent
+    AFFLUENT_USDE = ("affluent_usde", "Affluent TON USDe", Token.USDE)
+    AFFLUENT_SUSDE = ("affluent_susde", "Affluent TON sUSDe", Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
