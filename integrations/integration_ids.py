@@ -504,6 +504,11 @@ class IntegrationID(Enum):
         "TermMax sUSDe Collateral",
         Token.SUSDE,
     )
+    TERMMAX_PT_SUSDE_25SEP2025 = (
+        "termmax_pt_susde_25sep2025",
+        "TermMax PT-sUSDE-25SEP2025 Collateral",
+        Token.PT_SUSDE_25SEP2025,
+    )
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
