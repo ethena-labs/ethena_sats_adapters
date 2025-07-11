@@ -71,7 +71,7 @@ class AffluentIntegration(L2DelegationIntegration):
                 raise Exception(f"Error getting participants data for Affluent Protocol token {token} at block {block}: {e}")
             
             for user_data in payload["result"]:
-                block_data[user_data["user_address"]] = user_data["value"]
+                block_data[user_data["user_address"]] = user_data["balance"]
 
         except Exception as e:
                 err_msg = f"Error getting participants data for Affluent Protocol at block {block}: {e}"
@@ -96,6 +96,6 @@ if __name__ == "__main__":
         reward_multiplier=5
     )
 
-    print("Affluent USDe  :", json.dumps(affluent_integration_usde.get_l2_block_balances(cached_data={}, blocks=[22882346, 22882346 - 600]), indent=2))
-    print("Affluent sUSDe :", json.dumps(affluent_integration_susde.get_l2_block_balances(cached_data={}, blocks=[22882346]), indent=2))
+    print("Affluent USDe  :", json.dumps(affluent_integration_usde.get_l2_block_balances(cached_data={}, blocks=[22895215, 22895215 - 600]), indent=2))
+    print("Affluent sUSDe :", json.dumps(affluent_integration_susde.get_l2_block_balances(cached_data={}, blocks=[22895215]), indent=2))
 
