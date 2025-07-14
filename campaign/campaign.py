@@ -17,6 +17,7 @@ from constants.summary_columns import SummaryColumn
 from web3 import Web3
 from constants.evaa import EVAA_USDE_START_BLOCK, EVAA_SUSDE_START_BLOCK
 from integrations.stonfi_integration import StonFiIntegration
+from integrations.affluent_integration import AffluentIntegration
 from integrations.integration import Integration
 from integrations.integration_ids import IntegrationID
 from integrations.pendle_lpt_integration import PendleLPTIntegration
@@ -47,6 +48,20 @@ INTEGRATIONS: List[Integration] = [
         ],
         chain=Chain.TON,
         reward_multiplier=30,
+    ),
+    AffluentIntegration(
+        integration_id=IntegrationID.AFFLUENT_USDE,
+        start_block=AFFLUENT_USDE_START_BLOCK,
+        summary_cols=[SummaryColumn.AFFLUENT_USDE_PTS],
+        chain=Chain.TON,
+        reward_multiplier=20,
+    ),
+    AffluentIntegration(
+        integration_id=IntegrationID.AFFLUENT_SUSDE,
+        start_block=AFFLUENT_SUSDE_START_BLOCK,
+        summary_cols=[SummaryColumn.AFFLUENT_SUSDE_PTS],
+        chain=Chain.TON,
+        reward_multiplier=5,
     ),
     # Template integration
     ProtocolNameIntegration(
