@@ -73,7 +73,7 @@ class IntegrationID(Enum):
         "Thala sUSDe/USDC LP",
         Token.SUSDE,
     )
-    
+
     # Echelon
     ECHELON_SUSDE_COLLATERAL = (
         "echelon_susde_collateral",
@@ -398,8 +398,16 @@ class IntegrationID(Enum):
 
     # Inverse Finance FiRM
     FIRM_SUSDE = ("firm_susde", "Inverse Finance FiRM sUSDe", Token.SUSDE)
-    FIRM_SUSDE_DOLA_CLP = ("firm_susde_dola_clp", "Inverse Finance FiRM sUSDe/DOLA CLP", Token.SUSDE)
-    FIRM_YV_SUSDE_DOLA_CLP = ("firm_yv_susde_dola_clp", "Inverse Finance FiRM YV sUSDe/DOLA CLP", Token.SUSDE)
+    FIRM_SUSDE_DOLA_CLP = (
+        "firm_susde_dola_clp",
+        "Inverse Finance FiRM sUSDe/DOLA CLP",
+        Token.SUSDE,
+    )
+    FIRM_YV_SUSDE_DOLA_CLP = (
+        "firm_yv_susde_dola_clp",
+        "Inverse Finance FiRM YV sUSDe/DOLA CLP",
+        Token.SUSDE,
+    )
 
     # Hyperdrive
     HYPERDRIVE_SUSDE = (
@@ -427,7 +435,7 @@ class IntegrationID(Enum):
     )
 
     # Zerolend
-    ZEROLEND_SUSDE = ("zerolend_susde_deposit","Zerolend sUSDe",Token.SUSDE)
+    ZEROLEND_SUSDE = ("zerolend_susde_deposit", "Zerolend sUSDe", Token.SUSDE)
     ZEROLEND_USDE = ("zerolend_usde_deposit", "Zerolend USDe", Token.USDE)
 
     KAMINO_SUSDE_COLLATERAL_EXAMPLE = (
@@ -442,7 +450,6 @@ class IntegrationID(Enum):
 
     # STON.fi
     STONFI_USDE = ("stonfi_usde", "STON.fi USDe", Token.USDE)
-
 
     # Upshift sUSDe
     UPSHIFT_UPSUSDE = ("upshift_upsusde", "Upshift upsUSDe", Token.SUSDE)
@@ -465,7 +472,7 @@ class IntegrationID(Enum):
     RUMPEL_SENA_LP = (
         "rumpel_kpsats3_sena_lp_held",
         "Rumpel kpSATS-3/sENA LP",
-        Token.SENA
+        Token.SENA,
     )
 
     # InfinityPools
@@ -498,9 +505,32 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+
     # Affluent
     AFFLUENT_USDE = ("affluent_usde", "Affluent TON USDe", Token.USDE)
     AFFLUENT_SUSDE = ("affluent_susde", "Affluent TON sUSDe", Token.SUSDE)
+
+    # Silo Finance LP-sUSDe (25 Sep 2025)
+    SILO_FINANCE_LP_SUSDE_SEP_25_EXPIRY = (
+        "silo_finance_lp_susde_sep_25_expiry",
+        "Silo Finance LP-sUSDe (Sep 25)",
+        Token.SUSDE,
+    )
+
+    # Silo Finance LP-sUSDe (31 Jul 2025)
+    SILO_FINANCE_LP_SUSDE_JUL_31_EXPIRY = (
+        "silo_finance_lp_susde_jul_31_expiry",
+        "Silo Finance LP-sUSDe (Jul 31)",
+        Token.SUSDE,
+    )
+
+    # Silo Finance LP-eUSDe (14 Aug 2025)
+    SILO_FINANCE_LP_EUSDE_AUG_14_EXPIRY = (
+        "silo_finance_lp_eusde_aug_14_expiry",
+        "Silo Finance LP-eUSDe (Aug 14)",
+        Token.USDE,
+    )
+
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name

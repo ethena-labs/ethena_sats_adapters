@@ -73,6 +73,24 @@ class SummaryColumn(Enum):
 
     MORPHO_SUSDE_SUSDS_PTS = ("morpho_susde_susds_pts", SummaryColumnType.ETHENA_PTS)
 
+    # Silo Finance LP-sUSDe (25 Sep 2025)
+    SILO_FINANCE_LP_SUSDE_SEP_25_EXPIRY_PTS = (
+        "silo_finance_lp_usde_sep_25_expiry_pts",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
+    # Silo Finance LP-sUSDe (31 Jul 2025)
+    SILO_FINANCE_LP_SUSDE_JUL_31_PTS = (
+        "silo_finance_lp_susde_jul_25_pts",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
+    # Silo Finance LP-eUSDe (14 Aug 2025)
+    SILO_FINANCE_LP_EUSDE_AUG_14_PTS = (
+        "silo_finance_lp_usde_aug_25_pts",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type
