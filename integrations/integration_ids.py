@@ -499,11 +499,6 @@ class IntegrationID(Enum):
     )
 
     # TermMax
-    TERMMAX_SUSDE = (
-        "termmax_susde",
-        "TermMax sUSDe Collateral",
-        Token.SUSDE,
-    )
     TERMMAX_PT_SUSDE_25SEP2025 = (
         "termmax_pt_susde_25sep2025",
         "TermMax PT-sUSDE-25SEP2025 Collateral",
