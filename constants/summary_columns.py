@@ -71,7 +71,6 @@ class SummaryColumn(Enum):
     MORPHO_SUSDE_SUSDS_PTS = ("morpho_susde_susds_pts", SummaryColumnType.ETHENA_PTS)
 
     # TermMax
-    TERMMAX_SUSDE_PTS = ("termmax_susde_pts", SummaryColumnType.ETHENA_PTS)
     TERMMAX_PT_SUSDE_25SEP2025_PTS = ("termmax_pt_susde_25sep2025_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):
