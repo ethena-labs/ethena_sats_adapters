@@ -4,3 +4,5 @@ PRE_DEPOSIT_START_BLOCK= 22594324
 
 TUSDE_ADDRESS = "0xa01227a26a7710bc75071286539e47adb6dea417"
 TUSDE_DECIMALS = 18
+
+TERMMAX_API_URL = "https://data-manager-api.termmax.ts.finance/v1"
