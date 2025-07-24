@@ -91,6 +91,12 @@ class SummaryColumn(Enum):
         SummaryColumnType.ETHENA_PTS,
     )
 
+    # Terminal Finance
+    TERMINAL_TUSDE_PTS = (
+        "terminal_tusde_pts",
+        SummaryColumnType.ETHENA_PTS,
+    )
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

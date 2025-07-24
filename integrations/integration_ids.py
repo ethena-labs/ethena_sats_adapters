@@ -531,6 +531,12 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Terminal Finance
+    TERMINAL_TUSDE = (
+        "terminal_tusde",
+        "Terminal Finance tUSDe",
+        Token.USDE
+    )
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
