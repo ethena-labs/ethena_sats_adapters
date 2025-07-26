@@ -81,6 +81,12 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    ECHELON_SUSDE_USDC_XLPT_COLLATERAL = (
+        "echelon_susde_usdc_xlpt_collateral",
+        "Echelon sUSDe/USDC xLPT Collateral",
+        Token.SUSDE,
+    )
+
     # Stake DAO
     STAKEDAO_SUSDE_JULY_LPT = (
         "stakedao_susde_july_effective_lpt_held",
