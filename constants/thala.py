@@ -4,6 +4,8 @@ SUSDE_LPT_PID = 27
 
 ETHENA_ADDRESS_API_URL="https://app.thala.fi/api/ethena-addresses"
 
+ETHENA_XLPT_ADDRESS_API_URL="https://app.thala.fi/api/ethena-xlpt-addresses"
+
 THALA_FARMING_V1_ADDRESS = "0x6b3720cd988adeaf721ed9d4730da4324d52364871a68eac62b46d21e4d2fa99"
 
 THALASWAP_V2_ADDRESS = "0x7730cd28ee1cdc9e999336cbc430f99e7c44397c0aa77516f6f23a78559bb5"
