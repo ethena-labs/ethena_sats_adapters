@@ -9,7 +9,7 @@ from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
     ECHELON_SUSDE_USDC_XLPT_COLLATERAL_START_BLOCK
 )
-from constants.echelon import LENDING_CONTRACT_ADDRESS, SUSDE_USDC_XLPT_MARKET_ADDRESS, SUSDE_USDC_TOKEN_ADDRESS, ETHENA_SUSDE_USDC_XLPT_ADDRESS_API_URL
+from constants.echelon import LENDING_CONTRACT_ADDRESS, XLPT_ORACLE_CONTRACT_ADDRESS, SUSDE_USDC_XLPT_MARKET_ADDRESS, SUSDE_USDC_TOKEN_ADDRESS, ETHENA_SUSDE_USDC_XLPT_ADDRESS_API_URL
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
 from integrations.l2_delegation_integration import L2DelegationIntegration
@@ -37,7 +37,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
         self.token_address = token_address
         self.market_address = market_address
         self.decimals = str(decimals)
-        self.echelon_ts_location = "ts/echelon_balances.ts"
+        self.echelon_ts_location = "ts/echelon_xlpt_balances.ts"
 
     def get_l2_block_balances(
         self, cached_data: Dict[int, Dict[str, float]], blocks: List[int]
@@ -69,6 +69,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
                     str(self.decimals),
                     str(block),
                     json.dumps(user_addresses),
+                    XLPT_ORACLE_CONTRACT_ADDRESS,
+                    SUSDE_USDC_TOKEN_ADDRESS,
                 ],
                 capture_output=True,
                 text=True,
