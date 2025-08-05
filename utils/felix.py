@@ -8,6 +8,22 @@ from web3.types import ChecksumAddress
 from web3 import Web3
 
 
+def get_shares_to_assets_ratio_at_block(block_number: int) -> float:
+    """
+    Get the ratio of shares to assets for the Felix USDe vault at a specific block.
+    """
+    # Use the pre-configured contract instance
+    try:
+        # Call convertToAssets with 1 share to get the ratio
+        result = FELIX_USDE_VAULT_CONTRACT.functions.convertToAssets(1000000000000000000000).call(
+            block_identifier=block_number
+        )
+        return result / (10 ** 18)  # Convert from wei to USDe
+    except Exception as e:
+        print(f"Error getting shares to assets ratio: {e}")
+        return 0.0
+
+
 def get_users_asset_balances_at_block(block_number: int, batch_size: int = 24) -> Dict[ChecksumAddress, float]:
     """
     Get users' asset balances at a specific block by:
