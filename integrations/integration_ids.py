@@ -537,6 +537,9 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Felix
+    FELIX_USDE = ("felix_usde", "Felix USDe", Token.USDE)
+
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
