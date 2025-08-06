@@ -6,7 +6,7 @@ from integrations.cached_balances_integration import CachedBalancesIntegration
 from integrations.integration_ids import IntegrationID
 from web3 import Web3
 from eth_typing import ChecksumAddress
-from utils.felix import get_users_asset_balances_at_block_multithreaded
+from utils.felix import get_users_asset_balances_at_block
 
 
 class FelixUsdeIntegration(CachedBalancesIntegration):    
@@ -66,7 +66,7 @@ class FelixUsdeIntegration(CachedBalancesIntegration):
             # Get fresh data for this block
             logging.info(f"[Felix integration] Fetching data for block {block}")
             try:
-                block_balances = get_users_asset_balances_at_block_multithreaded(block)
+                block_balances = get_users_asset_balances_at_block(block)
                 result_data[block] = block_balances
             except Exception as e:
                 logging.error(f"[Felix integration] Error fetching data for block {block}: {e}")
