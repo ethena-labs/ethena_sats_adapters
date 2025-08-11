@@ -15,4 +15,4 @@ FELIX_USDE_VAULT_CONTRACT = W3_BY_CHAIN[Chain.HYPEREVM]["w3"].eth.contract(
 )
 
 # Set the Felix USDe holders subgraph URL
-FELIX_USDE_HOLDERS_GRAPH_URL = "https://api.goldsky.com/api/public/project_cmdod1b8ua1yt01ukdmucfj2c/subgraphs/felix-usde/1.0.5/gn"
+FELIX_USDE_HOLDERS_GRAPH_URL = "https://api.goldsky.com/api/public/project_cmbpnr7pflkhm01vphziu05pr/subgraphs/felix-usde/prod/gn"
