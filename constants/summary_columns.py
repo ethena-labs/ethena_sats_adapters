@@ -91,6 +91,8 @@ class SummaryColumn(Enum):
         SummaryColumnType.ETHENA_PTS,
     )
 
+    FELIX_USDE_PTS = ("felix_usde_pts", SummaryColumnType.ETHENA_PTS)
+
     # Terminal Finance
     TERMINAL_TUSDE_PTS = (
         "terminal_tusde_pts",
