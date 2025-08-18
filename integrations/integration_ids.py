@@ -537,6 +537,9 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Felix
+    FELIX_USDE = ("felix_usde", "Felix USDe", Token.USDE)
+
     # Terminal Finance
     TERMINAL_TUSDE = (
         "terminal_tusde",
