@@ -80,20 +80,14 @@ class WildcatIntegration(CachedBalancesIntegration):
                 continue
 
             market_data = data["market"]
-            # grab scaleFactor from subgraph (ray-scaled integer)
-            scale_factor = int(market_data.get("scaleFactor") or 10**27)
-            decimals = int(market_data.get("decimals") or 18)
-
+            # use scaledBalance directly (no normalization required per Wildcat team)
             lenders = market_data["lenders"]
             balances = {}
             for lender in lenders:
                 addr = Web3.to_checksum_address(lender["address"])
                 scaled = int(lender.get("scaledBalance", 0))
-                # normalized = rayMul(scaled, scaleFactor) per Wildcat SDK
-                from utils.wildcat import rayMul
-                normalized = rayMul(scaled, scale_factor)
-                # Convert to float of market token units using the market token decimals from subgraph
-                balances[addr] = float(normalized) / (10 ** decimals)
+                # Use scaledBalance directly as the integration value
+                balances[addr] = float(scaled)
 
             new_block_data[block] = balances
             cache_copy[block] = balances
