@@ -104,6 +104,8 @@ class SummaryColumn(Enum):
         SummaryColumnType.ETHENA_PTS,
     )
 
+    WILDCAT_MARKET_DEBT_PTS = ("wildcat_usde_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type
