@@ -553,6 +553,13 @@ class IntegrationID(Enum):
         Token.USDE
     )
 
+    # Wildcat
+    WILDCAT_MARKET_DEBT = (
+        "wildcat_hyperithm_usde_market",
+        "Wildcat Hyperithm USDe Market",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
