@@ -190,6 +190,11 @@ class IntegrationID(Enum):
         "USDE_ARB_NOV2024",
         Token.USDE,
     )
+    PENPIE_USDE_COMPOUNDING_27NOV2025_LPT = (
+        "PENPIE_USDE_COMPOUNDING_27NOV2025_effective_lpt_held",
+        "USDE_COMPOUNDING_27NOV2025",
+        Token.USDE,
+    )
 
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = (

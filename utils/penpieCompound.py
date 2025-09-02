@@ -2,9 +2,6 @@ from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from integrations.integration import Integration
 from constants.penpie import PENDLE_LOCKER_ETHEREUM
-from constants.penpie import PENDLE_LOCKER_ARBITRUM
-from constants.penpie import master_penpie_ethereum
-from constants.penpie import master_penpie_arbitrum
 from constants.penpie import auto_compound_manager_ethereum
 import logging
 import json
@@ -18,8 +15,8 @@ from typing import Optional, Set
 from web3.contract import Contract
 from eth_typing import ChecksumAddress
 
-with open("abi/penpie_master.json") as f:
-    master_penpie = json.load(f)
+with open("abi/penpie_auto_market_manager.json") as f:
+    auto_market_manager_abi = json.load(f)
 with open("abi/pendle_lpt.json") as f:
     lpt_abi = json.load(f)
 with open("abi/ERC20_abi.json") as f:
@@ -28,7 +25,7 @@ with open("abi/penpie_tokens.json") as f:
     penpie_tokens = json.load(f)
 
 
-class PENPIEIntegration(Integration):
+class PENPIECompoundIntegration(Integration):
     def __init__(
         self,
         integration_id: IntegrationID,
@@ -51,26 +48,20 @@ class PENPIEIntegration(Integration):
 
     def get_balance(self, user: str, block: int | str = "latest") -> float:
         if self.chain == Chain.ETHEREUM:
-            masterpenpiecontract = w3.eth.contract(
-                address=master_penpie_ethereum, abi=master_penpie
-            )
-        if self.chain == Chain.ARBITRUM:
-            masterpenpiecontract = w3_arb.eth.contract(
-                address=w3_arb.to_checksum_address(master_penpie_arbitrum),
-                abi=master_penpie,
+            autoMarketManager = w3.eth.contract(
+                address=auto_compound_manager_ethereum, abi=auto_market_manager_abi
             )
 
-        # Get lpt token address from Stake DAO vault
-        pendlePoolAddress = call_with_retry(
-            masterpenpiecontract.functions.receiptToStakeToken(self.lp_contract),
+        # Get penpie receipt token address & pendle market address for the auto compound market
+        lpTokens = call_with_retry(
+            autoMarketManager.functions.getAutoMarketInfo(self.lp_contract),
             block,
         )
-        # pendlePoolAddress = "0x107a2e3cD2BB9a32B9eE2E4d51143149F8367eBa"
+        # pendlePoolAddress = "0x4eaA571EaFCD96f51728756BD7F396459BB9B869"
         if self.chain == Chain.ETHEREUM:
-            lptContract = w3.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
-        if self.chain == Chain.ARBITRUM:
-            lptContract = w3_arb.eth.contract(address=pendlePoolAddress, abi=lpt_abi)
-        print(pendlePoolAddress)
+            lptContract = w3.eth.contract(address=lpTokens[1], abi=lpt_abi)
+        
+        print(lpTokens[1])
         # Get SY address
         tokens = call_with_retry(
             lptContract.functions.readTokens(),
@@ -80,20 +71,16 @@ class PENPIEIntegration(Integration):
         sy = tokens[0]
         if self.chain == Chain.ETHEREUM:
             sy_contract = w3.eth.contract(address=sy, abi=erc20_abi)
-        if self.chain == Chain.ARBITRUM:
-            sy_contract = w3_arb.eth.contract(address=sy, abi=erc20_abi)
 
         # Get SY balance in the Pendle pool
         sy_bal = call_with_retry(
-            sy_contract.functions.balanceOf(pendlePoolAddress),
+            sy_contract.functions.balanceOf(lpTokens[1]),
             block,
         )
         if sy_bal == 0:
             return 0
         if self.chain == Chain.ETHEREUM:
             PENDLE_LOCKER = PENDLE_LOCKER_ETHEREUM
-        if self.chain == Chain.ARBITRUM:
-            PENDLE_LOCKER = PENDLE_LOCKER_ARBITRUM
         # Get Stake DAO lpt balance
         lpt_bal = call_with_retry(
             lptContract.functions.activeBalance(PENDLE_LOCKER),
@@ -117,12 +104,24 @@ class PENPIEIntegration(Integration):
 
         if self.chain == Chain.ETHEREUM:
             receiptcontract = w3.eth.contract(
-                address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
+                address=w3.to_checksum_address(lpTokens[0]), abi=erc20_abi
             )
-        if self.chain == Chain.ARBITRUM:
-            receiptcontract = w3_arb.eth.contract(
-                address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
+        if self.chain == Chain.ETHEREUM:
+            autoMarketLPContract = w3.eth.contract(
+                address=self.lp_contract, abi=erc20_abi
             )
+
+        # Get User's Auto Market Balance
+        userAutoMarketBal = call_with_retry(
+            autoMarketLPContract.functions.balanceOf(user),
+            block,
+        )
+
+        # Get Auto Market Total Supply
+        autoMarketTotalSupply = call_with_retry(
+            autoMarketLPContract.functions.totalSupply(),
+            block,
+        )
 
         # Get gauge total suply
         penpeiepoolTotalSupply = call_with_retry(
@@ -131,13 +130,16 @@ class PENPIEIntegration(Integration):
         )
 
         # Get gauge user balance
-        userpenpeiepoolBal = call_with_retry(
-            receiptcontract.functions.balanceOf(user),
+        autoMarketpenpeiepoolBal = call_with_retry(
+            receiptcontract.functions.balanceOf(self.lp_contract),
             block,
         )
 
-        # Get user share based on gauge#totalSupply / gauge#balanceOf(user) and lockerSyBalance
-        userShare = userpenpeiepoolBal * 100 / penpeiepoolTotalSupply
+        # Get the share of the auto market in the penpie pool
+        autoMarketShare = autoMarketpenpeiepoolBal * 100 / penpeiepoolTotalSupply
+
+        # Get user share based on the share of the auto market in the penpie pool and the user's auto market balance
+        userShare = autoMarketShare * userAutoMarketBal / autoMarketTotalSupply
 
         print(user, userShare * lpt_bal / 100)
         return userShare * lockerSyBalance / 100
@@ -186,7 +188,6 @@ class PENPIEIntegration(Integration):
                 if (
                     deposit["args"]["to"]
                     != "0x0000000000000000000000000000000000000000"
-                    and deposit["args"]["to"] != auto_compound_manager_ethereum
                 ):
                     all_users.add(deposit["args"]["to"])
                     print(deposit["args"]["to"])
