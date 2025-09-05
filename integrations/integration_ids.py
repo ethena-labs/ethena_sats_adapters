@@ -511,7 +511,6 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
-
     # Affluent
     AFFLUENT_USDE = ("affluent_usde", "Affluent TON USDe", Token.USDE)
     AFFLUENT_SUSDE = ("affluent_susde", "Affluent TON sUSDe", Token.SUSDE)
@@ -541,16 +540,19 @@ class IntegrationID(Enum):
     FELIX_USDE = ("felix_usde", "Felix USDe", Token.USDE)
 
     # Terminal Finance
-    TERMINAL_TUSDE = (
-        "terminal_tusde",
-        "Terminal Finance tUSDe",
-        Token.USDE
-    )
+    TERMINAL_TUSDE = ("terminal_tusde", "Terminal Finance tUSDe", Token.USDE)
 
     TERMINAL_TERMMAX_TUSDE = (
         "terminal_termmax_tusde",
         "Terminal Finance tUSDe on TermMax",
-        Token.USDE
+        Token.USDE,
+    )
+
+    # Thruster
+    THRUSTER_USDE_POOL = (
+        "thruster_usde_pool",
+        "Thruster USDe Pool",
+        Token.USDE,
     )
 
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
