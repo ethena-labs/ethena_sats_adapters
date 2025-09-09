@@ -147,7 +147,7 @@ class PENPIEIntegrationV2(Integration):
 
         #---------------------Calculations for penpie auto compound pool--------------------
 
-        if self.chain == Chain.ETHEREUM or (self.chain == Chain.ARBITRUM and auto_compound_manager_arbitrum != "0x0000000000000000000000000000000000000000"):
+        if self.autoMarket_contract != "0x0000000000000000000000000000000000000000":
             
             if self.chain == Chain.ETHEREUM:
                 autoMarketLPContract = w3.eth.contract(
