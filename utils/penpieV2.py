@@ -130,7 +130,7 @@ class PENPIEIntegrationV2(Integration):
                 address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
             )
 
-        # Get gauge total suply
+        # Get gauge total supply
         penpeiepoolTotalSupply = call_with_retry(
             receiptcontract.functions.totalSupply(),
             block,
@@ -239,7 +239,7 @@ class PENPIEIntegrationV2(Integration):
 
             if self.autoMarket_contract != "0x0000000000000000000000000000000000000000":
                 deposits_auto_market = fetch_events_logs_with_retry(
-                    f"Penpie users {self.autoMarket_contract}",
+                    f"Penpie users {self.lp_contract}",
                     contract_auto_market.events.Transfer(),
                     start,
                     to_block,
