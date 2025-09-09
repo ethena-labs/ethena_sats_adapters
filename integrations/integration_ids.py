@@ -191,6 +191,12 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    PENPIE_USDE_SEP2025_LPT = (
+        "PENPIE_USDE_SEP2025_effective_lpt_held",
+        "USDE_SEP2025",
+        Token.USDE,
+    )
+
     # EQUILIBRIA
     EQUILIBRIA_SUSDE_SEPT_LPT = (
         "equilibria_susde_sept_effective_lpt_held",
