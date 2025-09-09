@@ -201,9 +201,15 @@ class PENPIEIntegrationV2(Integration):
             contract = w3.eth.contract(
                 address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
             )
+            contract_auto_market = w3.eth.contract(
+                address=w3.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
+            )
         elif self.chain == Chain.ARBITRUM:
             contract = w3_arb.eth.contract(
                 address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
+            )
+            contract_auto_market = w3_arb.eth.contract(
+                address=w3_arb.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
             )
         else:
             return set()
@@ -230,6 +236,22 @@ class PENPIEIntegrationV2(Integration):
                 ):
                     all_users.add(deposit["args"]["to"])
                     print(deposit["args"]["to"])
+
+            if self.autoMarket_contract != "0x0000000000000000000000000000000000000000":
+                deposits_auto_market = fetch_events_logs_with_retry(
+                    f"Penpie users {self.autoMarket_contract}",
+                    contract_auto_market.events.Transfer(),
+                    start,
+                    to_block,
+                )
+
+                for deposit_auto_market in deposits_auto_market:
+                    if (
+                        deposit_auto_market["args"]["to"]
+                        != "0x0000000000000000000000000000000000000000"
+                    ):
+                        all_users.add(deposit_auto_market["args"]["to"])
+                        print(deposit_auto_market["args"]["to"])
             start += page_size
 
         return all_users
