@@ -5,7 +5,6 @@ from constants.penpie import PENDLE_LOCKER_ETHEREUM
 from constants.penpie import PENDLE_LOCKER_ARBITRUM
 from constants.penpie import master_penpie_ethereum
 from constants.penpie import master_penpie_arbitrum
-from constants.penpie import auto_compound_manager_ethereum
 import logging
 import json
 from utils.web3_utils import (
