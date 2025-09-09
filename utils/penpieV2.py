@@ -227,7 +227,6 @@ class PENPIEIntegrationV2(Integration):
                 if (
                     deposit["args"]["to"]
                     != "0x0000000000000000000000000000000000000000"
-                    and deposit["args"]["to"] != auto_compound_manager_ethereum
                 ):
                     all_users.add(deposit["args"]["to"])
                     print(deposit["args"]["to"])
