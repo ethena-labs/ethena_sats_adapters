@@ -13,7 +13,7 @@ if __name__ == "__main__":
         25,
         1,
         {PENDLE_LOCKER_ETHEREUM},
-        USDE_AUTOMARKET_25SEP2025
+        USDE_AUTOMARKET_25SEP2025 # Optional Param, should be skipped for pools not supporting auto market
     )
     # print(penpie_integration.get_participants())
     print(
