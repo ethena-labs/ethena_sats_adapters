@@ -149,9 +149,14 @@ class PENPIEIntegrationV2(Integration):
 
         if self.chain == Chain.ETHEREUM or (self.chain == Chain.ARBITRUM and auto_compound_manager_arbitrum != "0x0000000000000000000000000000000000000000"):
             
-            autoMarketLPContract = w3.eth.contract(
-                address=self.autoMarket_contract, abi=erc20_abi
-            )
+            if self.chain == Chain.ETHEREUM:
+                autoMarketLPContract = w3.eth.contract(
+                    address=self.autoMarket_contract, abi=erc20_abi
+                )
+            if self.chain == Chain.ARBITRUM:
+                autoMarketLPContract = w3_arb.eth.contract(
+                    address=self.autoMarket_contract, abi=erc20_abi
+                )
 
             # Get User's Auto Market Balance
             userAutoMarketBal = call_with_retry(
