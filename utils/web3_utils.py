@@ -3,11 +3,12 @@ import os
 import time
 from datetime import datetime
 import traceback
-from typing import Iterable
+from typing import Iterable, List, Tuple, Union
 
 from dotenv import load_dotenv
 from eth_abi.abi import decode
 
+from eth_typing import ChecksumAddress
 from web3 import Web3
 from web3.types import BlockIdentifier, EventData
 
@@ -85,7 +86,6 @@ W3_BY_CHAIN = {
     },
 }
 
-
 MULTICALL_ABI = [
     {
         "inputs": [
@@ -94,7 +94,7 @@ MULTICALL_ABI = [
                     {"internalType": "address", "name": "target", "type": "address"},
                     {"internalType": "bytes", "name": "callData", "type": "bytes"},
                 ],
-                "internalType": "struct Multicall2.Call[]",
+                "internalType": "struct Multicall3.Call[]",
                 "name": "calls",
                 "type": "tuple[]",
             }
@@ -104,9 +104,37 @@ MULTICALL_ABI = [
             {"internalType": "uint256", "name": "blockNumber", "type": "uint256"},
             {"internalType": "bytes[]", "name": "returnData", "type": "bytes[]"},
         ],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "function",
-    }
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {"internalType": "address", "name": "target", "type": "address"},
+                    {"internalType": "bool", "name": "allowFailure", "type": "bool"},
+                    {"internalType": "bytes", "name": "callData", "type": "bytes"},
+                ],
+                "internalType": "struct Multicall3.Call3[]",
+                "name": "calls",
+                "type": "tuple[]",
+            }
+        ],
+        "name": "aggregate3",
+        "outputs": [
+            {
+                "components": [
+                    {"internalType": "bool", "name": "success", "type": "bool"},
+                    {"internalType": "bytes", "name": "returnData", "type": "bytes"},
+                ],
+                "internalType": "struct Multicall3.Result[]",
+                "name": "returnData",
+                "type": "tuple[]",
+            }
+        ],
+        "stateMutability": "payable",
+        "type": "function",
+    },
 ]
 
 MULTICALL_ADDRESS = (
@@ -117,6 +145,7 @@ MULTICALL_ADDRESS_BY_CHAIN = {
     Chain.SEPOLIA: "0x25Eef291876194AeFAd0D60Dff89e268b90754Bb",
     Chain.ETHEREUM: MULTICALL_ADDRESS,
     Chain.HYPEREVM: "0xcA11bde05977b3631167028862bE2a173976CA11",
+    Chain.BLAST: Web3.to_checksum_address("0xcA11bde05977b3631167028862bE2a173976CA11"),
 }
 
 
@@ -136,7 +165,7 @@ def fetch_events_logs_with_retry(
                 return contract_event.get_logs(fromBlock=from_block, toBlock=to_block)
             else:
                 return contract_event.get_logs(
-                  fromBlock=from_block, toBlock=to_block, argument_filters=filter
+                    fromBlock=from_block, toBlock=to_block, argument_filters=filter
                 )
 
         except Exception as e:
@@ -193,37 +222,58 @@ def multicall(w3: Web3, calls: list, block_identifier: BlockIdentifier = "latest
 
 
 def multicall_by_address(
-    # pylint: disable=redefined-outer-name
-    w3: Web3,
+    wb3: Web3,
     multical_address: str,
     calls: list,
-    block_identifier: BlockIdentifier = "latest",
+    block_identifier="latest",
+    allow_failure: bool = False,
+    batch_size: int = 1024,
 ):
-    multicall_contract = w3.eth.contract(
+    multicall_contract = wb3.eth.contract(
         address=Web3.to_checksum_address(multical_address), abi=MULTICALL_ABI
     )
 
-    aggregate_calls = []
+    aggregate_calls: List[
+        Union[Tuple[ChecksumAddress, bool, str], Tuple[ChecksumAddress, str]]
+    ] = []
     for call in calls:
         contract, fn_name, args = call
-        call_data = contract.encode_abi(fn_name=fn_name, args=args)
-        aggregate_calls.append((contract.address, call_data))
+        call_data = contract.encode_abi(fn_name, args=args)
 
-    result = multicall_contract.functions.aggregate(aggregate_calls).call(
-        block_identifier=block_identifier
-    )
+        aggregate_calls.append((contract.address, allow_failure, call_data))
 
-    decoded_results = []
+    result = []
+    for i in range(0, len(aggregate_calls), batch_size):
+        batch = aggregate_calls[i : i + batch_size]
+        result.extend(
+            call_with_retry(
+                multicall_contract.functions.aggregate3(batch),
+                block=block_identifier,
+            )
+        )
+
+    decoded_results: List[Union[Tuple, None]] = []
     for i, call in enumerate(calls):
         contract, fn_name, _ = call
         function = contract.get_function_by_name(fn_name)
         output_types = [output["type"] for output in function.abi["outputs"]]
-        decoded_results.append(decode(output_types, result[1][i]))
+        if allow_failure:
+            success = result[i][0]
+            if success:
+                decoded_output = decode(output_types, result[i][1])
+                decoded_results.append(decoded_output)
+            else:
+                decoded_results.append(None)
+        else:
+            decoded_output = decode(output_types, result[i][1])
+            decoded_results.append(decoded_output)
 
     return decoded_results
 
 
-def get_block_date(block: int, chain: Chain, adjustment: int = 0, fmt: str = "%Y-%m-%d %H") -> str:
+def get_block_date(
+    block: int, chain: Chain, adjustment: int = 0, fmt: str = "%Y-%m-%d %H"
+) -> str:
     wb3 = W3_BY_CHAIN[chain]["w3"]
     block_info = wb3.eth.get_block(block)
     timestamp = (
