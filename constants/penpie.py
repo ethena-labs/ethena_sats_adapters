@@ -13,6 +13,13 @@ master_penpie_arbitrum = Web3.to_checksum_address(
     "0x0776C06907CE6Ff3d9Dbf84bA9B3422d7225942D"
 )
 
+auto_compound_manager_ethereum = Web3.to_checksum_address(
+    "0x17034283d1560EfBceB5510B598Db717c16068CF"
+)
+
+auto_compound_manager_arbitrum = Web3.to_checksum_address(
+    "0x0000000000000000000000000000000000000000"
+)
 
 SUSDE_JULY = Web3.to_checksum_address("0xae52ec79F2444D642B7E855DfF67bA4849D365eB")
 SUSDE_JULY_DEPLOYMENT_BLOCK = 19717752
@@ -92,3 +99,12 @@ USDE_ARB_NOV2024 = Web3.to_checksum_address(
     "0x706f7F4cc144d6621E0c8798381575a8Cd1E0572"
 )
 USDE_ARB_NOV2024_DEPLOYMENT_BLOCK = 242775302
+
+USDE_25SEP2025 = Web3.to_checksum_address(
+    "0x37644cbc3d07d9cf65619b23ad122e5724b313a6"
+)   
+USDE_25SEP2025_DEPLOYMENT_BLOCK = 22530086
+
+USDE_AUTOMARKET_25SEP2025 = Web3.to_checksum_address(
+    "0x8c3d0b8a484e12a960b91fee6e7dd4531626791d" 
+)
