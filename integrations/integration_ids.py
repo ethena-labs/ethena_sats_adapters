@@ -561,6 +561,10 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Folks Finance
+    FOLKS_FINANCE_USDE = ("folks_finance_usde", "Folks Finance USDe", Token.USDE)
+    FOLKS_FINANCE_SUSDE = ("folks_finance_susde", "Folks Finance sUSDe", Token.SUSDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
