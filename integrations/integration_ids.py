@@ -561,6 +561,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Uniswap V4
+    UNISWAP_V4_POOL = (
+        "uniswap_v4_pool",
+        "Uniswap V4 Pool",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
