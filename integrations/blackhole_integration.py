@@ -41,8 +41,8 @@ class BlackholeIntegration(CachedBalancesIntegration):
         )
         # Base URL without query params
         self.api_url = (
-            "https://fbqe61zd1l.execute-api.us-east-1.amazonaws.com/"
-            "temp-stage-pool-balances/totalPoolBalances"
+            "https://api.blackhole.xyz/"
+            "totalPoolBalances"
         )
         self.ticker = ticker
         self.token_address = token_address
