@@ -18,3 +18,4 @@ class Chain(Enum):
     SEPOLIA = "Sepolia"
     TON = "Ton"
     HYPEREVM = "HyperEVM"
+    AVALANCHE="Avalanche"
