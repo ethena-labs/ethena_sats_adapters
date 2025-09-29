@@ -561,6 +561,9 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Midas
+    MIDAS_MWILDUSD = ("midas_mwildusd", "Midas mWildUSD", Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
