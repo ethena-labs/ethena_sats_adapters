@@ -138,7 +138,7 @@ MULTICALL_ABI = [
 ]
 
 MULTICALL_ADDRESS = (
-    "0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696"  # Ethereum mainnet address
+    "0xcA11bde05977b3631167028862bE2a173976CA11"  # Ethereum mainnet address
 )
 MULTICALL_ADDRESS_BY_CHAIN = {
     Chain.SWELL: "0xcA11bde05977b3631167028862bE2a173976CA11",
@@ -245,12 +245,28 @@ def multicall_by_address(
     result = []
     for i in range(0, len(aggregate_calls), batch_size):
         batch = aggregate_calls[i : i + batch_size]
-        result.extend(
-            call_with_retry(
-                multicall_contract.functions.aggregate3(batch),
-                block=block_identifier,
+
+        if allow_failure:
+            # When allowing failures, catch contract reverts and return None for failed batches
+            try:
+                batch_result = call_with_retry(
+                    multicall_contract.functions.aggregate3(batch),
+                    block=block_identifier,
+                )
+                result.extend(batch_result)
+            except Exception as e:
+                print(
+                    f"Multicall batch failed, returning None for {len(batch)} calls: {e}"
+                )
+                # Return None for each call in the failed batch
+                result.extend([(False, b"")] * len(batch))
+        else:
+            result.extend(
+                call_with_retry(
+                    multicall_contract.functions.aggregate3(batch),
+                    block=block_identifier,
+                )
             )
-        )
 
     decoded_results: List[Union[Tuple, None]] = []
     for i, call in enumerate(calls):
