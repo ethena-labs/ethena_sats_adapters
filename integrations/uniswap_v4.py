@@ -10,7 +10,6 @@ from constants.uniswap_v4 import (
     uniswap_v4_sv_contract,
 )
 from utils.web3_utils import (
-    MULTICALL_ADDRESS_BY_CHAIN,
     call_with_retry,
     fetch_events_logs_with_retry,
     multicall_by_address,
@@ -22,6 +21,8 @@ from integrations.deposit_ids_integration import DepositIdsIntegration
 from integrations.integration_ids import IntegrationID as IntID
 
 PAGINATION_SIZE = 1000
+
+extract_signed_24bit = lambda val: val - (1 << 24) if val >= (1 << 23) else val
 
 
 def get_all_users(
@@ -69,7 +70,7 @@ def get_all_users(
     if ownerOf_calls:
         multicall_results = multicall_by_address(
             wb3=w3,
-            multical_address=MULTICALL_ADDRESS_BY_CHAIN[Chain.ETHEREUM],
+            multical_address="0xcA11bde05977b3631167028862bE2a173976CA11",
             calls=ownerOf_calls,
             block_identifier=end,
             allow_failure=True,
@@ -95,27 +96,32 @@ def get_all_users(
 
 def get_position_balance(token_id, block, tick, sqrt_price):
     try:
-        [packedInfo] = call_with_retry(
+        packedInfo = call_with_retry(
             uniswap_v4_nfpm_contract.functions.positionInfo(token_id),
             block,
         )
-        [liquidity] = call_with_retry(
+        liquidity = call_with_retry(
             uniswap_v4_nfpm_contract.functions.getPositionLiquidity(token_id),
             block,
         )
     except Exception:
-        print(f"token {token_id} not yet created at block {block}")
+        print(f"token {token_id} empty at block {block}")
         return [0, 0]
 
     if liquidity == 0:
         return [0, 0]
+
     t0 = 0
     t1 = 0
 
     # tickUpper: bits 32-55 (from the right, 0-indexed)
     # tickLower: bits 8-31
-    tick_upper = (packedInfo >> 32) & ((1 << 24) - 1)
-    tick_lower = (packedInfo >> 8) & ((1 << 24) - 1)
+    tick_upper = extract_signed_24bit((packedInfo >> 32) & ((1 << 24) - 1))
+    tick_lower = extract_signed_24bit((packedInfo >> 8) & ((1 << 24) - 1))
+
+    # print(
+    #     f"tick: {tick}, tick_lower: {tick_lower}, tick_upper: {tick_upper}, token_id: {token_id}, liquidity: {liquidity}"
+    # )
 
     sqrt_ratio_l = math.sqrt(1.0001**tick_lower)
     sqrt_ratio_u = math.sqrt(1.0001**tick_upper)
@@ -126,6 +132,7 @@ def get_position_balance(token_id, block, tick, sqrt_price):
         t1 = liquidity * (sqrt_ratio_u - sqrt_ratio_l)
     else:
         t0 = liquidity * (sqrt_ratio_u - sqrt_ratio_l) / (sqrt_ratio_u * sqrt_ratio_l)
+
     return [abs(t0 / 10**18), abs(t1 / 10**6)]
 
 
@@ -150,8 +157,8 @@ class UniswapV4Integration(DepositIdsIntegration):
             user_t0_balances = 0
             user_t1_balances = 0
 
-            [sqrtPriceX96, tick] = call_with_retry(
-                uniswap_v4_sv_contract.functions.getSlot0(token_id),
+            [sqrtPriceX96, tick, _, _] = call_with_retry(
+                uniswap_v4_sv_contract.functions.getSlot0(UNISWAP_V4_USDE_POOL),
                 block,
             )
 
@@ -197,9 +204,9 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # The specific USDe pool was created at this block.
-    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23067966)
+    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23468000)
 
-    BLOCK = 23067966 + 2000
+    BLOCK = 23468700
     # BLOCK = 23393544
 
     print(f"Block: {BLOCK:,}")
