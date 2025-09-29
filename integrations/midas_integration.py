@@ -67,12 +67,17 @@ class MidasIntegration(CachedBalancesIntegration):
                     to_block,
                 )
                 for transfer in transfers:
-                    if transfer["args"]["from"] != ZERO_ADDRESS:
+                    userTo = transfer["args"]["to"]
+                    if userTo not in bals:
+                        bals[userTo] = 0
+                    bals[userTo] += round(transfer["args"]["value"] / 10**18, 4)
+
+                    userFrom = transfer["args"]["from"]
+                    if userFrom == ZERO_ADDRESS:
                         continue
-                    user = transfer["args"]["to"]
-                    if user not in bals:
-                        bals[user] = 0
-                    bals[user] += round(transfer["args"]["value"] / 10**18, 4)
+                    if userFrom not in bals:
+                        bals[userFrom] = 0
+                    bals[userFrom] -= round(transfer["args"]["value"] / 10**18, 4)
                 start = to_block + 1
             new_block_data[block] = bals
             cache_copy[block] = bals
@@ -89,7 +94,7 @@ if __name__ == "__main__":
 
     # Without cached data
     without_cached_data_output = midas_integration.get_block_balances(
-        cached_data={}, blocks=[23441782,23441783]
+        cached_data={}, blocks=[23441782,23442447]
     )
 
     print("=" * 120)
@@ -99,7 +104,7 @@ if __name__ == "__main__":
     # With cached data, using the previous output so there is no need
     # to fetch the previous blocks again
     with_cached_data_output = midas_integration.get_block_balances(
-        cached_data=without_cached_data_output, blocks=[23441782,23441783]
+        cached_data=without_cached_data_output, blocks=[23441782,23442447]
     )
     print("Run with cached data", with_cached_data_output)
     print("=" * 120)
