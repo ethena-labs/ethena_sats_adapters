@@ -104,6 +104,8 @@ class SummaryColumn(Enum):
         SummaryColumnType.ETHENA_PTS,
     )
 
+    MIDAS_MWILDUSD_PTS = ("midas_mwildusd_pts", SummaryColumnType.ETHENA_PTS)
+
     THRUSTER_POOL_PTS = ("thruster_pool_pts", SummaryColumnType.ETHENA_PTS)
 
     def __init__(self, column_name: str, col_type: SummaryColumnType):

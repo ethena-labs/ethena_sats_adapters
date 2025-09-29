@@ -1,0 +1,18 @@
+from web3 import Web3
+
+from utils.web3_utils import w3
+import json
+
+PAGINATION_SIZE = 2000
+
+MIDAS_MWILDUSD_ADDRESS = Web3.to_checksum_address("0x605A84861EE603e385b01B9048BEa6A86118DB0a")
+MIDAS_MWILDUSD_START_BLOCK = 23441782
+ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+
+with open("abi/ERC20_abi.json") as f:
+    ERC20_ABI = json.load(f)
+
+MIDAS_MWILDUSD_CONTRACT = w3.eth.contract(
+    address=MIDAS_MWILDUSD_ADDRESS,
+    abi=ERC20_ABI,
+)
