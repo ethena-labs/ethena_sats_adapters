@@ -343,6 +343,18 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    BALANCER_V3_PLASMA_USDE_USDT = (
+        "balancer_v3_plasma_usde_usdt",
+        "Balancer V3 Plasma USDe/USDT",
+        Token.USDE,
+    )
+
+    BALANCER_V3_PLASMA_SUSDE_USDT = (
+        "balancer_v3_plasma_susde_usdt",
+        "Balancer V3 Plasma sUSDe/USDT",
+        Token.SUSDE,
+    )
+
     # Nuri
     NURI_USDE_LP = ("nuri_usde_lp_bal", "Nuri USDe LP", Token.USDE)
 

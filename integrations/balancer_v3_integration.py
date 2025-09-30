@@ -74,11 +74,12 @@ class BalancerV3Integration(Integration):
         blocks: Optional[List[int]],
     ) -> Set[str]:
         """
-        Retrieve the set of all unique participants who might have staked Balancer Pool Tokens (BPTs).
-
-        This method identifies all addresses that have staked their BPT either directly
-        in Balancer gauges or via Aura Finance. Non-staked BPT holders are not included.
+        Retrieve the set of all unique participants who might have Balancer Pool Tokens (BPTs).
         """
+        bpt_holders = get_potential_token_holders(
+            self.chain, self.pool_address, self.start_block
+        )
+
         gauge_holders = (
             []
             if self.gauge_address is None
@@ -95,10 +96,10 @@ class BalancerV3Integration(Integration):
             )
         )
 
-        return set(aura_holders + gauge_holders)
+        return set(bpt_holders + aura_holders + gauge_holders)
 
 
 if __name__ == "__main__":
-    balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_ETHEREUM_USDE_USDT)
+    balancer = BalancerV3Integration(IntegrationID.BALANCER_V3_PLASMA_USDE_USDT)
     participants = balancer.get_participants(None)
     balances = balancer.get_balance(list(participants)[0])
