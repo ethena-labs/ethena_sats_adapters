@@ -40,8 +40,8 @@ class BalancerV3Integration(Integration):
         Retrieve the balance of the user in the incentivized Ethena token.
 
         This method calculates the user's token balance based on the share of Balancer Pool Tokens (BPTs)
-        staked either directly in Balancer gauges or via Aura Finance.
         """
+        bpt_balance = get_user_balance(self.chain, user, self.pool_address, block)
         gauge_balance = (
             0
             if self.gauge_address is None
@@ -55,7 +55,7 @@ class BalancerV3Integration(Integration):
 
         bpt_supply = get_token_supply(self.chain, self.pool_address, block)
 
-        user_balance = gauge_balance + aura_balance
+        user_balance = bpt_balance + gauge_balance + aura_balance
 
         incentivized_token_balance = get_vault_v3_pool_token_balance(
             self.chain, self.pool_address, self.incentivized_token, block
