@@ -123,15 +123,11 @@ def get_position_balance(token_id, block, tick, sqrt_price):
     #     f"tick: {tick}, tick_lower: {tick_lower}, tick_upper: {tick_upper}, token_id: {token_id}, liquidity: {liquidity}"
     # )
 
-    sqrt_ratio_l = math.sqrt(1.0001**tick_lower)
-    sqrt_ratio_u = math.sqrt(1.0001**tick_upper)
-    if tick_lower < tick < tick_upper:
-        t0 = liquidity * (sqrt_ratio_u - sqrt_price) / (sqrt_price * sqrt_ratio_u)
-        t1 = liquidity * (sqrt_price - sqrt_ratio_l)
-    elif tick >= tick_upper:
-        t1 = liquidity * (sqrt_ratio_u - sqrt_ratio_l)
-    else:
-        t0 = liquidity * (sqrt_ratio_u - sqrt_ratio_l) / (sqrt_ratio_u * sqrt_ratio_l)
+    sqrt_price_l = math.sqrt(1.0001**tick_lower) * (2**96)
+    sqrt_price_u = math.sqrt(1.0001**tick_upper) * (2**96)
+
+    t0 = liquidity * (sqrt_price_u - sqrt_price) / (sqrt_price * sqrt_price_u) * (2**96)
+    t1 = liquidity * (sqrt_price - sqrt_price_l) / (2**96)
 
     return [abs(t0 / 10**18), abs(t1 / 10**6)]
 
@@ -204,9 +200,9 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # The specific USDe pool was created at this block.
-    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23468000)
+    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23485700)
 
-    BLOCK = 23468700
+    BLOCK = 23491700
     # BLOCK = 23393544
 
     print(f"Block: {BLOCK:,}")
