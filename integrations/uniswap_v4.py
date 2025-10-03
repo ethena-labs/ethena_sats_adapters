@@ -123,11 +123,29 @@ def get_position_balance(token_id, block, tick, sqrt_price):
     #     f"tick: {tick}, tick_lower: {tick_lower}, tick_upper: {tick_upper}, token_id: {token_id}, liquidity: {liquidity}"
     # )
 
-    sqrt_price_l = math.sqrt(1.0001**tick_lower) * (2**96)
-    sqrt_price_u = math.sqrt(1.0001**tick_upper) * (2**96)
+    sqrt_ratio_l = math.sqrt(1.0001**tick_lower) * (2**96)
+    sqrt_ratio_u = math.sqrt(1.0001**tick_upper) * (2**96)
 
-    t0 = liquidity * (sqrt_price_u - sqrt_price) / (sqrt_price * sqrt_price_u) * (2**96)
-    t1 = liquidity * (sqrt_price - sqrt_price_l) / (2**96)
+    # t0 = liquidity * (sqrt_price_u - sqrt_price) / (sqrt_price * sqrt_price_u) * (2**96)
+    # t1 = liquidity * (sqrt_price - sqrt_price_l) / (2**96)
+
+    if tick_lower < tick < tick_upper:
+        t0 = (
+            liquidity
+            * (sqrt_ratio_u - sqrt_price)
+            / (sqrt_price * sqrt_ratio_u)
+            * (2**96)
+        )
+        t1 = liquidity * (sqrt_price - sqrt_ratio_l) / (2**96)
+    elif tick >= tick_upper:
+        t1 = liquidity * (sqrt_ratio_u - sqrt_ratio_l) / (2**96)
+    else:
+        t0 = (
+            liquidity
+            * (sqrt_ratio_u - sqrt_ratio_l)
+            / (sqrt_ratio_u * sqrt_ratio_l)
+            * (2**96)
+        )
 
     return [abs(t0 / 10**18), abs(t1 / 10**6)]
 
