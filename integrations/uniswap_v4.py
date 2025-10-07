@@ -26,7 +26,7 @@ extract_signed_24bit = lambda val: val - (1 << 24) if val >= (1 << 23) else val
 
 
 def get_all_users(
-    start=21688329,
+    start=23479850,
     end=None,
 ) -> Dict[ChecksumAddress, Set[int]]:
     if end is None:
@@ -218,9 +218,9 @@ if __name__ == "__main__":
     print("=" * 60)
 
     # The specific USDe pool was created at this block.
-    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23485700)
+    v4_integration = UniswapV4Integration(IntID.UNISWAP_V4_POOL, 23479850)
 
-    BLOCK = 23491700
+    BLOCK = 23479855
     # BLOCK = 23393544
 
     print(f"Block: {BLOCK:,}")

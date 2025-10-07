@@ -4,7 +4,7 @@ from web3.contract import Contract
 from utils.web3_utils import w3
 
 UNISWAP_V4_USDE_POOL = Web3.to_bytes(
-    hexstr="0xaae9da4a878406eb1de54efac30e239fd56d54fb8051e59f6fee529bc9609b3b"
+    hexstr="0x63bb22f47c7ede6578a25c873e77eb782ec8e4c19778e36ce64d37877b5bd1e7"
 )
 
 UNISWAP_V4_STATE_VIEW = Web3.to_checksum_address(
