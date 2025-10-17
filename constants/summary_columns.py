@@ -108,6 +108,8 @@ class SummaryColumn(Enum):
 
     UNISWAP_V4_POOL_PTS = ("uniswap_v4_pool_pts", SummaryColumnType.ETHENA_PTS)
 
+    BERACHAIN_LP_sUSDe_USDe_HONEY_POOL = ("berachain_sUSDe_USDe_HONEY_pool", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

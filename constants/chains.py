@@ -19,3 +19,4 @@ class Chain(Enum):
     TON = "Ton"
     HYPEREVM = "HyperEVM"
     PLASMA = "Plasma"
+    BERACHAIN = "Berachain"
