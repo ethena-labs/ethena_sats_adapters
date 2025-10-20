@@ -580,6 +580,13 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Berachain BEX
+    BERACHAIN_LP_sUSDe_USDe_HONEY_POOL = (
+        "berachain_sUSDe_USDe_HONEY_pool",
+        "Berachain sUSDe | USDe | HONEY Pool",
+        Token.USDE
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
