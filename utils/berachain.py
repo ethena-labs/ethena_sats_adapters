@@ -36,13 +36,12 @@ def get_pool_token_holders(
 
         print(start_block, to_block, len(transfers), "Getting Balancer ERC20 Transfers")
         
-        # ToDo: Rename
-        FILTERED_TO = [ZERO_ADRESS]
+        IGNORED_ADDRESSES = [ZERO_ADRESS]
         if reward_vault is not None:
-            FILTERED_TO.append(reward_vault)
+            IGNORED_ADDRESSES.append(reward_vault)
 
         for transfer in transfers:
-            if transfer["args"]["to"] not in FILTERED_TO:
+            if transfer["args"]["to"] not in IGNORED_ADDRESSES:
                 token_holders.add(transfer["args"]["to"])
 
         start_block += PAGE_SIZE
