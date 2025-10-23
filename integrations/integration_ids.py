@@ -529,6 +529,13 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    # Bend sUSDS-sUSDe
+    BEND_SUSDE_SUSDS = (
+        "bend_susde_susds",
+        "Bend sUSDe-sUSDS LP token",
+        Token.SUSDE,
+    )
+
     # Affluent
     AFFLUENT_USDE = ("affluent_usde", "Affluent TON USDe", Token.USDE)
     AFFLUENT_SUSDE = ("affluent_susde", "Affluent TON sUSDe", Token.SUSDE)
