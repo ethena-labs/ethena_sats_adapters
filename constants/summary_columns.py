@@ -73,6 +73,8 @@ class SummaryColumn(Enum):
 
     MORPHO_SUSDE_SUSDS_PTS = ("morpho_susde_susds_pts", SummaryColumnType.ETHENA_PTS)
 
+    BEND_SUSDE_SUSDS_PTS = ("bend_susde_susds_pts", SummaryColumnType.ETHENA_PTS)
+
     # Silo Finance LP-sUSDe (25 Sep 2025)
     SILO_FINANCE_LP_SUSDE_SEP_25_EXPIRY_PTS = (
         "silo_finance_lp_usde_sep_25_expiry_pts",
