@@ -42,6 +42,8 @@ HYPEREVM_NODE_URL = os.getenv("HYPEREVM_NODE_URL")
 w3_hyperevm = Web3(Web3.HTTPProvider(HYPEREVM_NODE_URL))
 PLASMA_NODE_URL = os.getenv("PLASMA_NODE_URL")
 w3_plasma = Web3(Web3.HTTPProvider(PLASMA_NODE_URL))
+BERACHAIN_NODE_URL = os.getenv("BERACHAIN_NODE_URL")
+w3_berachain = Web3(Web3.HTTPProvider(BERACHAIN_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -88,6 +90,9 @@ W3_BY_CHAIN = {
     },
     Chain.PLASMA: {
         "w3": w3_plasma,
+    },
+    Chain.BERACHAIN: {
+        "w3": w3_berachain,
     },
 }
 
