@@ -50,7 +50,7 @@ class KodiakIntegration(Integration):
                 result[block] = deepcopy(cached_data[block])
                 continue
 
-            params = {"excludeSources": "balance,v3-position", "blockNumber": block}
+            params = {"excludeSources": "balance", "blockNumber": block}
             response = requests.get(base_url, params=params)
             data = response.json()
 
@@ -63,7 +63,11 @@ class KodiakIntegration(Integration):
                         extra_data = balance_entry["extraData"]
                         if extra_data.get("islandId") == self.island.value.lower():
                             value += float(balance_entry["value"])
-                block_data[user_address] = value
+                    elif balance_entry["source"] == "v3-position":
+                        value += float(balance_entry["value"])
+                            
+                if value > 0:
+                    block_data[user_address] = value
             result[block] = block_data
         
         return result
