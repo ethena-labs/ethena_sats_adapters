@@ -114,6 +114,10 @@ class SummaryColumn(Enum):
     STRATA_MONEY_SENIOR = ("strata_srusde_pts", SummaryColumnType.ETHENA_PTS)
     STRATA_MONEY_JUNIOR = ("strata_jrusde_pts", SummaryColumnType.ETHENA_PTS)
 
+    # Kodiak
+    KODIAK_USDE_PTS = ("kodiak_usde_pts", SummaryColumnType.ETHENA_PTS)
+    KODIAK_SUSDE_PTS = ("kodiak_susde_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

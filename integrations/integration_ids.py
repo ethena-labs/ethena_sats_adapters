@@ -580,6 +580,19 @@ class IntegrationID(Enum):
         Token.USDE,
     )
 
+    # Kodiak
+    KODIAK_USDE = (
+        "kodiak_usde",
+        "Kodiak USDe",
+        Token.USDE
+    )
+
+    KODIAK_SUSDE = (
+        "kodiak_susde",
+        "Kodiak sUSDe",
+        Token.SUSDE
+    )
+
     # Uniswap V4
     UNISWAP_V4_POOL = (
         "uniswap_v4_pool",
