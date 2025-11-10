@@ -1,5 +1,4 @@
 from copy import deepcopy
-import json
 from typing import Dict, List
 from eth_typing import ChecksumAddress
 import requests
@@ -21,10 +20,10 @@ class KodiakIntegration(Integration):
         if chain not in [Chain.BERACHAIN]:
             raise ValueError(f"KodiakIntegration not supported on chain {chain}")
         
-        if integration_id is IntegrationID.KODIAK_USDE:
+        if integration_id == IntegrationID.KODIAK_USDE:
             self.island = KodiakIslandAddress.USDE
             self.token = Tokens.USDE
-        elif integration_id is IntegrationID.KODIAK_SUSDE:
+        elif integration_id == IntegrationID.KODIAK_SUSDE:
             self.island = KodiakIslandAddress.SUSDE
             self.token = Tokens.SUSDE
         else:
