@@ -1,6 +1,6 @@
 from enum import Enum
 
-KODIAK_API_URL = "https://staging.backend.kodiak.finance"
+KODIAK_API_URL = "https://backend.kodiak.finance"
 
 class KodiakIslandAddress(Enum):
     USDE = "0xE5A2ab5D2fb268E5fF43A5564e44c3309609aFF9"
