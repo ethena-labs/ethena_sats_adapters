@@ -48,7 +48,7 @@ class NhypeIntegration(CachedBalancesIntegration):
             end_block = self.w3.eth.get_block_number()
 
         start = self.start_block
-        batch_size = 500
+        batch_size = 10000
 
         while start <= end_block:
             current_batch_end = min(start + batch_size - 1, end_block)
