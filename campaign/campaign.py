@@ -16,7 +16,6 @@ from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK
 from constants.summary_columns import SummaryColumn
 from web3 import Web3
 from constants.evaa import EVAA_USDE_START_BLOCK, EVAA_SUSDE_START_BLOCK
-from constants.affluent import AFFLUENT_USDE_START_BLOCK, AFFLUENT_SUSDE_START_BLOCK
 from integrations.stonfi_integration import StonFiIntegration
 from integrations.affluent_integration import AffluentIntegration
 from integrations.integration import Integration
