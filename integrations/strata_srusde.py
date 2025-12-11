@@ -139,7 +139,7 @@ class StrataSrUSDeIntegration(CachedBalancesIntegration):
         Returns:
             Dictionary mapping block numbers to user balances at that block
         """
-        logging.info(f"[{self.tranche["name"]}] Getting block balances")
+        logging.info(f"[{self.tranche['name']}] Getting block balances")
 
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
