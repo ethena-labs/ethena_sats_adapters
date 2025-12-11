@@ -82,7 +82,7 @@ class EvaaIntegration(L2DelegationIntegration):
                 payload = res.json()
 
                 if payload is None:
-                    raise Exception(f"Error getting participants data for EVAA Protocol token {token} at block {block}: {e}")
+                    raise Exception(f"Error getting participants data for EVAA Protocol token {token} at block {block}: payload is None")
 
                 block_data = payload
 
