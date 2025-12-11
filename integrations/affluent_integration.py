@@ -68,7 +68,7 @@ class AffluentIntegration(L2DelegationIntegration):
             payload = res.json()
 
             if payload is None:
-                raise Exception(f"Error getting participants data for Affluent Protocol token {token} at block {block}: payload is None")
+                raise Exception(f"Error getting participants data for Affluent Protocol token {token} at block {block}: {e}")
             
             for user_data in payload["result"]:
                 block_data[user_data["user_address"]] = user_data["balance"]
