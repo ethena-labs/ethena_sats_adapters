@@ -114,6 +114,9 @@ class SummaryColumn(Enum):
     STRATA_MONEY_SENIOR = ("strata_srusde_pts", SummaryColumnType.ETHENA_PTS)
     STRATA_MONEY_JUNIOR = ("strata_jrusde_pts", SummaryColumnType.ETHENA_PTS)
 
+    # Safe USDe on Safe (Jan 8 - Feb 7 season)
+    SAFE_USDE_ON_SAFE_PTS = ("safe_usde_on_safe_pts", SummaryColumnType.ETHENA_PTS)
+
     def __init__(self, column_name: str, col_type: SummaryColumnType):
         self.column_name = column_name
         self.col_type = col_type

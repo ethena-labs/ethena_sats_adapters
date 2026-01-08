@@ -24,6 +24,11 @@ from integrations.pendle_lpt_integration import PendleLPTIntegration
 from integrations.pendle_yt_integration import PendleYTIntegration
 from integrations.evaa_integration import EvaaIntegration
 from integrations.template import ProtocolNameIntegration
+from integrations.safe_usde_on_safe_integration import (
+    SafeUSDeOnSafeIntegration,
+    SAFE_USDE_START_BLOCK,
+    SAFE_USDE_END_BLOCK,
+)
 from utils import pendle
 
 from constants.example_integrations import (
@@ -160,6 +165,15 @@ INTEGRATIONS: List[Integration] = [
         yt_contract=pendle.usde_arb_YT_contract,
         chain=Chain.ARBITRUM,
         reward_multiplier=20,
+    ),
+    # Safe USDe on Safe (Jan 8 - Feb 7 season)
+    SafeUSDeOnSafeIntegration(
+        integration_id=IntegrationID.SAFE_USDE_ON_SAFE,
+        start_block=SAFE_USDE_START_BLOCK,
+        summary_cols=[SummaryColumn.SAFE_USDE_ON_SAFE_PTS],
+        chain=Chain.ETHEREUM,
+        reward_multiplier=20,
+        end_block=SAFE_USDE_END_BLOCK,
     ),
 ]
 

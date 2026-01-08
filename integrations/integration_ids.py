@@ -591,6 +591,9 @@ class IntegrationID(Enum):
     STRATA_MONEY_SENIOR     = ("strata_srusde", "Strata Senior USDe", Token.SUSDE)
     STRATA_MONEY_JUNIOR     = ("strata_jrusde", "Strata Junior USDe", Token.SUSDE)
 
+    # Safe USDe on Safe (Jan 8 - Feb 7 season)
+    SAFE_USDE_ON_SAFE = ("safe_usde_on_safe", "Safe USDe on Safe", Token.USDE)
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
