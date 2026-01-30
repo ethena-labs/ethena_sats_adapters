@@ -44,6 +44,8 @@ PLASMA_NODE_URL = os.getenv("PLASMA_NODE_URL")
 w3_plasma = Web3(Web3.HTTPProvider(PLASMA_NODE_URL))
 BERACHAIN_NODE_URL = os.getenv("BERACHAIN_NODE_URL")
 w3_berachain = Web3(Web3.HTTPProvider(BERACHAIN_NODE_URL))
+INK_NODE_URL = os.getenv("INK_NODE_URL")
+w3_ink = Web3(Web3.HTTPProvider(INK_NODE_URL))
 
 W3_BY_CHAIN = {
     Chain.ETHEREUM: {
@@ -93,6 +95,9 @@ W3_BY_CHAIN = {
     },
     Chain.BERACHAIN: {
         "w3": w3_berachain,
+    },
+    Chain.INK: {
+        "w3": w3_ink,
     },
 }
 

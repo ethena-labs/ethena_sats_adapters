@@ -20,3 +20,4 @@ class Chain(Enum):
     HYPEREVM = "HyperEVM"
     PLASMA = "Plasma"
     BERACHAIN = "Berachain"
+    INK = "Ink"

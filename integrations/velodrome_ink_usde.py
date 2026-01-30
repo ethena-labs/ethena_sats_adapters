@@ -1,0 +1,31 @@
+from constants.chains import Chain
+from integrations.integration_ids import IntegrationID
+from integrations.integration import Integration
+from constants.velodrome import VELODROME_INK_START_BLOCK, USDE_INK_TOKEN
+from utils.velodrome import fetch_ink_balance, fetch_ink_participants
+
+
+class VelodromeIntegration(Integration):
+    def __init__(self):
+        super().__init__(
+            IntegrationID.VELODROME_INK_USDE,
+            VELODROME_INK_START_BLOCK,
+            Chain.INK,
+            None,
+            20,
+            1,
+            None,
+            None,
+        )
+
+    def get_balance(self, user: str, block: int) -> float:
+        return fetch_ink_balance(user, block, USDE_INK_TOKEN)
+
+    def get_participants(self, blocks: list[int] | None) -> set[str]:
+        self.participants = fetch_ink_participants(USDE_INK_TOKEN)
+        return self.participants
+
+
+if __name__ == "__main__":
+    velodrome_integration = VelodromeIntegration()
+    participants = velodrome_integration.get_participants(None)

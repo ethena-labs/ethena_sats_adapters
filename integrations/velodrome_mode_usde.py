@@ -2,7 +2,7 @@ from constants.chains import Chain
 from integrations.integration_ids import IntegrationID
 from integrations.integration import Integration
 from constants.velodrome import VELODROME_MODE_START_BLOCK, USDE_MODE_TOKEN
-from utils.velodrome import fetch_balance, fetch_participants
+from utils.velodrome import fetch_mode_balance, fetch_mode_participants
 
 
 class VelodromeIntegration(Integration):
@@ -19,10 +19,10 @@ class VelodromeIntegration(Integration):
         )
 
     def get_balance(self, user: str, block: int) -> float:
-        return fetch_balance(user, block, USDE_MODE_TOKEN)
+        return fetch_mode_balance(user, block, USDE_MODE_TOKEN)
 
     def get_participants(self, blocks: list[int] | None) -> set[str]:
-        self.participants = fetch_participants(USDE_MODE_TOKEN)
+        self.participants = fetch_mode_participants(USDE_MODE_TOKEN)
         return self.participants
 
 

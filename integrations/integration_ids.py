@@ -270,6 +270,8 @@ class IntegrationID(Enum):
     # Velodrome
     VELODROME_MODE_USDE = ("velodrome_mode_usde", "Velodrome Mode USDe", Token.USDE)
     VELODROME_MODE_SUSDE = ("velodrome_mode_susde", "Velodrome Mode sUSDe", Token.SUSDE)
+    VELODROME_INK_USDE = ("velodrome_ink_usde", "Velodrome Ink USDe", Token.USDE)
+    VELODROME_INK_SUSDE = ("velodrome_ink_susde", "Velodrome Ink sUSDe", Token.SUSDE)
     # Ambient
     AMBIENT_SCROLL_LP = ("ambient_usde_scroll_lp_bal", "Ambient Scroll LP", Token.USDE)
     AMBIENT_SWELL_LP = ("ambient_usde_swell_lp_bal", "Ambient Swell LP", Token.USDE)
