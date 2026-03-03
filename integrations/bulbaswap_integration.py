@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional, Set
+from typing import Callable, Dict, List, Optional, Set, Union
 import requests
 from eth_typing import ChecksumAddress
 from web3 import Web3
@@ -72,15 +72,13 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                     page = 0
                     while True:
                         # Get positions data with pagination
-                        response = requests.get(
-                            self.api_url,
-                            params={  # type: ignore[arg-type]
-                                "tokenAddress": token_address,
-                                "blockNumber": block,
-                                "page": page,
-                                "limit": self.page_size
-                            },
-                        )
+                        request_params: Dict[str, Union[str, int]] = {
+                            "tokenAddress": token_address,
+                            "blockNumber": block,
+                            "page": page,
+                            "limit": self.page_size,
+                        }
+                        response = requests.get(self.api_url, params=request_params)
                         data = response.json()
                         
                         if data["code"] == 200 and data["data"]["status"] == 0:
