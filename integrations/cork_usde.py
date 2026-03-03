@@ -600,7 +600,7 @@ class CorkIntegration(CachedBalancesIntegration):
                 if existing_block < block:
                     prev_block = existing_block
                     start = existing_block + 1
-                    account_bals = deepcopy(cast(Mapping[ChecksumAddress, Union[Decimal, float]], cache_copy_of_account_bals[prev_block]))
+                    account_bals = deepcopy(cast(Dict[ChecksumAddress, Union[Decimal, float]], cache_copy_of_account_bals[prev_block]))
                     break
 
             # Fetch pair config from self.start_block if not already done
@@ -708,6 +708,7 @@ class CorkIntegration(CachedBalancesIntegration):
             # remaining reserves after end of epoch/term.
             amm_contract_function = self.amm_contract.functions.getReserves
             amm_pools = self.amm_balances_by_lp_token.values()
+            amm_pools_with_tc = [p for p in amm_pools if p.term_config is not None]
             amm_calls = [
                 (
                     self.amm_contract,
@@ -717,7 +718,7 @@ class CorkIntegration(CachedBalancesIntegration):
                         amm_pool.term_config.share_token_addr,
                     ],
                 )
-                for amm_pool in amm_pools
+                for amm_pool in amm_pools_with_tc
             ]
             multicall_results = multicall_by_address(
                 wb3=self.w3,
@@ -730,7 +731,7 @@ class CorkIntegration(CachedBalancesIntegration):
             #   - The `result[0]` is the total balance of the asset token in the AMM pool
             #   - The `result[1]` is the total balance of the share token in the AMM pool
             for amm_pool, result in zip(
-              amm_pools, multicall_results
+              amm_pools_with_tc, multicall_results
             ):
                 # Update the total Ethena-asset and PSM-shares balance of each AMM pool
                 amm_pool.total_assets = (result[0], result[1])
@@ -909,9 +910,9 @@ class CorkIntegration(CachedBalancesIntegration):
                     # attribute the Ethena asset balances to the respective LP token holders
                     elif psm_pool.term_config is not None and account_addr == psm_pool.term_config.amm_pool_addr and amount:
                         tc = psm_pool.term_config
-                        lp_token_addr = tc.amm_lp_token_addr
-                        if lp_token_addr is not None:
-                            amm_pool = self.amm_balances_by_lp_token[lp_token_addr]
+                        lp_addr = tc.amm_lp_token_addr
+                        if lp_addr is not None:
+                            amm_pool = self.amm_balances_by_lp_token[lp_addr]
                             amm_ta = cast(Tuple[int, int], amm_pool.total_assets)
                             # If there are other Uniswap V4 pools which manage PSM-shares,
                             # the total amount of PSM-shares at the UniV4 PoolManager address
@@ -952,7 +953,7 @@ class CorkIntegration(CachedBalancesIntegration):
                                         account_bals[account_addr] = Decimal(bal) + qty
                                         print(
                                             "LPT-LVT-holder:",
-                                            lp_token_addr, vault_share_token_addr, account_addr,
+                                            lp_addr, vault_share_token_addr, account_addr,
                                             "start:", bal,
                                             "in:", qty,
                                             "end:", account_bals[account_addr]
@@ -966,7 +967,7 @@ class CorkIntegration(CachedBalancesIntegration):
                                     )
                                     account_bals[account_addr] = Decimal(bal) + qty
                                     print(
-                                        "LPT-holder:", lp_token_addr, account_addr,
+                                        "LPT-holder:", lp_addr, account_addr,
                                         "start:", bal,
                                         "in:", qty,
                                         "end:", account_bals[account_addr]
