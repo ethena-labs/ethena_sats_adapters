@@ -40,13 +40,7 @@ class EvaaIntegration(L2DelegationIntegration):
             block_balances: Dict[int, Dict[str, float]] = {}
 
             for block_number in blocks:
-                block_balances[block_number] = {}
-                block_data = self.get_participants_data(block_number)
-                participants: List[Dict[str, Any]] = block_data if isinstance(block_data, list) else []
-                for participant in participants:
-                    ton_address = participant["ton_address"]
-                    balance = float(participant["balance"])
-                    block_balances[block_number][ton_address] = balance
+                block_balances[block_number] = self.get_participants_data(block_number)
 
             return block_balances
         except Exception as e:
@@ -58,15 +52,14 @@ class EvaaIntegration(L2DelegationIntegration):
     def get_token_symbol(self):
          return self.integration_id.get_token()
 
-    def get_participants_data(self, block: int) -> List[Dict[str, Any]]:
+    def get_participants_data(self, block: int) -> Dict[str, float]:
         """
-        Returns a list of dicts with "ton_address" and "balance".
+        Returns a dict mapping ton_address to balance (matches L2DelegationIntegration).
         """
         token = self.get_token_symbol()
         pools_list = EVAA_POOLS_MAP[token]
         block_data: List[Dict[str, Any]] = []
         target_date = get_block_date(block, self.chain, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
-
 
         try:
             for pool in pools_list:
@@ -77,7 +70,6 @@ class EvaaIntegration(L2DelegationIntegration):
                         "timestamp": target_date,
                         "token": token.value
                     },
-                    
                     timeout=60,
                 )
                 payload = res.json()
@@ -94,7 +86,7 @@ class EvaaIntegration(L2DelegationIntegration):
                 err_msg = f"Error getting participants data for EVAA Protocol at block {block}: {e}"
                 slack_message(err_msg)
 
-        return block_data
+        return {p["ton_address"]: float(p["balance"]) for p in block_data}
 
 
 if __name__ == "__main__":

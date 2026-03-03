@@ -140,7 +140,7 @@ class SentimentIntegration(CachedBalancesIntegration):
             transfer_event = self.superpool_contract.events.Transfer
             
             # Get all transfer events in the block range
-            events = transfer_event.get_logs(fromBlock=from_block, toBlock=to_block)  # type: ignore[union-attr]
+            events = transfer_event.get_logs(fromBlock=from_block, toBlock=to_block)  # type: ignore[attr-defined]
             
             # Extract unique addresses from 'from' and 'to' fields
             addresses = set()

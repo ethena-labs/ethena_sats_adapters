@@ -74,13 +74,13 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                         # Get positions data with pagination
                         response = requests.get(
                             self.api_url,
-                            params={
+                            params={  # type: ignore[arg-type]
                                 "tokenAddress": token_address,
                                 "blockNumber": block,
                                 "page": page,
                                 "limit": self.page_size
                             },
-                        )  # type: ignore[arg-type]
+                        )
                         data = response.json()
                         
                         if data["code"] == 200 and data["data"]["status"] == 0:
