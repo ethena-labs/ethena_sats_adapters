@@ -600,7 +600,7 @@ class CorkIntegration(CachedBalancesIntegration):
                 if existing_block < block:
                     prev_block = existing_block
                     start = existing_block + 1
-                        account_bals = deepcopy(cast(Mapping[ChecksumAddress, Union[Decimal, float]], cache_copy_of_account_bals[prev_block]))
+                    account_bals = deepcopy(cast(Mapping[ChecksumAddress, Union[Decimal, float]], cache_copy_of_account_bals[prev_block]))
                     break
 
             # Fetch pair config from self.start_block if not already done
