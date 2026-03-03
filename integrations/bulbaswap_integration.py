@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Set
+from typing import Callable, Dict, List, Optional, Set
 import requests
 from eth_typing import ChecksumAddress
 from web3 import Web3
@@ -22,7 +22,7 @@ class BulbaswapIntegration(CachedBalancesIntegration):
         excluded_addresses: Optional[Set[ChecksumAddress]] = None,
         end_block: Optional[int] = None,
         ethereal_multiplier: int = 0,
-        ethereal_multiplier_func: Optional[callable] = None,
+        ethereal_multiplier_func: Optional[Callable[..., int]] = None,
     ):
         super().__init__(
             integration_id,
@@ -64,7 +64,7 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                 result[block] = cached_data[block]
                 continue
                 
-            block_data = {}
+                block_data: Dict[ChecksumAddress, float] = {}
             
             try:
                 # Fetch data for both token addresses
@@ -79,8 +79,8 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                                 "blockNumber": block,
                                 "page": page,
                                 "limit": self.page_size
-                            }
-                        )
+                            },
+                        )  # type: ignore[arg-type]
                         data = response.json()
                         
                         if data["code"] == 200 and data["data"]["status"] == 0:
@@ -91,7 +91,7 @@ class BulbaswapIntegration(CachedBalancesIntegration):
                                 user_address = Web3.to_checksum_address(item["userAddress"])
                                 
                                 # Sum up liquidity for all pools
-                                total_liquidity = 0
+                                total_liquidity: float = 0.0
                                 for pool_data in item["userPositions"].values():
                                     if float(pool_data["liquidityUSD"]) > 0:
                                         total_liquidity += float(pool_data["liquidityUSD"])

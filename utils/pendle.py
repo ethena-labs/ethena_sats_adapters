@@ -348,7 +348,7 @@ def get_pendle_participants_v3(token_addresses):
                 start,
                 to_block,
             )
-            print(start, to_block, len(transfers), "getting Pendle contract data")
+            print(start, to_block, len(list(transfers)), "getting Pendle contract data")
             for transfer in transfers:
                 all_users.add(transfer["args"]["to"])
             start += page_size

@@ -145,7 +145,7 @@ def get_potential_token_holders(
             to_block,
         )
 
-        print(start_block, to_block, len(transfers), "Getting Balancer ERC20 Transfers")
+        print(start_block, to_block, len(list(transfers)), "Getting Balancer ERC20 Transfers")
 
         for transfer in transfers:
             if transfer["args"]["to"] not in [AURA_VOTER_PROXY[chain], ZERO_ADRESS]:

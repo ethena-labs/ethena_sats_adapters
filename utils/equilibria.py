@@ -153,7 +153,7 @@ class EquilibriaIntegration(Integration):
             print(
                 start,
                 to_block,
-                len(deposits),
+                len(list(deposits)),
                 "getting Equilibria Finance contract data",
             )
             for deposit in deposits:

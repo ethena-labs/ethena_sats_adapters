@@ -84,7 +84,7 @@ class MerchantMoeIntegration(Integration):
             )
 
             logging.info(
-                f"[{self.name}] Scanning blocks {start_block} to {to_block}, received {len(transfers)} mETH/USDe transfer events"
+                f"[{self.name}] Scanning blocks {start_block} to {to_block}, received {len(list(transfers))} mETH/USDe transfer events"
             )
             for transfer in transfers:
                 from_address = transfer["args"]["from"]

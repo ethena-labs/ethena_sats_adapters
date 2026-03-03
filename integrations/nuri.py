@@ -128,7 +128,7 @@ class Nuri(Integration):
                     start_block,
                     to_block,
                 )
-                print(f"Fetched {len(mint_events)} Mint events")
+                print(f"Fetched {len(list(mint_events))} Mint events")
 
                 for event in mint_events:
                     tx_hash = event["transactionHash"]

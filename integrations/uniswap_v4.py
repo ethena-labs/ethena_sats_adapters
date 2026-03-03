@@ -158,7 +158,7 @@ class UniswapV4Integration(DepositIdsIntegration):
             Chain.ETHEREUM,
             [SummaryColumn.UNISWAP_V4_POOL_PTS],
             50,
-            {},
+            None,
         )
 
     def get_deposit_ids_balances(

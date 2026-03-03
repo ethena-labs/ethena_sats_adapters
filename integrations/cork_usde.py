@@ -220,7 +220,7 @@ class CorkIntegration(CachedBalancesIntegration):
         # For each pair, update term config...
         for pair_id, pair_config in pair_config_by_id.items():
             start_block = max(from_block, pair_config.start_block)
-            if len(new_lpt_events) > 0:
+            if len(list(new_lpt_events)) > 0:
                 # print(f"Found {len(new_lpt_events)} new LPT events")
                 # Update the LP token address for each term
                 for term_id, term_config in pair_config.terms.items():
@@ -684,7 +684,7 @@ class CorkIntegration(CachedBalancesIntegration):
                 for pair_id in pair_ids
             ]
             multicall_results = multicall_by_address(
-                w3=self.w3,
+                wb3=self.w3,
                 multical_address=MULTICALL_ADDRESS_BY_CHAIN[self.chain],
                 calls=vault_calls,
                 block_identifier=block,
@@ -724,7 +724,7 @@ class CorkIntegration(CachedBalancesIntegration):
                 for amm_pool in amm_pools
             ]
             multicall_results = multicall_by_address(
-                w3=self.w3,
+                wb3=self.w3,
                 multical_address=MULTICALL_ADDRESS_BY_CHAIN[self.chain],
                 calls=amm_calls,
                 block_identifier=block,
@@ -761,7 +761,7 @@ class CorkIntegration(CachedBalancesIntegration):
                 for term_id in pair_config.terms
             ]
             multicall_results = multicall_by_address(
-                w3=self.w3,
+                wb3=self.w3,
                 multical_address=MULTICALL_ADDRESS_BY_CHAIN[self.chain],
                 calls=psm_calls,
                 block_identifier=block,

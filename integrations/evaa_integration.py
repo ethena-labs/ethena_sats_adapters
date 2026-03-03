@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from constants.evaa import EVAA_POOLS_MAP, EVAA_ENDPOINT, EVAA_USDE_START_BLOCK, EVAA_SUSDE_START_BLOCK
 
@@ -42,28 +42,29 @@ class EvaaIntegration(L2DelegationIntegration):
             for block_number in blocks:
                 block_balances[block_number] = {}
                 block_data = self.get_participants_data(block_number)
-                for participant in block_data:
+                participants: List[Dict[str, Any]] = block_data if isinstance(block_data, list) else []
+                for participant in participants:
                     ton_address = participant["ton_address"]
-                    balance = participant["balance"]
+                    balance = float(participant["balance"])
                     block_balances[block_number][ton_address] = balance
 
             return block_balances
         except Exception as e:
-            err_msg = f"Error fetching EVAA balances at block {block_number}: {e}"
+            err_msg = f"Error fetching EVAA balances: {e}"
             print(err_msg)
             slack_message(err_msg)
+            return {}
 
     def get_token_symbol(self):
          return self.integration_id.get_token()
 
-    def get_participants_data(self, block: int) -> Dict[str, float]:
+    def get_participants_data(self, block: int) -> List[Dict[str, Any]]:
         """
-        Returns a list of "ton_address": "balance"
+        Returns a list of dicts with "ton_address" and "balance".
         """
-
         token = self.get_token_symbol()
         pools_list = EVAA_POOLS_MAP[token]
-        block_data: Dict[str, float] = {}
+        block_data: List[Dict[str, Any]] = []
         target_date = get_block_date(block, self.chain, adjustment=3600, fmt="%Y-%m-%dT%H:%M:%S")
 
 
@@ -84,7 +85,10 @@ class EvaaIntegration(L2DelegationIntegration):
                 if payload is None:
                     raise Exception(f"Error getting participants data for EVAA Protocol token {token} at block {block}: empty response")
 
-                block_data = payload
+                if isinstance(payload, list):
+                    block_data.extend(payload)
+                else:
+                    block_data.append(payload)
 
         except Exception as e:
                 err_msg = f"Error getting participants data for EVAA Protocol at block {block}: {e}"

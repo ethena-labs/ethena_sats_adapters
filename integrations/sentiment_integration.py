@@ -96,7 +96,7 @@ SUPERPOOL_ABI = [
 ]
 
 # Cache of all holders - maintains a set of all addresses that have ever held SuperPool tokens
-ALL_HOLDERS_CACHE = set()
+ALL_HOLDERS_CACHE: Set[ChecksumAddress] = set()
 
 class SentimentIntegration(CachedBalancesIntegration):
     def __init__(
@@ -140,7 +140,7 @@ class SentimentIntegration(CachedBalancesIntegration):
             transfer_event = self.superpool_contract.events.Transfer
             
             # Get all transfer events in the block range
-            events = transfer_event.get_logs(fromBlock=from_block, toBlock=to_block)
+            events = transfer_event.get_logs(fromBlock=from_block, toBlock=to_block)  # type: ignore[union-attr]
             
             # Extract unique addresses from 'from' and 'to' fields
             addresses = set()
@@ -379,7 +379,7 @@ if __name__ == "__main__":
     
     # Test caching functionality
     print("\nTesting cached data functionality...")
-    cached_data = {test_block: {"0x1234567890123456789012345678901234567890": 100.0}}
+    cached_data = {test_block: {Web3.to_checksum_address("0x1234567890123456789012345678901234567890"): 100.0}}
     
     try:
         result = test_integration.get_block_balances(cached_data=cached_data, blocks=[test_block])

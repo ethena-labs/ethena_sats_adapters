@@ -46,6 +46,7 @@ class AffluentIntegration(L2DelegationIntegration):
             err_msg = f"Error fetching Affluent balances at block {target_block}: {e}"
             print(err_msg)
             slack_message(err_msg)
+            return {}
 
     def get_token_symbol(self):
          return self.integration_id.get_token()

@@ -146,7 +146,7 @@ class StakeDAOIntegration(Integration):
                 start,
                 to_block,
             )
-            print(start, to_block, len(deposits), "getting Stake DAO contract data")
+            print(start, to_block, len(list(deposits)), "getting Stake DAO contract data")
             for deposit in deposits:
                 all_users.add(deposit["args"]["_depositor"])
             start += page_size
