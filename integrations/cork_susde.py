@@ -717,7 +717,7 @@ class CorkIntegration(CachedBalancesIntegration):
                     amm_contract_function.fn_name,
                     [
                         amm_pool.pair_config.amm_quote_token_addr,
-                        amm_pool.term_config.share_token_addr,
+                        cast(TermConfig, amm_pool.term_config).share_token_addr,
                     ],
                 )
                 for amm_pool in amm_pools_with_tc
