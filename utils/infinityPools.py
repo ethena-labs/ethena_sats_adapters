@@ -41,7 +41,7 @@ def get_infinityPools_info_list(
             start,
             to_block,
         )
-        print(start, to_block, len(liquidity_added_events),
+        print(start, to_block, len(list(liquidity_added_events)),
               "getting liquidity_added_events for infinityPools")
         for liquidity_added_event in liquidity_added_events:
             try:

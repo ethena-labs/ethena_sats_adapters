@@ -46,6 +46,7 @@ class AffluentIntegration(L2DelegationIntegration):
             err_msg = f"Error fetching Affluent balances at block {target_block}: {e}"
             print(err_msg)
             slack_message(err_msg)
+            return {}
 
     def get_token_symbol(self):
          return self.integration_id.get_token()
@@ -68,7 +69,7 @@ class AffluentIntegration(L2DelegationIntegration):
             payload = res.json()
 
             if payload is None:
-                raise Exception(f"Error getting participants data for Affluent Protocol token {token} at block {block}: {e}")
+                raise Exception(f"Error getting participants data for Affluent Protocol token {token} at block {block}: empty response")
             
             for user_data in payload["result"]:
                 block_data[user_data["user_address"]] = user_data["balance"]

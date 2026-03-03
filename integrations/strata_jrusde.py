@@ -49,8 +49,10 @@ class StrataJrUSDeIntegration(CachedBalancesIntegration):
 
         # Initialize tranche
         tranche = next((c for c in strata["tranches"] if c["name"] == "jrUSDe"), None)
-        self.tranche = tranche
-        self.contract_tranche: Contract  = self.w3.eth.contract(
+        if tranche is None:
+            raise ValueError("jrUSDe tranche not found in strata config")
+        self.tranche: Dict[str, Any] = tranche
+        self.contract_tranche: Contract = self.w3.eth.contract(
             address=tranche["address"],
             abi=ERC4626_ABI,
         )
@@ -139,7 +141,7 @@ class StrataJrUSDeIntegration(CachedBalancesIntegration):
         Returns:
             Dictionary mapping block numbers to user balances at that block
         """
-        logging.info(f"[{self.tranche["name"]}] Getting block balances")
+        logging.info(f"[{self.tranche['name']}] Getting block balances")
 
         new_block_data: Dict[int, Dict[ChecksumAddress, float]] = {}
         if not blocks:
@@ -193,7 +195,7 @@ class StrataJrUSDeIntegration(CachedBalancesIntegration):
 
                 start = to_block + 1
 
-            balances.pop('0x0000000000000000000000000000000000000000', None)
+            balances.pop(Web3.to_checksum_address('0x0000000000000000000000000000000000000000'), None)
             new_block_data[block] = self.convert_block_balances_to_assets(balances, block)
             cache_copy[block] = balances
         return new_block_data
@@ -230,7 +232,7 @@ if __name__ == "__main__":
         cached_data={}, blocks=[ BLOCK_2 ]
     )
 
-    user = "0x5071479276AD65a5D7E04230C226c25e2522891a"
+    user = Web3.to_checksum_address("0x5071479276AD65a5D7E04230C226c25e2522891a")
     print("One-Go-Fetch", balances[BLOCK_2][user])
     print("Cache-Fetch", with_cached_data_output[BLOCK_2][user])
     print("Balance-Fetch", integration_1.get_balance(user, block=BLOCK_2))

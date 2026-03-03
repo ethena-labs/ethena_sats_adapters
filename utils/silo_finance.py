@@ -53,7 +53,11 @@ class SiloFinance(CachedBalancesIntegration):
             start = prev_block
             bals: Dict[ChecksumAddress, float] = {}
             if cache_copy:
-                prev_block, bals = self.find_closest_cached_data(block, cache_copy)
+                closest = self.find_closest_cached_data(block, cache_copy)
+                if closest is not None:
+                    prev_block, bals = closest
+                else:
+                    prev_block, bals = self.start_block, {}
                 logger.info(
                     f"Found closest cached data for block {block}: {prev_block}"
                 )

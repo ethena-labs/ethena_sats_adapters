@@ -3,7 +3,7 @@ import subprocess
 import json
 import requests
 
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 from dotenv import load_dotenv
 from constants.summary_columns import SummaryColumn
 from constants.example_integrations import (
@@ -49,7 +49,7 @@ class EchelonAptosIntegration(L2DelegationIntegration):
 
         # Populate block data from smallest to largest
         for block in sorted_blocks:
-            user_addresses = self.get_participants(block)
+            user_addresses = list(self.get_participants([block]))
             result = self.get_participants_data(block, user_addresses[0:20])
 
             # Store the balances and cache the exchange rate
@@ -95,7 +95,8 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             print(f"Unexpected error: {e}")
             raise
 
-    def get_participants(self, block: int) -> List[str]:
+    def get_participants(self, blocks: Optional[List[int]] = None) -> Set[str]:
+        block = blocks[0] if blocks else 0
         try:
             response = requests.get(
                 f"{ETHENA_ADDRESS_API_URL}?block={block}",
@@ -106,16 +107,16 @@ class EchelonAptosIntegration(L2DelegationIntegration):
             data = response.json()['data']
             if not isinstance(data, list):
                 logging.warning(f"Unexpected response format from API: {data}")
-                return []
+                return set()
                 
-            return [addr for addr in data if isinstance(addr, str)]
+            return set(addr for addr in data if isinstance(addr, str))
             
         except requests.RequestException as e:
             logging.error(f"Request failed for block {block}: {str(e)}")
-            return []
+            return set()
         except Exception as e:
             logging.error(f"Error processing participants for block {block}: {str(e)}")
-            return []
+            return set()
 
 if __name__ == "__main__":
     example_integration = EchelonAptosIntegration(

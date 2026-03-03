@@ -25,7 +25,11 @@
   "pnpm": {
     "overrides": {
       "bigint-buffer": "npm:bigint-buffer-fixed@^1.1.5",
-      "axios": "^1.12.0",
+      "tar": ">=7.5.8",
+      "minimatch": ">=3.1.4",
+      "axios": ">=1.13.5",
+      "lodash": ">=4.17.23",
+      "bn.js": ">=5.2.3",
       "base-x": "^5.0.1"
     }
   }

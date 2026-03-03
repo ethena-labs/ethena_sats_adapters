@@ -147,15 +147,15 @@ class PENPIEIntegrationV2(Integration):
 
         #---------------------Calculations for penpie auto compound pool--------------------
 
-        if self.autoMarket_contract != "0x0000000000000000000000000000000000000000":
-            
+        if self.autoMarket_contract and self.autoMarket_contract != "0x0000000000000000000000000000000000000000":
+            assert self.autoMarket_contract is not None  # for mypy
             if self.chain == Chain.ETHEREUM:
                 autoMarketLPContract = w3.eth.contract(
-                    address=self.autoMarket_contract, abi=erc20_abi
+                    address=w3.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
                 )
             if self.chain == Chain.ARBITRUM:
                 autoMarketLPContract = w3_arb.eth.contract(
-                    address=self.autoMarket_contract, abi=erc20_abi
+                    address=w3_arb.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
                 )
 
             # Get User's Auto Market Balance
@@ -170,7 +170,7 @@ class PENPIEIntegrationV2(Integration):
             )
             # Get Auto market's penpie balance
             autoMarketpenpeiepoolBal = call_with_retry(
-                receiptcontract.functions.balanceOf(self.autoMarket_contract),
+                receiptcontract.functions.balanceOf(w3.to_checksum_address(self.autoMarket_contract)),
                 block,
             )
 
@@ -197,19 +197,20 @@ class PENPIEIntegrationV2(Integration):
         all_users = set()
         start = self.start_block
 
+        auto_market_addr = self.autoMarket_contract or "0x0000000000000000000000000000000000000000"
         if self.chain == Chain.ETHEREUM:
             contract = w3.eth.contract(
                 address=w3.to_checksum_address(self.lp_contract), abi=erc20_abi
             )
             contract_auto_market = w3.eth.contract(
-                address=w3.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
+                address=w3.to_checksum_address(auto_market_addr), abi=erc20_abi
             )
         elif self.chain == Chain.ARBITRUM:
             contract = w3_arb.eth.contract(
                 address=w3_arb.to_checksum_address(self.lp_contract), abi=erc20_abi
             )
             contract_auto_market = w3_arb.eth.contract(
-                address=w3_arb.to_checksum_address(self.autoMarket_contract), abi=erc20_abi
+                address=w3_arb.to_checksum_address(auto_market_addr), abi=erc20_abi
             )
         else:
             return set()

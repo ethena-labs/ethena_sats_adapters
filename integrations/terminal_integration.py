@@ -84,7 +84,7 @@ class TerminalIntegration(
         value = transfer["args"]["value"]
 
         if sender != ADDRESS_ZERO:
-            cached_balances[sender] = cached_balances.get(sender) - convert_to_decimals(value)
+            cached_balances[sender] = (cached_balances.get(sender) or 0.0) - convert_to_decimals(value)
             # If balance is negative, set it to 0 (possible due to rounding errors)
             if cached_balances[sender] < 0: cached_balances[sender] = 0
 
@@ -152,11 +152,11 @@ if __name__ == "__main__":
     )
 
     assert without_cached_data_output == {
-        22619607: { "0xf651032419e3a19A3f8B1A350427b94356C86Bf4": 3.0 },
-        22619668: { "0xf651032419e3a19A3f8B1A350427b94356C86Bf4": 1.0 },
-        22619716: { 
-            "0xf651032419e3a19A3f8B1A350427b94356C86Bf4": 1.0,
-            "0xaFC2a7Dfa6A14a4BbAb663F0966a779458dA123C": 0.0,
+        22619607: { Web3.to_checksum_address("0xf651032419e3a19A3f8B1A350427b94356C86Bf4"): 3.0 },
+        22619668: { Web3.to_checksum_address("0xf651032419e3a19A3f8B1A350427b94356C86Bf4"): 1.0 },
+        22619716: {
+            Web3.to_checksum_address("0xf651032419e3a19A3f8B1A350427b94356C86Bf4"): 1.0,
+            Web3.to_checksum_address("0xaFC2a7Dfa6A14a4BbAb663F0966a779458dA123C"): 0.0,
         },
     }
 
@@ -164,10 +164,10 @@ if __name__ == "__main__":
     print("Testing with cached data...")
     with_cached_data_output = integration.get_block_balances(
         cached_data= {
-            22619716: { "0xf651032419e3a19A3f8B1A350427b94356C86Bf4": 1.0 },
+            22619716: { Web3.to_checksum_address("0xf651032419e3a19A3f8B1A350427b94356C86Bf4"): 1.0 },
             22790716: {
-                "0xf651032419e3a19A3f8B1A350427b94356C86Bf4": 1.0,
-                "0xFD46bC7c3025a6864Fccfc9a4e781E4D0D6F3ce5": 3e-6
+                Web3.to_checksum_address("0xf651032419e3a19A3f8B1A350427b94356C86Bf4"): 1.0,
+                Web3.to_checksum_address("0xFD46bC7c3025a6864Fccfc9a4e781E4D0D6F3ce5"): 3e-6
             }
         },
         blocks=[22790965, 22790912],

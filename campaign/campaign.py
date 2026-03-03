@@ -32,6 +32,7 @@ from constants.example_integrations import (
     KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
     RATEX_EXAMPLE_USDE_START_BLOCK,
 )
+from constants.affluent import AFFLUENT_USDE_START_BLOCK, AFFLUENT_SUSDE_START_BLOCK
 from constants.stonfi import STONFI_USDE_START_BLOCK
 from constants.chains import Chain
 from constants.pendle import PENDLE_USDE_JULY_DEPLOYMENT_BLOCK

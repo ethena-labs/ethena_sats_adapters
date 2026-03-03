@@ -203,7 +203,7 @@ def get_vault_users(
             start_block,
             to_block,
         )
-        print(event_label, ": found", len(transfers), "transfers")
+        print(event_label, ": found", len(list(transfers)), "transfers")
         for transfer in transfers:
             all_users.add(transfer["args"]["to"])
         start_block += page_size

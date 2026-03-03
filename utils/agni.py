@@ -46,7 +46,7 @@ def get_agni_pool_info_list(
             start,
             to_block,
         )
-        print(start, to_block, len(deposits), "getting deposits for agni")
+        print(start, to_block, len(list(deposits)), "getting deposits for agni")
         for deposit in deposits:
             try:
                 token_id = deposit["args"]["tokenId"]
