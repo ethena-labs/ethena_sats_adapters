@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ethena_sats_adapters"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "DateTime~=4.9",
+    "web3~=6.19.0",
+    "python-dotenv~=1.0.0",
+    "requests==2.32.4",
+    "tqdm~=4.66.4",
+    "rich==13.7.1",
+    "types-requests==2.31.0.6",
+]
+
+[tool.uv]
+dev-dependencies = [
+
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TCH", "PTH", "ERA", "PL", "TRY", "RUF"]
