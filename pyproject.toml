@@ -1,0 +1,61 @@
+[project]
+name = "ethena_sats_adapters"
+version = "0.1.0"
+description = ""
+requires-python = ">3.12,<3.13"
+readme = "README.md"
+dependencies = [
+    "DateTime~=4.9",
+    "web3~=6.19.0",
+    "python-dotenv~=1.0.0",
+    "requests==2.32.4",
+    "tqdm~=4.66.4",
+    "rich==13.7.1",
+    "types-requests==2.31.0.6",
+]
+
+[dependency-groups]
+dev = [
+
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 130
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "ARG",  # flake8-unused-arguments
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "PTH",  # flake8-use-pathlib
+    "ERA",  # eradicate
+    "PL",   # Pylint
+    "TRY",  # tryceratops
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "E501",      # line too long (handled by formatter)
+    "PLR0913",   # too many arguments
+    "PLR0912",   # too many branches
+    "PLR0915",   # too many statements
+    "TRY003",    # avoid long messages outside exception class
+    "TRY300",    # consider moving to else block
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["PLR2004", "S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
