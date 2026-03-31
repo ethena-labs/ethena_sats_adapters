@@ -1,12 +1,8 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "ethena_sats_adapters"
 version = "0.1.0"
 description = ""
-requires-python = "==3.10.*"
+requires-python = ">3.12,<3.13"
 readme = "README.md"
 dependencies = [
     "DateTime~=4.9",
@@ -24,7 +20,7 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 line-length = 130
 
 [tool.ruff.lint]
