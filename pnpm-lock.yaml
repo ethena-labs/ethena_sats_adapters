@@ -12,7 +12,7 @@ overrides:
   axios@1.14.1: 1.14.0
   axios@0.30.4: 0.30.3
   plain-crypto-js@4.2.1: 0.0.0-security
-  lodash: '>=4.17.23'
+  lodash: '>=4.18.1'
   bn.js: '>=5.2.3'
   base-x: ^5.0.1
   '@tootallnate/once': '>=3.0.1'
@@ -1224,8 +1224,8 @@ packages:
   lodash.flattendeep@4.4.0:
     resolution: {integrity: sha512-uHaJFihxmJcEX3kT4I23ABqKKalJ/zDrDg0lsFtc1h+3uw49SIJ5beyhx5ExVRti3AvKoOJngIj7xz3oylPdWQ==}
 
-  lodash@4.17.23:
-    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   loupe@3.2.1:
     resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
@@ -2391,7 +2391,7 @@ snapshots:
       decimal.js: 10.5.0
       decimal.js-light: 2.5.1
       fecha: 4.2.3
-      lodash: 4.17.23
+      lodash: 4.18.1
       toformat: 2.0.0
     transitivePeerDependencies:
       - bluebird
@@ -3465,7 +3465,7 @@ snapshots:
 
   lodash.flattendeep@4.4.0: {}
 
-  lodash@4.17.23: {}
+  lodash@4.18.1: {}
 
   loupe@3.2.1: {}
 
