@@ -53,6 +53,8 @@ class SummaryColumn(Enum):
         SummaryColumnType.ETHENA_PTS,
     )
 
+    JUP_LEND_ETHENA_PTS = ("jup_lend_ethena_pts", SummaryColumnType.ETHENA_PTS)
+
     RATEX_EXAMPLE_PTS = ("ratex_example_pts", SummaryColumnType.ETHENA_PTS)
 
     FIVA_EXAMPLE_PTS = ("fiva_example_pts", SummaryColumnType.ETHENA_PTS)

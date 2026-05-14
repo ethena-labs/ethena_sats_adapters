@@ -7,6 +7,7 @@ from integrations.claimed_ena_example_integration import ClaimedEnaIntegration
 from integrations.kamino_l2_delegation_example_integration import (
     KaminoL2DelegationExampleIntegration,
 )
+from integrations.jup_lend_ethena_integration import JupLendEthenaIntegration
 from integrations.ratex_l2_delegation_example_integration import (
     RatexL2DelegationExampleIntegration,
 )
@@ -32,6 +33,7 @@ from constants.example_integrations import (
     KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
     RATEX_EXAMPLE_USDE_START_BLOCK,
 )
+from constants.jup_lend import JUP_LEND_ETHENA_START_BLOCK
 from constants.affluent import AFFLUENT_USDE_START_BLOCK, AFFLUENT_SUSDE_START_BLOCK
 from constants.stonfi import STONFI_USDE_START_BLOCK
 from constants.chains import Chain
@@ -112,6 +114,17 @@ INTEGRATIONS: List[Integration] = [
         start_block=KAMINO_SUSDE_COLLATERAL_START_BLOCK_EXAMPLE,
         market_address="BJnbcRHqvppTyGesLzWASGKnmnF1wq9jZu6ExrjT7wvF",
         token_address="EwBTjwCXJ3TsKP8dNTYnzRmBWRd6h48FdLFSAGJ3sCtx",
+        decimals=9,
+        chain=Chain.SOLANA,
+        reward_multiplier=1,
+    ),
+    # Jupiter Lend borrow vault collateral (default: vault 1 WSOL; set vault_id + supply_mint
+    # to the Ethena-backed vault when listed, or vault_id="auto" + that SPL mint).
+    JupLendEthenaIntegration(
+        integration_id=IntegrationID.JUP_LEND_ETHENA,
+        start_block=JUP_LEND_ETHENA_START_BLOCK,
+        vault_id="1",
+        supply_mint="So11111111111111111111111111111111111111112",
         decimals=9,
         chain=Chain.SOLANA,
         reward_multiplier=1,

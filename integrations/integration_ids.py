@@ -468,6 +468,12 @@ class IntegrationID(Enum):
         Token.SUSDE,
     )
 
+    JUP_LEND_ETHENA = (
+        "jup_lend_ethena",
+        "Jupiter Lend Ethena vault collateral",
+        Token.USDE,
+    )
+
     RATEX_USDE_EXAMPLE = ("ratex_usde_example", "Ratex USDe Example", Token.USDE)
 
     FIVA_USDE_EXAMPLE = ("fiva_usde_example", "Fiva USDe Example", Token.USDE)

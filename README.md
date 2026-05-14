@@ -15,9 +15,10 @@ For your protocol to be included and your users to receive points, you should su
    - For EVM compatible chains: Copy [CachedBalancesTemplate](integrations/template.py)
    - For non-EVM chains (e.g. Solana): Copy [L2DelegationTemplate](integrations/l2_delegation_template.py)
      - We strongly recommend using a TypeScript script or similar to fetch balances for better reliability and maintainability
-     - See [KaminoL2DelegationExampleIntegration](integrations/kamino_l2_delegation_example_integration.py) for the recommended TypeScript approach
+     - See [KaminoL2DelegationExampleIntegration](integrations/kamino_l2_delegation_example_integration.py) for one TypeScript + subprocess pattern (Kamino)
+     - See [JupLendEthenaIntegration](integrations/jup_lend_ethena_integration.py) and [ts/jup_lend_ethena_vault.ts](ts/jup_lend_ethena_vault.ts) for Jupiter Lend on Solana (`@jup-ag/lend`, `getVaultsProgram`)
        - Create your TypeScript script in the `ts/` directory
-       - Use the Kamino example as a reference for calling your script from Python
+       - Use the Kamino or Jupiter Lend integration as a reference for calling your script from Python
      - API integration is also supported but less preferred (see [RatexL2DelegationExampleIntegration](integrations/ratex_l2_delegation_example_integration.py))
 6. Name your file `[protocol name]_integration.py` and place it in the `integrations` directory.
 7. Your integration must inherit from either:
