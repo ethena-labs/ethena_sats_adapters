@@ -7,7 +7,11 @@ from typing import Dict, List
 
 from dotenv import load_dotenv
 
-from constants.jup_lend import JUP_LEND_ETHENA_START_BLOCK
+from constants.jup_lend import (
+    JUP_LEND_ETHENA_MARKET,
+    JUP_LEND_ETHENA_START_BLOCK,
+    JUP_LEND_ETHENA_VAULT_STATE_PUBKEY,
+)
 from constants.summary_columns import SummaryColumn
 from constants.chains import Chain
 from integrations.integration_ids import IntegrationID as IntID
@@ -18,17 +22,16 @@ load_dotenv()
 
 class JupLendEthenaIntegration(L2DelegationIntegration):
     """
-    Solana Jupiter Lend borrow vault: collateral balances per wallet via
-    ts/jup_lend_ethena_vault.ts (getVaultsProgram + position accounts).
+    Solana Jupiter Lend borrow vault (Ethena market): supply-side collateral
+    per position NFT via ts/jup_lend_ethena_vault.ts.
     """
 
     def __init__(
         self,
         integration_id: IntID,
         start_block: int,
-        vault_id: str,
-        supply_mint: str,
-        decimals: int,
+        vault_state_pubkey: str = JUP_LEND_ETHENA_VAULT_STATE_PUBKEY,
+        market: str = JUP_LEND_ETHENA_MARKET,
         chain: Chain = Chain.SOLANA,
         reward_multiplier: int = 1,
     ):
@@ -39,9 +42,8 @@ class JupLendEthenaIntegration(L2DelegationIntegration):
             summary_cols=[SummaryColumn.JUP_LEND_ETHENA_PTS],
             reward_multiplier=reward_multiplier,
         )
-        self.vault_id = vault_id
-        self.supply_mint = supply_mint
-        self.decimals = str(decimals)
+        self.vault_state_pubkey = vault_state_pubkey
+        self.market = market
         self.ts_rel_path = "ts/jup_lend_ethena_vault.ts"
         self._repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -79,9 +81,8 @@ class JupLendEthenaIntegration(L2DelegationIntegration):
                 response = subprocess.run(
                     [
                         *self._runner_cmd(),
-                        self.vault_id,
-                        self.supply_mint,
-                        self.decimals,
+                        self.vault_state_pubkey,
+                        self.market,
                     ],
                     capture_output=True,
                     text=True,
@@ -111,13 +112,9 @@ class JupLendEthenaIntegration(L2DelegationIntegration):
 
 
 if __name__ == "__main__":
-    # Default: vault 1 (WSOL supply). Override vault_id / supply_mint / decimals for your vault.
     integration = JupLendEthenaIntegration(
         integration_id=IntID.JUP_LEND_ETHENA,
         start_block=JUP_LEND_ETHENA_START_BLOCK,
-        vault_id="1",
-        supply_mint="So11111111111111111111111111111111111111112",
-        decimals=9,
         chain=Chain.SOLANA,
         reward_multiplier=1,
     )

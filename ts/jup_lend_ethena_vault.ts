@@ -1,228 +1,91 @@
 /**
- * Jupiter Lend borrow vault: aggregate supply-side collateral (raw col amount)
- * per position NFT holder for a single vault.
+ * Jupiter Lend borrow vault (Ethena market): supply-side collateral per position NFT.
  *
- * Args: <vault_id | "auto"> <supply_mint> <decimals>
- * - vault_id: numeric vault id on-chain, or "auto" to resolve via lite-api.jup.ag
- *   using the first borrow vault whose supplyToken.address matches supply_mint.
- * - supply_mint: SPL mint of the vault collateral asset (e.g. Ethena USDe / sUSDe).
- * - decimals: human-readable decimal places for JSON output.
+ * Usage:
+ *   tsx ts/jup_lend_ethena_vault.ts <vault_state_pubkey> [market]
  *
- * Uses getVaultsProgram from @jup-ag/lend/borrow plus borrow PDAs from @jup-ag/lend.
+ * USDE / USDG vault (ethena):
+ *   tsx ts/jup_lend_ethena_vault.ts 72RGBXosx2NzHvJyt8AgjRkiX8EyEnT899tfrQSSgNtm ethena
  *
- * Env: JUP_LEND_CHUNK_DELAY_MS (default 120 ms between RPC chunks). For smoke tests,
- * JUP_LEND_MAX_POSITIONS caps how many GPA results are processed (omit for full vault).
+ * Env:
+ *   RPC_URL / SOLANA_NODE_URL — Solana RPC (see ts/common.ts)
+ *   BATCH_SIZE — accounts per getMultipleAccounts (default 100)
  */
-import * as dotenv from "dotenv";
-import { Connection, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { getVaultsProgram } from "@jup-ag/lend/borrow";
+import { borrowPda } from "@jup-ag/lend";
 import { SOL_NODE } from "./common";
 
-dotenv.config();
+const EXCHANGE_PRICES_PRECISION = new BN("1000000000000"); // 1e12
+const OPERATE_PRECISION = new BN("1000000000"); // 1e9
 
-const POSITION_DISCRIMINATOR = Buffer.from([
-  170, 188, 143, 228, 122, 64, 247, 208,
-]);
+const [vaultStateArg, marketArg] = process.argv.slice(2);
+const vaultStatePk = new PublicKey(
+  vaultStateArg ?? "72RGBXosx2NzHvJyt8AgjRkiX8EyEnT899tfrQSSgNtm",
+);
+const JUPITER_LEND_ETHENA_MARKET = marketArg === "main" ? "main" : "ethena";
+const JUPITER_LEND_ETHENA_BATCH_SIZE = Number(process.env.BATCH_SIZE ?? "100");
 
-const CHUNK = 8;
-const CHUNK_DELAY_MS = Number(process.env.JUP_LEND_CHUNK_DELAY_MS ?? 120);
-
-const args = process.argv.slice(2);
-const vaultArg = args[0];
-const supplyMintStr = args[1];
-const decimals = Number(args[2]);
-
-function readU16LE(buf: Buffer, offset: number): number {
-  return buf.readUInt16LE(offset);
+function rawColToHuman(colRaw: BN, vaultSupplyExchangePrice: BN): number {
+  const denom = EXCHANGE_PRICES_PRECISION.mul(OPERATE_PRECISION);
+  const rounded = new BN(colRaw.toString())
+    .mul(new BN(vaultSupplyExchangePrice.toString()))
+    .muln(100)
+    .add(denom.divn(2))
+    .div(denom);
+  return rounded.toNumber() / 100;
 }
 
-function readU32LE(buf: Buffer, offset: number): number {
-  return buf.readUInt32LE(offset);
-}
-
-function decodePositionAccount(data: Buffer): {
-  vaultId: number;
-  positionId: number;
-  positionMint: PublicKey;
-} {
-  const body = data.subarray(8);
-  const vaultId = readU16LE(body, 0);
-  const positionId = readU32LE(body, 2);
-  const positionMint = new PublicKey(body.subarray(6, 6 + 32));
-  return { vaultId, positionId, positionMint };
-}
-
-async function resolveVaultIdFromApi(supplyMint: string): Promise<number> {
-  const { Client } = await import("@jup-ag/lend/api");
-  const client = new Client();
-  const vaults = await client.borrow.getVaults();
-  const want = supplyMint.trim();
-  const hit = vaults.find(
-    (v: { id: number; supplyToken: { address: string } }) =>
-      v.supplyToken.address === want
-  );
-  if (!hit) {
-    throw new Error(
-      `No Jupiter Lend borrow vault with supply mint ${want}. ` +
-        `Check https://api.solana.fluid.io/v1/ethena/borrowing/vaults or pass an explicit vault id.`
-    );
+function chunk<T>(array: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    out.push(array.slice(i, i + size));
   }
-  return hit.id as number;
-}
-
-async function getNftHolderWallet(
-  connection: Connection,
-  positionMint: PublicKey
-): Promise<PublicKey> {
-  const largest = await connection.getTokenLargestAccounts(positionMint);
-  if (!largest.value.length) {
-    throw new Error(`No token accounts for mint ${positionMint.toBase58()}`);
-  }
-  const ta = largest.value[0].address;
-  const info = await connection.getParsedAccountInfo(ta);
-  const parsed = info.value?.data;
-  if (
-    !parsed ||
-    typeof parsed !== "object" ||
-    !("parsed" in parsed) ||
-    parsed.parsed.type !== "account"
-  ) {
-    throw new Error(`Could not parse token account ${ta.toBase58()}`);
-  }
-  const ownerStr = (parsed.parsed as { info: { owner: string } }).info.owner;
-  return new PublicKey(ownerStr);
+  return out;
 }
 
 async function main() {
-  if (!vaultArg || !supplyMintStr || Number.isNaN(decimals)) {
-    throw new Error(
-      'Usage: ts-node ts/jup_lend_ethena_vault.ts <vault_id|"auto"> <supply_mint> <decimals>'
-    );
+  const connection = new Connection(SOL_NODE);
+  const program = getVaultsProgram({ connection, market: JUPITER_LEND_ETHENA_MARKET });
+
+  const vaultState = await program.account.vaultState.fetch(vaultStatePk);
+
+  const vaultId = vaultState.vaultId;
+  const nextPositionId = vaultState.nextPositionId;
+  const supplyExPrice = vaultState.vaultSupplyExchangePrice;
+
+  const positionIds: number[] = [];
+  for (let id = 1; id < nextPositionId; id++) {
+    positionIds.push(id);
   }
 
-  const supplyMint = new PublicKey(supplyMintStr);
-  const connection = new Connection(SOL_NODE, "confirmed");
+  const dataMap: Record<string, number> = {};
 
-  const [{ borrowPda }, borrowMod] = await Promise.all([
-    import("@jup-ag/lend"),
-    import("@jup-ag/lend/borrow"),
-  ]);
-  const { default: baseX } = await import("base-x");
-  const bs58 = baseX(
-    "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-  );
-
-  const vaultId: number =
-    vaultArg === "auto"
-      ? await resolveVaultIdFromApi(supplyMintStr)
-      : Number(vaultArg);
-
-  if (!Number.isInteger(vaultId) || vaultId < 0) {
-    throw new Error(`Invalid vault id: ${vaultArg}`);
-  }
-
-  const dummySigner = new PublicKey("11111111111111111111111111111111");
-  const program = borrowMod.getVaultsProgram({
-    connection,
-    signer: dummySigner,
-    market: "ethena",
-  });
-
-  const vaultConfigPk = borrowPda.getVaultConfig(vaultId);
-  const vaultConfig = await program.account.vaultConfig.fetch(vaultConfigPk);
-  const cfgSupply = vaultConfig.supplyToken as PublicKey;
-  if (!cfgSupply.equals(supplyMint)) {
-    throw new Error(
-      `Vault ${vaultId} supply token ${cfgSupply.toBase58()} does not match ` +
-        `expected ${supplyMint.toBase58()}`
+  for (const ids of chunk(positionIds, JUPITER_LEND_ETHENA_BATCH_SIZE)) {
+    const addresses = ids.map((id) =>
+      borrowPda.getPosition(vaultId, id, JUPITER_LEND_ETHENA_MARKET),
     );
-  }
+    const accounts = await program.account.position.fetchMultiple(addresses);
 
-  const vaultIdBytes = Buffer.alloc(2);
-  vaultIdBytes.writeUInt16LE(vaultId, 0);
+    for (let i = 0; i < ids.length; i++) {
+      const position = accounts[i];
+      if (!position) continue;
 
-  const accounts = await connection.getProgramAccounts(program.programId, {
-    filters: [
-      {
-        memcmp: {
-          offset: 0,
-          bytes: bs58.encode(POSITION_DISCRIMINATOR),
-        },
-      },
-      {
-        memcmp: {
-          offset: 8,
-          bytes: bs58.encode(vaultIdBytes),
-        },
-      },
-    ],
-  });
+      const supplyRaw = position.supplyAmount;
+      if (supplyRaw.isZero()) continue;
 
-  const maxRaw = process.env.JUP_LEND_MAX_POSITIONS;
-  const maxN = maxRaw ? Number(maxRaw) : 0;
-  const toProcess =
-    maxN > 0 && Number.isFinite(maxN) ? accounts.slice(0, maxN) : accounts;
+      const collateral = rawColToHuman(supplyRaw, supplyExPrice);
+      if (collateral <= 0) continue;
 
-  const out: Record<string, number> = {};
-
-  for (let i = 0; i < toProcess.length; i += CHUNK) {
-    const slice = toProcess.slice(i, i + CHUNK);
-    await Promise.all(
-      slice.map(async ({ pubkey, account }) => {
-        let positionId: number;
-        let positionMint: PublicKey;
-        try {
-          const dec = decodePositionAccount(account.data);
-          if (dec.vaultId !== vaultId) return;
-          positionId = dec.positionId;
-          positionMint = dec.positionMint;
-        } catch {
-          return;
-        }
-
-        const posPk = borrowPda.getPosition(vaultId, positionId);
-        if (!posPk.equals(pubkey)) {
-          return;
-        }
-
-        let colRaw: BN;
-        try {
-          const cur = await borrowMod.getCurrentPosition({
-            vaultId,
-            positionId,
-            connection,
-            market: "ethena",
-          });
-          colRaw = cur.colRaw;
-        } catch {
-          return;
-        }
-
-        if (!colRaw || colRaw.isZero()) return;
-
-        let owner: PublicKey;
-        try {
-          owner = await getNftHolderWallet(connection, positionMint);
-        } catch {
-          return;
-        }
-
-        const human = colRaw.toNumber() / 10 ** decimals;
-        if (human <= 0) return;
-
-        const key = owner.toBase58();
-        out[key] = (out[key] ?? 0) + human;
-      })
-    );
-    if (i + CHUNK < toProcess.length && CHUNK_DELAY_MS > 0) {
-      await new Promise((r) => setTimeout(r, CHUNK_DELAY_MS));
+      dataMap[String(position.nftId)] = collateral;
     }
   }
 
-  console.log(JSON.stringify(out));
+  console.log(JSON.stringify(dataMap));
 }
 
-main().catch((e) => {
-  console.error(e);
+main().catch((err) => {
+  console.error(err);
   process.exit(1);
 });

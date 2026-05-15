@@ -118,14 +118,10 @@ INTEGRATIONS: List[Integration] = [
         chain=Chain.SOLANA,
         reward_multiplier=1,
     ),
-    # Jupiter Lend borrow vault collateral (default: vault 1 WSOL; set vault_id + supply_mint
-    # to the Ethena-backed vault when listed, or vault_id="auto" + that SPL mint).
+    # Jupiter Lend Ethena market: USDE/USDG vault supply-side collateral per position NFT.
     JupLendEthenaIntegration(
         integration_id=IntegrationID.JUP_LEND_ETHENA,
         start_block=JUP_LEND_ETHENA_START_BLOCK,
-        vault_id="1",
-        supply_mint="So11111111111111111111111111111111111111112",
-        decimals=9,
         chain=Chain.SOLANA,
         reward_multiplier=1,
     ),
