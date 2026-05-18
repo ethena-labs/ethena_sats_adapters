@@ -20,6 +20,7 @@ dev = [
 ]
 
 [tool.uv]
+exclude-newer = "10 days"
 override-dependencies = [
     "aiohttp>=3.13.4",
     "Pygments>=2.20.0",
