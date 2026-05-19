@@ -8,11 +8,13 @@ overrides:
   bigint-buffer: npm:bigint-buffer-fixed@^1.1.5
   tar: '>=7.5.11'
   minimatch: '>=3.1.4'
-  axios: '>=1.15.0'
-  axios@1.14.1: 1.15.0
+  axios: '>=1.15.2'
+  axios@1.14.1: 1.15.2
   axios@0.30.4: 0.30.3
   brace-expansion@<1.1.13: 1.1.13
-  brace-expansion@>=4.0.0 <5.0.5: 5.0.5
+  brace-expansion@>=4.0.0 <5.0.6: 5.0.6
+  ip-address@<=10.1.0: 10.1.1
+  uuid@11.1.0: 11.1.1
   plain-crypto-js@4.2.1: 0.0.0-security
   lodash: '>=4.18.1'
   bn.js: '>=5.2.3'
@@ -25,7 +27,7 @@ importers:
     dependencies:
       '@aptos-labs/ts-sdk':
         specifier: ^1.33.1
-        version: 1.39.0(axios@1.15.0)(got@11.8.6)
+        version: 1.39.0(axios@1.16.1)(got@11.8.6)
       '@babel/core':
         specifier: ^7.26.10
         version: 7.29.0
@@ -39,8 +41,8 @@ importers:
         specifier: ^1.95.2
         version: 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       axios:
-        specifier: '>=1.15.0'
-        version: 1.15.0
+        specifier: '>=1.15.2'
+        version: 1.16.1
       base-x:
         specifier: ^5.0.1
         version: 5.0.1
@@ -68,7 +70,7 @@ packages:
     engines: {node: '>=15.10.0'}
     deprecated: This version is deprecated.  Please upgrade to version 2.1.0 or later.
     peerDependencies:
-      axios: 1.15.0
+      axios: 1.15.2
       got: ^11.8.6
 
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.5':
@@ -557,8 +559,11 @@ packages:
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
-  axios@1.15.0:
-    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
+  axios@1.15.2:
+    resolution: {integrity: sha512-wLrXxPtcrPTsNlJmKjkPnNPK2Ihe0hn0wGSaTEiHRPxwjvJwT3hKmXF4dpqxmPO9SoNb2FsYXj/xEo0gHN+D5A==}
+
+  axios@1.16.1:
+    resolution: {integrity: sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -599,8 +604,8 @@ packages:
   brace-expansion@1.1.14:
     resolution: {integrity: sha512-MWPGfDxnyzKU7rNOW9SP/c50vi3xrmrua/+6hfPbCS2ABNWfx24vPidzvC7krjU/RTo235sV776ymlsMtGKj8g==}
 
-  brace-expansion@5.0.5:
-    resolution: {integrity: sha512-VZznLgtwhn+Mact9tfiwx64fA9erHH/MCXEUfB/0bX/6Fz6ny5EGTXYltMocqg4xFAQZtnO3DHWWXi8RiuN7cQ==}
+  brace-expansion@5.0.6:
+    resolution: {integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==}
     engines: {node: 18 || 20 || >=22}
 
   browserslist@4.24.4:
@@ -1111,8 +1116,8 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  ip-address@10.1.0:
-    resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
+  ip-address@10.1.1:
+    resolution: {integrity: sha512-1FMu8/N15Ck1BL551Jf42NYIoin2unWjLQ2Fze/DXryJRl5twqtwNHlO39qERGbIOcKYWHdgRryhOC+NG4eaLw==}
     engines: {node: '>= 12'}
 
   is-fullwidth-code-point@3.0.0:
@@ -1708,12 +1713,13 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+  uuid@11.1.1:
+    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   webidl-conversions@3.0.1:
@@ -1806,9 +1812,9 @@ snapshots:
     dependencies:
       commander: 12.1.0
 
-  '@aptos-labs/aptos-client@1.2.0(axios@1.15.0)(got@11.8.6)':
+  '@aptos-labs/aptos-client@1.2.0(axios@1.16.1)(got@11.8.6)':
     dependencies:
-      axios: 1.15.0
+      axios: 1.16.1
       got: 11.8.6
 
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.5': {}
@@ -1817,10 +1823,10 @@ snapshots:
     dependencies:
       '@aptos-labs/aptos-dynamic-transaction-composer': 0.1.5
 
-  '@aptos-labs/ts-sdk@1.39.0(axios@1.15.0)(got@11.8.6)':
+  '@aptos-labs/ts-sdk@1.39.0(axios@1.16.1)(got@11.8.6)':
     dependencies:
       '@aptos-labs/aptos-cli': 1.1.1
-      '@aptos-labs/aptos-client': 1.2.0(axios@1.15.0)(got@11.8.6)
+      '@aptos-labs/aptos-client': 1.2.0(axios@1.16.1)(got@11.8.6)
       '@aptos-labs/script-composer-pack': 0.0.9
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
@@ -2120,7 +2126,7 @@ snapshots:
       '@solana/spl-token': 0.3.11(@solana/web3.js@1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@switchboard-xyz/sbv2-lite': 0.1.6(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
-      axios: 1.15.0
+      axios: 1.15.2
       bn.js: 5.2.3
       buffer: 6.0.3
       buffer-layout: 1.2.2
@@ -2150,7 +2156,7 @@ snapshots:
       '@raydium-io/raydium-sdk': 1.3.1-beta.5(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/spl-token': 0.4.12(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
-      axios: 1.15.0
+      axios: 1.15.2
       bn.js: 5.2.3
       bs58: 6.0.0
       decimal.js: 10.5.0
@@ -2262,13 +2268,14 @@ snapshots:
       '@project-serum/anchor': 0.20.1(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/spl-token': 0.1.8(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
-      axios: 1.15.0
+      axios: 1.16.1
       decimal.js: 10.5.0
       tiny-invariant: 1.3.3
     transitivePeerDependencies:
       - bufferutil
       - debug
       - encoding
+      - supports-color
       - typescript
       - utf-8-validate
 
@@ -2397,7 +2404,7 @@ snapshots:
       '@solana/buffer-layout': 4.0.1
       '@solana/spl-token': 0.3.11(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
-      axios: 1.15.0
+      axios: 1.15.2
       big.js: 6.2.2
       bn.js: 5.2.3
       decimal.js: 10.5.0
@@ -2777,13 +2784,23 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.15.0:
+  axios@1.15.2:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
+
+  axios@1.16.1:
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.5
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - debug
+      - supports-color
 
   balanced-match@1.0.2: {}
 
@@ -2825,7 +2842,7 @@ snapshots:
       balanced-match: 1.0.2
       concat-map: 0.0.1
 
-  brace-expansion@5.0.5:
+  brace-expansion@5.0.6:
     dependencies:
       balanced-match: 4.0.4
 
@@ -3349,7 +3366,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  ip-address@10.1.0: {}
+  ip-address@10.1.1: {}
 
   is-fullwidth-code-point@3.0.0: {}
 
@@ -3556,11 +3573,11 @@ snapshots:
 
   minimatch@10.2.4:
     dependencies:
-      brace-expansion: 5.0.5
+      brace-expansion: 5.0.6
 
   minimatch@10.2.5:
     dependencies:
-      brace-expansion: 5.0.5
+      brace-expansion: 5.0.6
 
   minipass-collect@1.0.2:
     dependencies:
@@ -3812,7 +3829,7 @@ snapshots:
       '@types/ws': 8.18.1
       buffer: 6.0.3
       eventemitter3: 5.0.4
-      uuid: 11.1.0
+      uuid: 11.1.1
       ws: 8.20.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     optionalDependencies:
       bufferutil: 4.1.0
@@ -3856,7 +3873,7 @@ snapshots:
 
   socks@2.8.7:
     dependencies:
-      ip-address: 10.1.0
+      ip-address: 10.1.1
       smart-buffer: 4.2.0
 
   source-map@0.6.1: {}
@@ -3983,7 +4000,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@11.1.0: {}
+  uuid@11.1.1: {}
 
   uuid@8.3.2: {}
 

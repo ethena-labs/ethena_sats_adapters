@@ -23,6 +23,7 @@ dev = [
 override-dependencies = [
     "aiohttp>=3.13.4",
     "Pygments>=2.20.0",
+    "urllib3>=2.7.0",
 ]
 
 [tool.ruff]
