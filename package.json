@@ -27,7 +27,7 @@
       "bigint-buffer": "npm:bigint-buffer-fixed@^1.1.5",
       "tar": ">=7.5.11",
       "minimatch": ">=3.1.4",
-      "axios": ">=1.15.2",
+      "axios": "1.15.2",
       "axios@1.14.1": "1.15.2",
       "axios@0.30.4": "0.30.3",
       "brace-expansion@<1.1.13": "1.1.13",
