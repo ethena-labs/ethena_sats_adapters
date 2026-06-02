@@ -1,0 +1,42 @@
+# pnpm-specific settings live here. pnpm v11 no longer reads the package.json
+# "pnpm" field, nor non-auth/registry settings from .npmrc.
+
+# Supply-chain hardening
+# Refuse to install package versions younger than 10 days
+minimumReleaseAge: 14400
+# Fail (don't silently downgrade) if a package's publisher trust level drops
+trustPolicy: no-downgrade
+# Known-benign provenance downgrades, vetted and exempted from no-downgrade.
+# Each is a maintainer that stopped publishing with npm provenance (not an
+# attack). See nodejs/undici#4666.
+trustPolicyExclude:
+  - undici-types
+  # semver@6.3.1 (npm's own package) published without provenance; benign
+  - semver
+# Transitive deps must resolve from the registry, not git/tarball sources
+blockExoticSubdeps: true
+
+# Security CVE pins migrated verbatim from the former package.json#pnpm.overrides
+overrides:
+  "bigint-buffer": "npm:bigint-buffer-fixed@^1.1.5"
+  "tar": ">=7.5.11"
+  "minimatch": ">=3.1.4"
+  "axios": ">=1.15.2"
+  "axios@1.14.1": "1.15.2"
+  "axios@0.30.4": "0.30.3"
+  "brace-expansion@<1.1.13": "1.1.13"
+  "brace-expansion@>=4.0.0 <5.0.6": "5.0.6"
+  "ip-address@<=10.1.0": "10.1.1"
+  "uuid@11.1.0": "11.1.1"
+  "plain-crypto-js@4.2.1": "0.0.0-security"
+  "lodash": ">=4.18.1"
+  "bn.js": ">=5.2.3"
+  "base-x": "^5.0.1"
+  "@tootallnate/once": ">=3.0.1"
+
+# Dependencies permitted to run install/build scripts.
+allowBuilds:
+  bigint-buffer-fixed: true # native, replaces bigint-buffer via override
+  bufferutil: true # ws perf addon
+  utf-8-validate: true # ws perf addon
+  es5-ext: false # install script is a donation notice, not functional
