@@ -19,7 +19,11 @@ blockExoticSubdeps: true
 # Security CVE pins migrated verbatim from the former package.json#pnpm.overrides
 overrides:
   "bigint-buffer": "npm:bigint-buffer-fixed@^1.1.5"
-  "tar": ">=7.5.11"
+  # GHSA-23hp-3jrh-7fpw / CVE-2026-59873 (CRITICAL): every tar <= 7.5.18 is
+  # vulnerable to a decompression/parse DoS via unlimited input, so the old
+  # `>=7.5.11` floor still resolved into the vulnerable range (7.5.16). Pinned
+  # exactly: 7.5.20 is the newest release that clears `minimumReleaseAge` above.
+  "tar": "7.5.20"
   "minimatch": ">=3.1.4"
   "axios": ">=1.16.0"
   "axios@1.14.1": ">=1.16.0"

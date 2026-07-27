@@ -6,7 +6,7 @@ settings:
 
 overrides:
   bigint-buffer: npm:bigint-buffer-fixed@^1.1.5
-  tar: '>=7.5.11'
+  tar: 7.5.20
   minimatch: '>=3.1.4'
   axios: '>=1.16.0'
   axios@1.14.1: '>=1.16.0'
@@ -1622,8 +1622,8 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  tar@7.5.16:
-    resolution: {integrity: sha512-56adEpPMouktRlBLXiaYFFzZ/3+JXa8P9n7WbR+ibIjtviN55mEaOkiysCnPnWm+7kkui1Dn8J9l+g6zV8731w==}
+  tar@7.5.20:
+    resolution: {integrity: sha512-9FcyK4PA6+WbzlTM9WhQm6vB5W7cP7dUiPsv1g7YDwEQnQ1CGpK3MGlKk/ITVWMk05kHZuBhmVhiv8LZoy/PFQ==}
     engines: {node: '>=18'}
 
   test-exclude@6.0.0:
@@ -2870,7 +2870,7 @@ snapshots:
       promise-inflight: 1.0.1
       rimraf: 3.0.2
       ssri: 9.0.1
-      tar: 7.5.16
+      tar: 7.5.20
       unique-filename: 2.0.1
     transitivePeerDependencies:
       - bluebird
@@ -3627,7 +3627,7 @@ snapshots:
       npmlog: 6.0.2
       rimraf: 3.0.2
       semver: 7.8.5
-      tar: 7.5.16
+      tar: 7.5.20
       which: 2.0.2
     transitivePeerDependencies:
       - bluebird
@@ -3895,7 +3895,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  tar@7.5.16:
+  tar@7.5.20:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0
