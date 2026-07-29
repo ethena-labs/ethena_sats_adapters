@@ -591,6 +591,13 @@ class IntegrationID(Enum):
     STRATA_MONEY_SENIOR     = ("strata_srusde", "Strata Senior USDe", Token.SUSDE)
     STRATA_MONEY_JUNIOR     = ("strata_jrusde", "Strata Junior USDe", Token.SUSDE)
 
+    # Meridian
+    MERIDIAN_LIQUIDITY_PROVIDER = (
+        "meridian_liquidity_provider",
+        "Meridian Liquidity Provider",
+        Token.USDE,
+    )
+
     def __init__(self, column_name: str, description: str, token: Token = Token.USDE):
         self.column_name = column_name
         self.description = description
