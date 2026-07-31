@@ -29,7 +29,7 @@ importers:
     dependencies:
       '@aptos-labs/ts-sdk':
         specifier: ^1.33.1
-        version: 1.39.0(axios@1.16.1)(got@11.8.6)
+        version: 1.39.0(axios@1.18.0)(got@11.8.6)
       '@babel/core':
         specifier: ^7.26.10
         version: 7.29.0
@@ -44,7 +44,7 @@ importers:
         version: 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       axios:
         specifier: '>=1.16.0'
-        version: 1.16.1
+        version: 1.18.0
       base-x:
         specifier: ^5.0.1
         version: 5.0.1
@@ -488,8 +488,8 @@ packages:
   '@types/node@25.5.0':
     resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
-  '@types/node@26.0.0':
-    resolution: {integrity: sha512-vf2YFi1iY9lHGwNJMs01biZFbKJkrZR1T6/MlzjhJLPdntOHLhTrDSnSVcdtvjihi4VQNlrFRIxLsDBlQpAipA==}
+  '@types/node@26.1.2':
+    resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
 
   '@types/responselike@1.0.3':
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
@@ -561,8 +561,8 @@ packages:
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
-  axios@1.16.1:
-    resolution: {integrity: sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==}
+  axios@1.18.0:
+    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -606,6 +606,10 @@ packages:
   brace-expansion@5.0.6:
     resolution: {integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==}
     engines: {node: 18 || 20 || >=22}
+
+  brace-expansion@5.0.8:
+    resolution: {integrity: sha512-JZyDyq3D4AUifKTPOB7DELf6XsB3WdPuNxCtob1vFXPsSXhdAiHBWJ/tJ8HAc9aH84BK+5JFZLNkJKx3G9kzQg==}
+    engines: {node: 20 || >=22}
 
   browserslist@4.24.4:
     resolution: {integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==}
@@ -1115,8 +1119,8 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  ip-address@10.2.0:
-    resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
+  ip-address@10.3.1:
+    resolution: {integrity: sha512-1e9d3kb97NHJTIJDZW9rKqW2h6+dFa50Dy0fpPSMQp2ADje5gvKsXmdiK6dwY5t76TaTt5+P5N1Y/LoToIxP6g==}
     engines: {node: '>= 12'}
 
   is-fullwidth-code-point@3.0.0:
@@ -1296,8 +1300,8 @@ packages:
     resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
     engines: {node: 18 || 20 || >=22}
 
-  minimatch@10.2.5:
-    resolution: {integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==}
+  minimatch@10.2.6:
+    resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==}
     engines: {node: 18 || 20 || >=22}
 
   minipass-collect@1.0.2:
@@ -1344,8 +1348,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  nan@2.27.0:
-    resolution: {integrity: sha512-hC+0LidcL3XE4rp1C4H54KujgXKzbfyTngZTwBByQxsOxCEKZT0MPQ4hOKUH2jU1OYstqdDH4onyHPDzcV0XdQ==}
+  nan@2.28.0:
+    resolution: {integrity: sha512-fTsDz99OTq2sVePhGdp4qQhggZFtKr64ZNVyVajRKtMOkJxYekplBh577PiJB12v/D3s2E5cGtOI45LWp6rnLQ==}
 
   negotiator@0.6.4:
     resolution: {integrity: sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w==}
@@ -1794,9 +1798,9 @@ snapshots:
     dependencies:
       commander: 12.1.0
 
-  '@aptos-labs/aptos-client@1.2.0(axios@1.16.1)(got@11.8.6)':
+  '@aptos-labs/aptos-client@1.2.0(axios@1.18.0)(got@11.8.6)':
     dependencies:
-      axios: 1.16.1
+      axios: 1.18.0
       got: 11.8.6
 
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.5': {}
@@ -1805,10 +1809,10 @@ snapshots:
     dependencies:
       '@aptos-labs/aptos-dynamic-transaction-composer': 0.1.5
 
-  '@aptos-labs/ts-sdk@1.39.0(axios@1.16.1)(got@11.8.6)':
+  '@aptos-labs/ts-sdk@1.39.0(axios@1.18.0)(got@11.8.6)':
     dependencies:
       '@aptos-labs/aptos-cli': 1.1.1
-      '@aptos-labs/aptos-client': 1.2.0(axios@1.16.1)(got@11.8.6)
+      '@aptos-labs/aptos-client': 1.2.0(axios@1.18.0)(got@11.8.6)
       '@aptos-labs/script-composer-pack': 0.0.9
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
@@ -2108,7 +2112,7 @@ snapshots:
       '@solana/spl-token': 0.3.11(@solana/web3.js@1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@switchboard-xyz/sbv2-lite': 0.1.6(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
-      axios: 1.16.1
+      axios: 1.18.0
       bn.js: 5.2.3
       buffer: 6.0.3
       buffer-layout: 1.2.2
@@ -2138,7 +2142,7 @@ snapshots:
       '@raydium-io/raydium-sdk': 1.3.1-beta.5(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/spl-token': 0.4.12(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
-      axios: 1.16.1
+      axios: 1.18.0
       bn.js: 5.2.3
       bs58: 6.0.0
       decimal.js: 10.5.0
@@ -2250,7 +2254,7 @@ snapshots:
       '@project-serum/anchor': 0.20.1(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/spl-token': 0.1.8(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
-      axios: 1.16.1
+      axios: 1.18.0
       decimal.js: 10.5.0
       tiny-invariant: 1.3.3
     transitivePeerDependencies:
@@ -2386,7 +2390,7 @@ snapshots:
       '@solana/buffer-layout': 4.0.1
       '@solana/spl-token': 0.3.11(@solana/web3.js@1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.3)(utf-8-validate@6.0.6)
       '@solana/web3.js': 1.95.8(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
-      axios: 1.16.1
+      axios: 1.18.0
       big.js: 6.2.2
       bn.js: 5.2.3
       decimal.js: 10.5.0
@@ -2670,7 +2674,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.2.0
       '@types/keyv': 3.1.4
-      '@types/node': 26.0.0
+      '@types/node': 26.1.2
       '@types/responselike': 1.0.3
 
   '@types/connect@3.4.38':
@@ -2681,7 +2685,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 26.0.0
+      '@types/node': 26.1.2
 
   '@types/node@12.20.55': {}
 
@@ -2693,13 +2697,13 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
-  '@types/node@26.0.0':
+  '@types/node@26.1.2':
     dependencies:
       undici-types: 8.3.0
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 26.0.0
+      '@types/node': 26.1.2
 
   '@types/uuid@10.0.0': {}
 
@@ -2766,7 +2770,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.16.1:
+  axios@1.18.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
@@ -2791,7 +2795,7 @@ snapshots:
   bigint-buffer-fixed@1.1.6:
     dependencies:
       bindings: 1.5.0
-      nan: 2.27.0
+      nan: 2.28.0
       node-gyp: 9.4.1
     transitivePeerDependencies:
       - bluebird
@@ -2817,6 +2821,10 @@ snapshots:
       concat-map: 0.0.1
 
   brace-expansion@5.0.6:
+    dependencies:
+      balanced-match: 4.0.4
+
+  brace-expansion@5.0.8:
     dependencies:
       balanced-match: 4.0.4
 
@@ -3252,7 +3260,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 10.2.5
+      minimatch: 10.2.6
       once: 1.4.0
 
   gopd@1.2.0: {}
@@ -3340,7 +3348,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  ip-address@10.2.0: {}
+  ip-address@10.3.1: {}
 
   is-fullwidth-code-point@3.0.0: {}
 
@@ -3549,9 +3557,9 @@ snapshots:
     dependencies:
       brace-expansion: 5.0.6
 
-  minimatch@10.2.5:
+  minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.6
+      brace-expansion: 5.0.8
 
   minipass-collect@1.0.2:
     dependencies:
@@ -3596,7 +3604,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  nan@2.27.0: {}
+  nan@2.28.0: {}
 
   negotiator@0.6.4: {}
 
@@ -3845,7 +3853,7 @@ snapshots:
 
   socks@2.8.9:
     dependencies:
-      ip-address: 10.2.0
+      ip-address: 10.3.1
       smart-buffer: 4.2.0
 
   source-map@0.6.1: {}
