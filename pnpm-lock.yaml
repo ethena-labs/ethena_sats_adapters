@@ -8,11 +8,12 @@ overrides:
   bigint-buffer: npm:bigint-buffer-fixed@^1.1.5
   tar: 7.5.20
   minimatch: '>=3.1.4'
-  axios: '>=1.16.0'
-  axios@1.14.1: '>=1.16.0'
+  axios: '>=1.18.0'
+  axios@1.14.1: '>=1.18.0'
   axios@0.30.4: 0.30.3
-  brace-expansion@<1.1.13: 1.1.13
-  brace-expansion@>=4.0.0 <5.0.6: 5.0.6
+  brace-expansion@<1.1.16: 1.1.16
+  brace-expansion@>=2.0.0 <2.1.2: 2.1.2
+  brace-expansion@>=3.0.0 <5.0.8: 5.0.8
   ip-address@<=10.1.0: 10.1.1
   uuid@11.1.0: 11.1.1
   ws@>=7.0.0 <7.5.11: 7.5.11
@@ -43,7 +44,7 @@ importers:
         specifier: ^1.95.2
         version: 1.98.4(bufferutil@4.1.0)(encoding@0.1.13)(typescript@5.7.3)(utf-8-validate@6.0.6)
       axios:
-        specifier: '>=1.16.0'
+        specifier: '>=1.18.0'
         version: 1.18.0
       base-x:
         specifier: ^5.0.1
@@ -72,7 +73,7 @@ packages:
     engines: {node: '>=15.10.0'}
     deprecated: This version is deprecated.  Please upgrade to version 2.1.0 or later.
     peerDependencies:
-      axios: '>=1.16.0'
+      axios: '>=1.18.0'
       got: ^11.8.6
 
   '@aptos-labs/aptos-dynamic-transaction-composer@0.1.5':
@@ -596,10 +597,6 @@ packages:
 
   borsh@0.7.0:
     resolution: {integrity: sha512-CLCsZGIBCFnPtkNnieW/a8wmreDmfUtjU2m9yHrzPXIlNbqVs0AQrSatSG6vdNYUqdc83tkQi2eHfF98ubzQLA==}
-
-  brace-expansion@5.0.6:
-    resolution: {integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==}
-    engines: {node: 18 || 20 || >=22}
 
   brace-expansion@5.0.8:
     resolution: {integrity: sha512-JZyDyq3D4AUifKTPOB7DELf6XsB3WdPuNxCtob1vFXPsSXhdAiHBWJ/tJ8HAc9aH84BK+5JFZLNkJKx3G9kzQg==}
@@ -2804,10 +2801,6 @@ snapshots:
       bs58: 4.0.1
       text-encoding-utf-8: 1.0.2
 
-  brace-expansion@5.0.6:
-    dependencies:
-      balanced-match: 4.0.4
-
   brace-expansion@5.0.8:
     dependencies:
       balanced-match: 4.0.4
@@ -3537,7 +3530,7 @@ snapshots:
 
   minimatch@10.2.4:
     dependencies:
-      brace-expansion: 5.0.6
+      brace-expansion: 5.0.8
 
   minimatch@10.2.6:
     dependencies:

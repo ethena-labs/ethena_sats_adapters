@@ -4,6 +4,12 @@
 # Supply-chain hardening
 # Refuse to install package versions younger than 10 days
 minimumReleaseAge: 14400
+# Pre-existing lockfile entry younger than the age gate; exclude so CVE
+# override lockfile regeneration can proceed (already present on main).
+# TODO(2026-08-10): drop this once ip-address@10.4.0 clears minimumReleaseAge
+# (published 2026-07-31; 10-day gate ⇒ ~2026-08-10).
+minimumReleaseAgeExclude:
+  - ip-address@10.4.0
 # Fail (don't silently downgrade) if a package's publisher trust level drops
 trustPolicy: no-downgrade
 # Known-benign provenance downgrades, vetted and exempted from no-downgrade.
@@ -25,11 +31,15 @@ overrides:
   # exactly: 7.5.20 is the newest release that clears `minimumReleaseAge` above.
   "tar": "7.5.20"
   "minimatch": ">=3.1.4"
-  "axios": ">=1.16.0"
-  "axios@1.14.1": ">=1.16.0"
+  # GHSA-gcfj-64vw-6mp9: Node HTTP adapter can inherit polluted proxy after
+  # interceptor config cloning; floor raised from >=1.16.0 to patched >=1.18.0.
+  "axios": ">=1.18.0"
+  "axios@1.14.1": ">=1.18.0"
   "axios@0.30.4": "0.30.3"
-  "brace-expansion@<1.1.13": "1.1.13"
-  "brace-expansion@>=4.0.0 <5.0.6": "5.0.6"
+  "brace-expansion@<1.1.16": "1.1.16"
+  "brace-expansion@>=2.0.0 <2.1.2": "2.1.2"
+  # CVE-2026-13149: no patched 3.x/4.x exists — advisory remediates >=3.0.0 via 5.x
+  "brace-expansion@>=3.0.0 <5.0.8": "5.0.8"
   "ip-address@<=10.1.0": "10.1.1"
   "uuid@11.1.0": "11.1.1"
   "ws@>=7.0.0 <7.5.11": "7.5.11"
