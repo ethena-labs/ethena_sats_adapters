@@ -13,7 +13,7 @@ overrides:
   axios@0.30.4: 0.30.3
   brace-expansion@<1.1.16: 1.1.16
   brace-expansion@>=2.0.0 <2.1.2: 2.1.2
-  brace-expansion@>=5.0.0 <5.0.8: 5.0.8
+  brace-expansion@>=3.0.0 <5.0.8: 5.0.8
   ip-address@<=10.1.0: 10.1.1
   uuid@11.1.0: 11.1.1
   ws@>=7.0.0 <7.5.11: 7.5.11
