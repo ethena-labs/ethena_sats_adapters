@@ -9,6 +9,9 @@ minimumReleaseAge: 14400
 # TODO(2026-08-10): drop this once ip-address@10.4.0 clears minimumReleaseAge
 # (published 2026-07-31; 10-day gate ⇒ ~2026-08-10).
 minimumReleaseAgeExclude:
+  # TEMPORARY (~remove after 2026-08-20): package-name excludes are required —
+  # version-scoped excludes alone do not bypass minimumReleaseAge for these
+  # security pins on pnpm. Revisit once patched releases are >10 days old.
   - js-yaml
   - brace-expansion
   - ip-address@10.4.0
@@ -53,6 +56,7 @@ overrides:
 
   "brace-expansion@<1.1.18": "1.1.18"
   "brace-expansion@>=2.0.0 <2.1.4": "2.1.4"
+  "brace-expansion@>=3.0.0 <3.0.6": "3.0.6"
   "brace-expansion@>=4.0.0 <5.0.9": "5.0.9"
   "js-yaml@>=3.0.0 <3.15.1": "3.15.1"
   "js-yaml@>=4.0.0 <4.3.1": "4.3.1"
