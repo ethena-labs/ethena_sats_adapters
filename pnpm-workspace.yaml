@@ -33,9 +33,13 @@ overrides:
   "bigint-buffer": "npm:bigint-buffer-fixed@^1.1.5"
   # GHSA-23hp-3jrh-7fpw / CVE-2026-59873 (CRITICAL): every tar <= 7.5.18 is
   # vulnerable to a decompression/parse DoS via unlimited input, so the old
-  # `>=7.5.11` floor still resolved into the vulnerable range (7.5.16). Pinned
-  # exactly: 7.5.20 is the newest release that clears `minimumReleaseAge` above.
-  "tar": "7.5.20"
+  # `>=7.5.11` floor still resolved into the vulnerable range (7.5.16).
+  # CVE-2026-73566 (HIGH) then widened the affected range to <= 7.5.20 — exactly
+  # the version the previous exact pin resolved to, so the pin itself became the
+  # exposure. Back to a floor: `minimumReleaseAge` above already holds resolution
+  # to releases old enough to install (7.5.22 today), and a future advisory
+  # inside this range self-heals on the next lockfile regeneration.
+  "tar": ">=7.5.21"
   "minimatch": ">=3.1.4"
   # GHSA-gcfj-64vw-6mp9: Node HTTP adapter can inherit polluted proxy after
   # interceptor config cloning; floor raised from >=1.16.0 to patched >=1.18.0.
