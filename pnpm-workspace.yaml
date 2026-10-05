@@ -43,8 +43,9 @@ overrides:
   "minimatch": ">=3.1.4"
   # GHSA-gcfj-64vw-6mp9: Node HTTP adapter can inherit polluted proxy after
   # interceptor config cloning; floor raised from >=1.16.0 to patched >=1.18.0.
-  "axios": ">=1.18.0"
-  "axios@1.14.1": ">=1.18.0"
+  # GHSA-3pq3-5fj3-cg6v and six sibling HIGH advisories then covered 1.x < 1.20.0.
+  "axios": ">=1.20.0 <2.0.0"
+  "axios@1.14.1": ">=1.20.0 <2.0.0"
   "axios@0.30.4": "0.30.3"
 
   # CVE-2026-13149: no patched 3.x/4.x exists — advisory remediates >=3.0.0 via 5.x
@@ -59,13 +60,23 @@ overrides:
   "base-x": "^5.0.1"
   "@tootallnate/once": ">=3.0.1"
 
-  "brace-expansion@<1.1.18": "1.1.18"
-  "brace-expansion@>=2.0.0 <2.1.4": "2.1.4"
+  # GHSA-6j4f-fj2g-mc7p / GHSA-qhr7-859c-m2p7 (HIGH) moved past the old 1.1.18 /
+  # 2.1.4 / 5.0.9 targets.
+  "brace-expansion@<1.1.21": "1.1.21"
+  "brace-expansion@>=2.0.0 <2.1.7": "2.1.7"
   "brace-expansion@>=3.0.0 <3.0.6": "3.0.6"
-  "brace-expansion@>=4.0.0 <5.0.9": "5.0.9"
+  "brace-expansion@>=4.0.0 <5.0.12": "5.0.12"
   "js-yaml@>=3.0.0 <3.15.2": "3.15.2"
-  "js-yaml@>=4.0.0 <4.3.1": "4.3.1"
+  # CVE-2026-84375 covers 4.x < 4.3.2, including the previous 4.3.1 target.
+  "js-yaml@>=4.0.0 <4.3.2": "4.3.2"
   "js-yaml@>=5.0.0 <=5.2.1": "5.2.2"
+  # CVE-2026-73088 / CVE-2026-73089
+  "browserslist@<4.28.7": "4.28.7"
+  # MAJOR: CVE-2026-63376 / CVE-2026-77465 affect toml < 4.2.0 and there is no
+  # patched 3.x. The ^3.0.0 consumers (@coral-xyz/anchor, @project-serum/anchor)
+  # only call toml.parse() from anchor.workspace to read Anchor.toml, which this
+  # repo never touches; 4.2.0 keeps the same CommonJS parse() export.
+  "toml@<4.2.0": "4.2.0"
 # Dependencies permitted to run install/build scripts.
 allowBuilds:
   bigint-buffer-fixed: true # native, replaces bigint-buffer via override
