@@ -72,6 +72,11 @@ overrides:
   "js-yaml@>=5.0.0 <=5.2.1": "5.2.2"
   # CVE-2026-73088 / CVE-2026-73089
   "browserslist@<4.28.7": "4.28.7"
+  # MAJOR: CVE-2026-63376 / CVE-2026-77465 affect toml < 4.2.0 and there is no
+  # patched 3.x. The ^3.0.0 consumers (@coral-xyz/anchor, @project-serum/anchor)
+  # only call toml.parse() from anchor.workspace to read Anchor.toml, which this
+  # repo never touches; 4.2.0 keeps the same CommonJS parse() export.
+  "toml@<4.2.0": "4.2.0"
 # Dependencies permitted to run install/build scripts.
 allowBuilds:
   bigint-buffer-fixed: true # native, replaces bigint-buffer via override

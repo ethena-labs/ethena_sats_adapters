@@ -28,6 +28,7 @@ overrides:
   js-yaml@>=4.0.0 <4.3.2: 4.3.2
   js-yaml@>=5.0.0 <=5.2.1: 5.2.2
   browserslist@<4.28.7: 4.28.7
+  toml@<4.2.0: 4.2.0
 
 importers:
 
@@ -1645,8 +1646,9 @@ packages:
   toformat@2.0.0:
     resolution: {integrity: sha512-03SWBVop6nU8bpyZCx7SodpYznbZF5R4ljwNLBcTQzKOD9xuihRo/psX58llS1BMFhhAI08H3luot5GoXJz2pQ==}
 
-  toml@3.0.0:
-    resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
+  toml@4.2.0:
+    resolution: {integrity: sha512-TvAJjbHZlYmI323+srtqHQFyJsoWy6mI09ppkuj9+iRsqsVKG9fvTcOP7FHF2UCb0QSYtjEavffrKzdd0XgClg==}
+    engines: {node: '>=20'}
 
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
@@ -1937,7 +1939,7 @@ snapshots:
       pako: 2.1.0
       snake-case: 3.0.4
       superstruct: 0.15.5
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -1959,7 +1961,7 @@ snapshots:
       pako: 2.1.0
       snake-case: 3.0.4
       superstruct: 0.15.5
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -2270,7 +2272,7 @@ snapshots:
       js-sha256: 0.9.0
       pako: 2.1.0
       snake-case: 3.0.4
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -2292,7 +2294,7 @@ snapshots:
       js-sha256: 0.9.0
       pako: 2.1.0
       snake-case: 3.0.4
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -2315,7 +2317,7 @@ snapshots:
       js-sha256: 0.9.0
       pako: 2.1.0
       snake-case: 3.0.4
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -2337,7 +2339,7 @@ snapshots:
       js-sha256: 0.9.0
       pako: 2.1.0
       snake-case: 3.0.4
-      toml: 3.0.0
+      toml: 4.2.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -3906,7 +3908,7 @@ snapshots:
 
   toformat@2.0.0: {}
 
-  toml@3.0.0: {}
+  toml@4.2.0: {}
 
   tr46@0.0.3: {}
 
